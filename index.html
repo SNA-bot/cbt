@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sealed Nectar Academy CBT</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{background:#667eea;min-height:100vh;padding:15px}
+.box{max-width:900px;margin:auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px #0003}
+.head{background:#1e3a8a;color:#fff;padding:20px;text-align:center}
+.nav{display:flex;background:#f1f5f9}
+.nav button{flex:1;padding:14px;border:0;background:0;font-weight:700;color:#64748b}
+.nav button.on{color:#1e3a8a;border-bottom:3px solid #1e3a8a;background:#fff}
+.page{padding:20px;display:none}.page.on{display:block}
+input,select,textarea,button{width:100%;padding:12px;margin:6px 0;border:2px solid #e2e8f0;border-radius:8px;font-size:15px}
+button.btn{background:#1e3a8a;color:#fff;border:0;font-weight:700;cursor:pointer}
+.qcard{background:#f8fafc;padding:15px;margin:10px 0;border-left:4px solid #667eea;border-radius:8px}
+.opt{padding:10px;margin:6px 0;background:#fff;border:2px solid #e2e8f0;border-radius:6px;cursor:pointer}
+.opt.sel{background:#dbeafe;border-color:#1e3a8a}
+.timer{background:#fef3c7;padding:10px;text-align:center;font-weight:700;border-radius:6px;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="box">
+<div class="head"><h1>Sealed Nectar Academy</h1><p>CBT Portal - Unlimited & Free</p></div>
+<div class="nav">
+<button class="on" onclick="sw('s',this)">Student</button>
+<button onclick="sw('t',this)">Teacher</button>
+<button onclick="sw('m',this)">Questions</button>
+</div>
+
+<div id="s" class="page on">
+<h2>Start Test</h2>
+<input id="nm" placeholder="Full Name">
+<select id="cl"><option value="">Class</option><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>SS1</option><option>SS2</option><option>SS3</option></select>
+<select id="sb"></select>
+<button class="btn" onclick="start()">Start Test</button>
+<div id="ta" style="display:none">
+<div class="timer" id="tm"></div>
+<div id="qa"></div>
+<button class="btn" onclick="nx()">Next</button>
+<button class="btn" onclick="sub()" style="background:#64748b">Submit</button>
+</div>
+<div id="ra" style="display:none"></div>
+</div>
+
+<div id="t" class="page">
+<h2>Teacher Login</h2>
+<p>Default password: <b>sna2024</b></p>
+<input type="password" id="pw" placeholder="Password">
+<button class="btn" onclick="login()">Login</button>
+<div id="tp" style="display:none">
+<h3>Add Question</h3>
+<input id="qs" placeholder="Subject e.g. Mathematics">
+<select id="qc"><option>JSS1</option><option>JSS2</option><option>JSS3</option><option>SS1</option><option>SS2</option><option>SS3</option></select>
+<textarea id="qt" rows="2" placeholder="Question"></textarea>
+<input id="a" placeholder="Option A"><input id="b" placeholder="Option B">
+<input id="c" placeholder="Option C"><input id="d" placeholder="Option D">
+<select id="co"><option value="0">Correct: A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select>
+<button class="btn" onclick="add()">Save Question</button>
+</div>
+</div>
+
+<div id="m" class="page">
+<h2>All Questions (<span id="cnt">0</span>)</h2>
+<div id="list"></div>
+</div>
+</div>
+
+<script>
+let Q=JSON.parse(localStorage.getItem('sna_q')||'[]'),T=[],i=0,A=[],ti,pass=localStorage.getItem('sna_p')||'sna2024';
+function sw(id,b){document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));document.getElementById(id).classList.add('on');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');if(id=='s')ld();if(id=='m')sh();}
+function ld(){let s=[...new Set(Q.map(x=>x.s))];document.getElementById('sb').innerHTML='<option value="">Select Subject</option>'+s.map(x=>`<option>${x}</option>`).join('');}
+function login(){if(document.getElementById('pw').value==pass){document.getElementById('tp').style.display='block';alert('Welcome')}else alert('Wrong')}
+function add(){let o=[a.value,b.value,c.value,d.value];if(!qs.value||!qt.value||o.some(x=>!x))return alert('Fill all');Q.push({s:qs.value.trim(),c:qc.value,t:qt.value.trim(),o,co:+co.value,id:Date.now()});localStorage.setItem('sna_q',JSON.stringify(Q));alert('Saved! Total:'+Q.length);qt.value='';[a,b,c,d].forEach(x=>x.value='');sh()}
+function sh(){cnt.textContent=Q.length;list.innerHTML=Q.map((x,n)=>`<div class=qcard><b>${n+1}. [${x.c}-${x.s}]</b> ${x.t}<br>${x.o.map((o,k)=>`${'ABCD'[k]}) ${o}${k==x.co?' ✓':''}`).join('<br>')}<br><button onclick="del(${x.id})" style="margin-top:6px;background:#dc2626;color:#fff;border:0;padding:6px 10px;border-radius:5px">Delete</button></div>`).join('')||'No questions'}
+function del(id){Q=Q.filter(x=>x.id!=id);localStorage.setItem('sna_q',JSON.stringify(Q));sh()}
+function start(){let n=nm.value.trim(),clv=cl.value,sv=sb.value;if(!n||!clv||!sv)return alert('Fill all');T=Q.filter(x=>x.c==clv&&x.s==sv);if(!T.length)return alert('No questions');T=T.sort(()=>.5-Math.random()).slice(0,20);i=0;A=Array(T.length).fill(null);ta.style.display='block';sq();st(1800)}
+function sq(){let q=T[i];qa.innerHTML=`<div class=qcard><h3>Q${i+1}/${T.length}</h3><p>${q.t}</p>${q.o.map((o,k)=>`<div class="opt ${A[i]==k?'sel':''}" onclick="A[i]=${k};sq()">${'ABCD'[k]}. ${o}</div>`).join('')}</div>`}
+function nx(){if(i<T.length-1){i++;sq()}}
+function st(s){clearInterval(ti);ti=setInterval(()=>{tm.textContent=`Time: ${Math.floor(s/60)}:${('0'+s%60).slice(-2)}`;if(--s<0){clearInterval(ti);sub()}},1000)}
+function sub(){clearInterval(ti);let sc=0;A.forEach((a,j)=>{if(a==T[j].co)sc++});let p=Math.round(sc/T.length*100);ta.style.display='none';ra.style.display='block';ra.innerHTML=`<div style="background:#667eea;color:#fff;padding:30px;border-radius:12px;text-align:center"><h2>Result</h2><p style="font-size:40px">${p}%</p><p>${sc}/${T.length} correct</p><p>${nm.value} - ${cl.value}</p><button class=btn onclick="location.reload()" style="background:#fff;color:#1e3a8a;margin-top:15px">New Test</button></div>`}
+ld();sh();
+</script>
+</body>
+</html>
