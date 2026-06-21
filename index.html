@@ -1,90 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SNA v4.4</title>
-<style>
-:root{--g:#0a5c36}*{box-sizing:border-box;font-family:system-ui}body{margin:0;background:#f5f7f6}
-header{background:var(--g);color:#fff;padding:16px;text-align:center}
-nav{display:flex}nav button{flex:1;padding:12px;border:0;background:#eee;font-weight:600}
-nav button.active{background:#fff;border-bottom:3px solid var(--g);color:var(--g)}
-.card{background:#fff;margin:12px;padding:14px;border-radius:10px}
-input,select,textarea,button{width:100%;padding:10px;margin:5px 0;border:1px solid #999;border-radius:6px;font-size:1rem;background:#fff}
-button.primary{background:var(--g);color:#fff;border:0;font-weight:700}
-.hidden{display:none}label{font-weight:600;margin-top:8px;display:block;font-size:.9rem}
-</style>
-</head>
-<body>
-<header><h2>SEALED NECTAR ACADEMY</h2><p>v4.4 – Class Fix</p></header>
-<nav>
-<button onclick="tab('s')" id="b1" class="active">Scores</button>
-<button onclick="tab('c')" id="b3">CBT</button>
-<button onclick="tab('a')" id="b4">Admin</button>
-</nav>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SNA CBT v4.6</title><style>body{margin:0;font-family:system-ui;background:#f0f2f5}header{background:#0a5c36;color:#fff;padding:16px;text-align:center}h1{margin:0;font-size:20px}.wrap{max-width:800px;margin:auto;padding:12px}.card{background:#fff;padding:14px;margin:10px 0;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.1)}label{display:block;font-weight:600;margin:8px 0 4px;font-size:14px}select,input,textarea,button{width:100%;padding:11px;font-size16px;border:1px solid #bbb;border-radius:8px;box-sizing:border-box}button{background:#0a5c36;color:#fff;font-weight:700;border:0;margin-top:8px;cursor:pointer}button.sec{background:#eee;color:#333}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ok{color:green;font-weight:700}.bad{color:#b00;font-weight:700}</style></head>
+<body><header><h1>SEALED NECTAR ACADEMY</h1><div>v4.6 – Stable Question Bank</div></header>
+<div class="wrap">
+<div class="card"><h3>1. Admin Login</h3><input id="pw" type="password" placeholder="Password (SNA2026)"><button onclick="if(pw.value==='SNA2026'){admin.style.display='block';pw.disabled=true;this.disabled=true}else alert('Wrong')">Login</button></div>
 
-<div id="a" class="card">
-<h3>Admin – Question Bank (Login: SNA2026)</h3>
-<input id="pw" type="password" placeholder="Enter password"><button class="primary" onclick="if(document.getElementById('pw').value==='SNA2026'){document.getElementById('panel').classList.remove('hidden')}else{alert('Wrong')}">Login</button>
+<div id="admin" class="card" style="display:none"><h3>2. Choose Where to Save</h3>
+<div class="row"><div><label>Segment</label><select id="seg"></select></div><div><label>Class</label><select id="cls"></select></div></div>
+<div class="row"><div><label>Term</label><select id="trm"></select></div><div><label>Subject</label><select id="sub"></select></div></div>
+<div id="where" style="margin:8px 0;font-size:13px;color:#555"></div>
+<button class="sec" onclick="load()">Load Bank</button><div id="status" style="margin-top:6px"></div><hr>
+<label>Question</label><textarea id="q" rows="2"></textarea>
+<div class="row"><div><label>A</label><input id="a"></div><div><label>B</label><input id="b"></div></div>
+<div class="row"><div><label>C</label><input id="c"></div><div><label>D</label><input id="d"></div></div>
+<label>Correct Answer</label><select id="co"><option>A</option><option>B</option><option>C</option><option>D</option></select>
+<button onclick="add()">Add & Save Question</button>
+<div id="list" style="margin-top:10px;font-size:14px"></div></div>
 
-<div id="panel" class="hidden">
-<label>Segment</label>
-<select id="seg" onchange="updateClass()"></select>
-<label>Class</label>
-<select id="cls"></select>
-<label>Term</label>
-<select id="trm"></select>
-<label>Subject</label>
-<select id="sub"></select>
-<button onclick="loadBank()">Load Bank</button>
-
-<hr>
-<label>Question</label><textarea id="q" rows="3"></textarea>
-<label>A</label><input id="a1"><label>B</label><input id="a2"><label>C</label><input id="a3"><label>D</label><input id="a4">
-<label>Correct</label><select id="cor"><option>A</option><option>B</option><option>C</option><option>D</option></select>
-<button class="primary" onclick="addQ()">Add Question</button>
-<div id="list"></div>
-<button class="primary" onclick="saveBank()">Save Bank</button>
+<div class="card"><h3>3. Student CBT Test</h3>
+<input id="name" placeholder="Student full name">
+<div class="row"><div><label>Segment</label><select id="s2"></select></div><div><label>Class</label><select id="c2"></select></div></div>
+<div class="row"><div><label>Term</label><select id="t2"></select></div><div><label>Subject</label><select id="b2"></select></div></div>
+<button onclick="start()">Start Exam</button><div id="exam" style="margin-top:10px"></div></div>
 </div>
-</div>
-
-<div id="c" class="card hidden"><h3>CBT</h3>
-<input id="name" placeholder="Student name">
-<select id="cseg" onchange="document.getElementById('ccls').innerHTML=classes[this.value].map(x=>`<option>${x}</option>`).join('')"></select>
-<select id="ccls"></select>
-<select id="ctrm"></select>
-<select id="csub"></select>
-<button class="primary" onclick="startExam()">Start</button>
-<div id="exam"></div>
-</div>
-
-<div id="s" class="card hidden"><h3>Scores (auto-filled from CBT)</h3><p>Check after students submit.</p></div>
-
 <script>
-const classes={Nursery:["KG1","KG2"],Primary:["PRY1","PRY2","PRY3","PRY4","PRY5","PRY6"],Secondary:["JSS1","JSS2","JSS3","SS1","SS2","SS3"]};
+const data={Nursery:["KG1","KG2"],Primary:["PRY1","PRY2","PRY3","PRY4","PRY5","PRY6"],Secondary:["JSS1","JSS2","JSS3","SS1","SS2","SS3"]};
 const terms=["1st Term","2nd Term","3rd Term"];
-const subjects=["MATHEMATICS","ENGLISH LANGUAGE","BASIC SCIENCE","PHYSICS","CHEMISTRY","BIOLOGY","BASIC TECHNOLOGY","AGRICULTURAL SCIENCE","CIVIC EDUCATION","COMPUTER STUDIES","ECONOMICS","GOVERNMENT","LITERATURE IN ENGLISH","COMMERCE","ACCOUNTING"];
-
-function init(){
-["seg","cseg"].forEach(id=>{document.getElementById(id).innerHTML=Object.keys(classes).map(k=>`<option>${k}</option>`).join('')});
-["trm","ctrm"].forEach(id=>document.getElementById(id).innerHTML=terms.map(t=>`<option>${t}</option>`).join(''));
-["sub","csub"].forEach(id=>document.getElementById(id).innerHTML=subjects.map(s=>`<option>${s}</option>`).join(''));
-updateClass();
-document.getElementById('ccls').innerHTML=classes["Nursery"].map(x=>`<option>${x}</option>`).join('');
-}
-function updateClass(){
-const seg=document.getElementById('seg').value;
-document.getElementById('cls').innerHTML=classes[seg].map(c=>`<option>${c}</option>`).join('');
-}
-function tab(n){["s","c","a"].forEach(id=>document.getElementById(id).classList.toggle("hidden",id!==n));}
-
-let bank=[];
-function loadBank(){const k=`qb_${seg.value}_${cls.value}_${trm.value}_${sub.value}`;bank=JSON.parse(localStorage.getItem(k)||"[]");list.innerHTML=bank.map((q,i)=>`${i+1}. ${q.q} [${q.correct}]<hr>`).join('');}
-function addQ(){bank.push({q:q.value,a:a1.value,b:a2.value,c:a3.value,d:a4.value,correct:cor.value});q.value=a1.value=a2.value=a3.value=a4.value="";loadBank();}
-function saveBank(){const k=`qb_${seg.value}_${cls.value}_${trm.value}_${sub.value}`;localStorage.setItem(k,JSON.stringify(bank));alert("Saved "+bank.length+" questions for "+sub.value+" "+cls.value);}
-
-function startExam(){const k=`qb_${cseg.value}_${ccls.value}_${ctrm.value}_${csub.value}`;const qs=JSON.parse(localStorage.getItem(k)||"[]");if(!qs.length)return alert("No questions yet");exam.innerHTML=`<p>Loaded ${qs.length} questions. Exam ready.</p>`;}
-
-window.onload=init;
-</script>
-</body>
-</html>
+const subs=["MATHEMATICS","ENGLISH LANGUAGE","BASIC SCIENCE","PHYSICS","CHEMISTRY","BIOLOGY","BASIC TECHNOLOGY","AGRICULTURAL SCIENCE","CIVIC EDUCATION","COMPUTER STUDIES","ECONOMICS"];
+function fill(sel,arr){document.getElementById(sel).innerHTML=arr.map(x=>`<option>${x}</option>`).join('')}
+fill('seg',Object.keys(data));fill('s2',Object.keys(data));fill('trm',terms);fill('t2',terms);fill('sub',subs);fill('b2',subs);
+function upd(){fill('cls',data[seg.value]);fill('c2',data[s2.value]);where.textContent='Saving to: '+key();} seg.onchange=upd; s2.onchange=()=>fill('c2',data[s2.value]); upd();
+function key(){return `qb_${seg.value}_${cls.value}_${trm.value}_${sub.value}`}
+function key2(){return `qb_${s2.value}_${c2.value}_${t2.value}_${b2.value}`}
+function load(){const d=JSON.parse(localStorage.getItem(key())||"[]");status.innerHTML=`<span class="ok">${d.length} questions found</span>`;list.innerHTML=d.map((x,i)=>`${i+1}. ${x.q} [${x.correct}]`).join('<br>');where.textContent='Saving to: '+key()}
+function add(){if(!q.value.trim())return alert('Enter question');let d=JSON.parse(localStorage.getItem(key())||"[]");d.push({q:q.value,a:a.value,b:b.value,c:c.value,d:d.value,correct:co.value});localStorage.setItem(key(),JSON.stringify(d));q.value=a.value=b.value=c.value=d.value='';load();alert('Saved!')}
+let qs=[],ans=[],pos=0;
+function start(){qs=JSON.parse(localStorage.getItem(key2())||"[]");if(!qs.length){exam.innerHTML='<span class=bad>No questions yet for '+key2()+'</span>';return}ans=Array(qs.length).fill(null);pos=0;show()}
+function show(){const x=qs[pos];exam.innerHTML=`<b>Q${pos+1}/${qs.length}</b><p>${x.q}</p>`+['a','b','c','d'].map(k=>`<label style="display:block;margin:4px 0"><input type="radio" name="r" value="${k.toUpperCase()}" ${ans[pos]===k.toUpperCase()?'checked':''} onchange="ans[${pos}]=this.value"> ${k.toUpperCase()}. ${x[k]}</label>`).join('')+`<div class="row"><button class="sec" onclick="if(pos>0){pos--;show()}">Prev</button><button onclick="if(pos<qs.length-1){pos++;show()}else submit()"> ${pos<qs.length-1?'Next':'Submit'}</button></div>`}
+function submit(){let c=0;qs.forEach((x,i)=>{if(ans[i]===x.correct)c++});const score=Math.round(c/qs.length*60);exam.innerHTML=`<span class=ok>Done!</span><p>${name.value||'Student'}: ${c}/${qs.length} correct = <b>${score}/60</b></p><p>Questions loaded from: ${key2()}</p>`}
+load();
+</script></body></html>
