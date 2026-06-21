@@ -74,7 +74,7 @@ let qs=JSON.parse(localStorage.getItem('sna_questions')||'[]');
 let settings=JSON.parse(localStorage.getItem('sna_settings')||'{"time":30,"attempts":1}');
 let attempts=JSON.parse(localStorage.getItem('sna_attempts')||'{}');
 let curTest=null,timer=null,timeLeft=0;
-const subjects=['Mathematics','English','Basic Science','Social Studies','CRS','IRS','Computer','Agric','Business','Civic','Physics','Chemistry','Biology','Economics','Government','Literature'];
+const subjects=['Mathematics','English','Basic Science','Social Studies','CRS','IRS','Computer','Agric','Business','Civic','Physics','Chemistry','Biology','Economics','Government','Literature','PHE','Home Economics','Cultural & Creative Arts','French','Yoruba','Hausa','Igbo','Further Maths','Commerce','Accounting','Geography','History','Technical Drawing','Animal Husbandry','Arabiyah'];
 function init(){['ssub','qsub','fsub'].forEach(id=>{const el=document.getElementById(id);subjects.forEach(s=>el.innerHTML+=`<option>${s}</option>`)});document.getElementById('setTime').value=settings.time;document.getElementById('setAtt').value=settings.attempts;showQs();}
 function sw(id,b){document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));document.getElementById(id).classList.add('on');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on')}
 function tLogin(){if(document.getElementById('tpass').value===PASS){document.getElementById('tlogin').style.display='none';document.getElementById('tdash').style.display='block'}else alert('Wrong')}
