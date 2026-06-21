@@ -2,31 +2,114 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SNA v4.2</title>
-<style>:root{--g:#0a5c36}*{box-sizing:border-box;font-family:system-ui}body{margin:0;background:#f5f7f6}header{background:var(--g);color:#fff;padding:16px;text-align:center}nav{display:flex}nav button{flex:1;padding:12px;border:0;background:#eee;font-weight:600}nav button.active{background:#fff;border-bottom:3px solid var(--g);color:var(--g)}.card{background:#fff;margin:12px;padding:12px;border-radius:10px}input,select,textarea,button{width:100%;padding:9px;margin:4px 0;border:1px solid #ccc;border-radius:6px}button.primary{background:var(--g);color:#fff;border:0}.hidden{display:none}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:5px;font-size:.9rem}</style>
+<title>SNA v4.3</title>
+<style>
+:root{--g:#0a5c36}*{box-sizing:border-box;font-family:system-ui}body{margin:0;background:#f5f7f6}
+header{background:var(--g);color:#fff;padding:16px;text-align:center}
+nav{display:flex}nav button{flex:1;padding:12px;border:0;background:#eee;font-weight:600}
+nav button.active{background:#fff;border-bottom:3px solid var(--g);color:var(--g)}
+.card{background:#fff;margin:12px;padding:14px;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+input,select,textarea,button{width:100%;padding:10px;margin:5px 0;border:1px solid #bbb;border-radius:6px;font-size:1rem;background:#fff}
+button.primary{background:var(--g);color:#fff;border:0;font-weight:700}
+.hidden{display:none}label{font-size:.85rem;font-weight:600;margin-top:6px;display:block}
+</style>
 </head>
 <body>
-<header><h2>SEALED NECTAR ACADEMY</h2><p>v4.2 Teacher Question Bank</p></header>
-<nav><button id="b1" class="active" onclick="tab('s')">Scores</button><button id="b2" onclick="tab('r')">Report</button><button id="b3" onclick="tab('c')">CBT</button><button id="b4" onclick="tab('a')">Admin</button></nav>
-<div id="s" class="card"><h3>Scores</h3><select id="ss"></select><select id="sc"></select><select id="st"></select><select id="sb"></select><button class="primary" onclick="ls()">Load</button><table id="tbl"><tr><th>Name</th><th>CA</th><th>Exam</th><th>Total</th></tr></table><button onclick="as()">+Student</button><button class="primary" onclick="sv()">Save</button></div>
-<div id="r" class="card hidden"><h3>Report</h3><p>Select in Scores first, then print from browser.</p></div>
-<div id="c" class="card hidden"><h3>CBT Login</h3><input id="nm" placeholder="Full name"><select id="cs"></select><select id="cc"></select><select id="ct"></select><select id="cb"></select><button class="primary" onclick="start()">Start</button><div id="exam" class="hidden"></div></div>
-<div id="a" class="card hidden"><div id="al"><h3>Admin Login</h3><input id="pw" type="password" placeholder="Password"><button class="primary" onclick="login()">Login</button><p>Default SNA2026</p></div><div id="ap" class="hidden"><h3>Question Bank</h3><select id="as"></select><select id="ac"></select><select id="at"></select><select id="ab"></select><button onclick="lb()">Load</button><textarea id="qt" placeholder="Question"></textarea><input id="a1" placeholder="A"><input id="a2" placeholder="B"><input id="a3" placeholder="C"><input id="a4" placeholder="D"><select id="cor"><option>A<option>B<option>C<option>D</select><button class="primary" onclick="aq()">Add Question</button><div id="ql"></div><button class="primary" onclick="sbk()">Save Bank</button></div></div>
+<header><h2>SEALED NECTAR ACADEMY</h2><p>v4.3 Teacher Question Bank - FIXED</p></header>
+<nav>
+<button id="b1" class="active" onclick="tab('s')">Scores</button>
+<button id="b2" onclick="tab('r')">Report</button>
+<button id="b3" onclick="tab('c')">CBT</button>
+<button id="b4" onclick="tab('a')">Admin</button>
+</nav>
+
+<div id="s" class="card"><h3>Scores</h3>
+<label>Segment</label><select id="ss"></select>
+<label>Class</label><select id="sc"></select>
+<label>Term</label><select id="st"></select>
+<label>Subject</label><select id="sb"></select>
+<button class="primary" onclick="ls()">Load Students</button>
+<div id="tbl"></div>
+<button onclick="as()">+ Add Student</button>
+<button class="primary" onclick="sv()">Save All</button>
+</div>
+
+<div id="r" class="card hidden"><h3>Report</h3><p>Use Scores tab first.</p></div>
+
+<div id="c" class="card hidden"><h3>CBT Login</h3>
+<input id="nm" placeholder="Full name">
+<label>Segment</label><select id="cs"></select>
+<label>Class</label><select id="cc"></select>
+<label>Term</label><select id="ct"></select>
+<label>Subject</label><select id="cb"></select>
+<button class="primary" onclick="start()">Start Exam</button>
+<div id="exam" class="hidden" style="margin-top:12px"></div>
+</div>
+
+<div id="a" class="card hidden">
+<div id="al"><h3>Admin Login</h3>
+<input id="pw" type="password" placeholder="Password">
+<button class="primary" onclick="login()">Login</button>
+<p style="font-size:.8rem">Default: SNA2026</p></div>
+
+<div id="ap" class="hidden">
+<h3>Question Bank</h3>
+<label>Segment</label><select id="as"></select>
+<label>Class</label><select id="ac"></select>
+<label>Term</label><select id="at"></select>
+<label>Subject</label><select id="ab"></select>
+<button onclick="lb()">Load Bank</button>
+<hr>
+<label>Question</label><textarea id="qt" rows="3" placeholder="Type question here"></textarea>
+<label>Option A</label><input id="a1" placeholder="A">
+<label>Option B</label><input id="a2" placeholder="B">
+<label>Option C</label><input id="a3" placeholder="C">
+<label>Option D</label><input id="a4" placeholder="D">
+<label>Correct Answer</label>
+<select id="cor"><option>A</option><option>B</option><option>C</option><option>D</option></select>
+<button class="primary" onclick="aq()">Add Question</button>
+<div id="ql" style="margin-top:10px"></div>
+<button class="primary" onclick="sbk()">Save Bank</button>
+</div>
+</div>
+
 <script>
-B=["MATHEMATICS","ENGLISH LANGUAGE","BASIC SCIENCE","BASIC TECHNOLOGY","AGRICULTURAL SCIENCE","HOME ECONOMICS","CIVIC EDUCATION","SOCIAL STUDIES","CHRISTIAN RELIGIOUS STUDIES","ISLAMIC STUDIES","COMPUTER STUDIES","PHYSICS","CHEMISTRY","BIOLOGY","ECONOMICS","GOVERNMENT","LITERATURE IN ENGLISH","GEOGRAPHY","COMMERCE","ACCOUNTING","FURTHER MATHEMATICS"];
-function fill(id,arr){document.getElementById(id).innerHTML=arr.map(v=>`<option>${v}</option>`).join('')}
-function init(){["ss","cs","as"].forEach(i=>fill(i,Object.keys(S)));["st","ct","at"].forEach(i=>fill(i,T));["sb","cb","ab"].forEach(i=>fill(i,B));upd();["ss","cs","as"].forEach(i=>document.getElementById(i).onchange=upd)}
-function upd(){["s","c","a"].forEach(p=>{const seg=document.getElementById(p==="s"?"ss":p==="c"?"cs":"as").value;fill(p==="s"?"sc":p==="c"?"cc":"ac",S[seg])})}
-function tab(n){["s","r","c","a"].forEach(id=>document.getElementById(id).classList.toggle("hidden",id!==n));["b1","b2","b3","b4"].forEach((b,i)=>document.getElementById(b).classList.toggle("active", ["s","r","c","a"][i]===n))}
-let bank=[];function login(){if(pw.value==="SNA2026"){al.classList.add("hidden");ap.classList.remove("hidden");sessionStorage.a=1}else alert("Wrong")}
-function lb(){const k=`qb_${as.value}_${ac.value}_${at.value}_${ab.value}`;bank=JSON.parse(localStorage.getItem(k)||"[]");ql.innerHTML=bank.map((q,i)=>`<p>${i+1}. ${q.q} [${q.correct}] <button onclick="bank.splice(${i},1);ql.innerHTML=''">del</button></p>`).join('')}
-function aq(){bank.push({q:qt.value,a:a1.value,b:a2.value,c:a3.value,d:a4.value,correct:cor.value});qt.value=a1.value=a2.value=a3.value=a4.value="";lb()}
-function sbk(){const k=`qb_${as.value}_${ac.value}_${at.value}_${ab.value}`;localStorage.setItem(k,JSON.stringify(bank));alert("Saved! Students will see it now.")}
-let examQ=[],ans=[],cur=0;function start(){const k=`qb_${cs.value}_${cc.value}_${ct.value}_${cb.value}`;examQ=JSON.parse(localStorage.getItem(k)||"[]");if(!examQ.length)return alert("No questions yet - ask teacher to add in Admin");ans=Array(examQ.length).fill(null);cur=0;document.getElementById("exam").classList.remove("hidden");showQ()}
-function showQ(){const q=examQ[cur];exam.innerHTML=`<h4>Q${cur+1}/${examQ.length}</h4><p>${q.q}</p>${["a","b","c","d"].map(o=>`<label><input type=radio name=o value=${o.toUpperCase()} ${ans[cur]===o.toUpperCase()?"checked":""} onchange="ans[${cur}]=this.value"> ${o.toUpperCase()}. ${q[o]}</label><br>`).join('')}<button onclick="cur>0&&cur--&&showQ()">Prev</button><button onclick="cur<examQ.length-1&&cur++&&showQ()">Next</button><button class="primary" onclick="sub()">Submit</button>`}
-function sub(){let correct=0;examQ.forEach((q,i)=>{if(ans[i]===q.correct)correct++});const score=Math.round(correct/examQ.length*60);const k=`scores_${cs.value}_${cc.value}_${ct.value}_${cb.value}`;const data=JSON.parse(localStorage.getItem(k)||"[]");const name=nm.value;const idx=data.findIndex(d=>d.name===name);if(idx>=0)data[idx].exam=score;else data.push({name,ca:0,exam:score});localStorage.setItem(k,JSON.stringify(data));exam.innerHTML=`<h3>Done!</h3><p>${name}: ${correct}/${examQ.length} = ${score}/60</p><p>Saved.</p>`}
-function ls(){const k=`scores_${ss.value}_${sc.value}_${st.value}_${sb.value}`;const data=JSON.parse(localStorage.getItem(k)||"[]");tbl.innerHTML="<tr><th>Name</th><th>CA</th><th>Exam</th><th>Total</th></tr>"+data.map(d=>`<tr><td><input value="${d.name}"></td><td><input type=number value="${d.ca}"></td><td><input type=number value="${d.exam}"></td><td>${d.ca+d.exam}</td></tr>`).join('')}
-function as(){tbl.innerHTML+=`<tr><td><input></td><td><input type=number></td><td><input type=number></td><td>0</td></tr>`}
-function sv(){const rows=[...tbl.querySelectorAll("tr")].slice(1).map(tr=>({name:tr.children[0].querySelector("input").value,ca:+tr.children[1].querySelector("input").value||0,exam:+tr.children[2].querySelector("input").value||0}));const k=`scores_${ss.value}_${sc.value}_${st.value}_${sb.value}`;localStorage.setItem(k,JSON.stringify(rows));alert("Saved")}
-window.onload=init;if(sessionStorage.a){al.classList.add("hidden");ap.classList.remove("hidden")}
-</script></body></html>
+const S={Nursery:["KG1","KG2"],Primary:["PRY1","PRY2","PRY3","PRY4","PRY5","PRY6"],Secondary:["JSS1","JSS2","JSS3","SS1","SS2","SS3"]};
+const T=["1st Term","2nd Term","3rd Term"];
+const B=["MATHEMATICS","ENGLISH LANGUAGE","BASIC SCIENCE","PHYSICS","CHEMISTRY","BIOLOGY","BASIC TECHNOLOGY","AGRICULTURAL SCIENCE","CIVIC EDUCATION","COMPUTER STUDIES","ECONOMICS"];
+
+function fill(id,arr){const el=document.getElementById(id);el.innerHTML="";arr.forEach(v=>{const o=document.createElement("option");o.text=v;el.add(o)});}
+
+function init(){
+["ss","cs","as"].forEach(id=>fill(id,Object.keys(S)));
+["st","ct","at"].forEach(id=>fill(id,T));
+["sb","cb","ab"].forEach(id=>fill(id,B));
+updAll();
+["ss","cs","as"].forEach(id=>document.getElementById(id).addEventListener("change",updAll));
+}
+function updAll(){
+fill("sc",S[ss.value]||[]);fill("cc",S[cs.value]||[]);fill("ac",S[as.value]||[]);
+}
+function tab(n){["s","r","c","a"].forEach(id=>document.getElementById(id).classList.toggle("hidden",id!==n));
+["b1","b2","b3","b4"].forEach((b,i)=>document.getElementById(b).classList.toggle("active",["s","r","c","a"][i]===n));}
+
+let bank=[];
+function login(){if(pw.value==="SNA2026"){al.classList.add("hidden");ap.classList.remove("hidden");sessionStorage.a=1;}else alert("Wrong password");}
+function lb(){const k=`qb_${as.value}_${ac.value}_${at.value}_${ab.value}`;bank=JSON.parse(localStorage.getItem(k)||"[]");ql.innerHTML=bank.map((q,i)=>`<div style="border:1px solid #ddd;padding:6px;margin:4px 0">${i+1}. ${q.q} <b>[${q.correct}]</b> <button onclick="bank.splice(${i},1);lb()">Del</button></div>`).join('')||"<p>No questions yet</p>";}
+function aq(){if(!qt.value.trim())return alert("Type question");bank.push({q:qt.value,a:a1.value,b:a2.value,c:a3.value,d:a4.value,correct:cor.value});qt.value=a1.value=a2.value=a3.value=a4.value="";lb();}
+function sbk(){const k=`qb_${as.value}_${ac.value}_${at.value}_${ab.value}`;localStorage.setItem(k,JSON.stringify(bank));alert("Saved! Students will now see "+bank.length+" questions for "+ab.value);}
+
+let examQ=[],ans=[],cur=0;
+function start(){const k=`qb_${cs.value}_${cc.value}_${ct.value}_${cb.value}`;examQ=JSON.parse(localStorage.getItem(k)||"[]");if(!examQ.length)return alert("No questions set yet. Teacher should add in Admin.");ans=Array(examQ.length).fill(null);cur=0;exam.classList.remove("hidden");showQ();}
+function showQ(){const q=examQ[cur];exam.innerHTML=`<h4>Q${cur+1} of ${examQ.length}</h4><p>${q.q}</p>`+["a","b","c","d"].map(o=>`<label style="display:block;margin:6px 0"><input type="radio" name="o" value="${o.toUpperCase()}" ${ans[cur]===o.toUpperCase()?"checked":""} onchange="ans[${cur}]=this.value"> ${o.toUpperCase()}. ${q[o]}</label>`).join('')+`<div style="display:flex;gap:8px;margin-top:10px"><button onclick="if(cur>0){cur--;showQ()}">Prev</button><button onclick="if(cur<examQ.length-1){cur++;showQ()}">Next</button><button class="primary" style="margin-left:auto" onclick="sub()">Submit</button></div>`;}
+function sub(){let c=0;examQ.forEach((q,i)=>{if(ans[i]===q.correct)c++});const score=Math.round(c/examQ.length*60);const k=`scores_${cs.value}_${cc.value}_${ct.value}_${cb.value}`;let data=JSON.parse(localStorage.getItem(k)||"[]");const name=nm.value||"Student";const idx=data.findIndex(d=>d.name===name);if(idx>=0)data[idx].exam=score;else data.push({name,ca:0,exam:score});localStorage.setItem(k,JSON.stringify(data));exam.innerHTML=`<h3>Completed</h3><p>${name}: ${c}/${examQ.length} correct = <b>${score}/60</b></p><p>Saved to Scores.</p>`;}
+
+function ls(){const k=`scores_${ss.value}_${sc.value}_${st.value}_${sb.value}`;const data=JSON.parse(localStorage.getItem(k)||"[]");let h=`<table style="width:100%;margin-top:8px"><tr><th>Name</th><th>CA</th><th>Exam</th></tr>`;data.forEach((d,i)=>{h+=`<tr><td><input id="n${i}" value="${d.name}"></td><td><input type="number" id="c${i}" value="${d.ca}"></td><td><input type="number" id="e${i}" value="${d.exam}"></td></tr>`});h+=`</table>`;tbl.innerHTML=h;tbl.dataset.count=data.length;}
+function as(){const cnt=Number(tbl.dataset.count||0);tbl.innerHTML+=`<div><input placeholder="Name" id="n${cnt}"> <input type="number" placeholder="CA" id="c${cnt}"> <input type="number" placeholder="Exam" id="e${cnt}"></div>`;tbl.dataset.count=cnt+1;}
+function sv(){const cnt=Number(tbl.dataset.count||0);const rows=[];for(let i=0;i<cnt;i++){const n=document.getElementById(`n${i}`);if(!n)continue;rows.push({name:n.value,ca:+document.getElementById(`c${i}`).value||0,exam:+document.getElementById(`e${i}`).value||0});}const k=`scores_${ss.value}_${sc.value}_${st.value}_${sb.value}`;localStorage.setItem(k,JSON.stringify(rows));alert("Saved "+rows.length+" students");}
+
+window.onload=init;
+if(sessionStorage.a){al.classList.add("hidden");ap.classList.remove("hidden");}
+</script>
+</body>
+</html>
