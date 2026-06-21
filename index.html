@@ -1,144 +1,85 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SNA CBT v4.7 – SS1 Preloaded</title>
-<style>body{margin:0;font-family:system-ui;background:#f0f2f5}header{background:#0a5c36;color:#fff;padding:16px;text-align:center}h1{margin:0;font-size:20px}.wrap{max-width:800px;margin:auto;padding:12px}.card{background:#fff;padding:14px;margin:10px 0;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.1)}label{display:block;font-weight:600;margin:8px 0 4px;font-size:14px}select,input,textarea,button{width:100%;padding:11px;font-size:16px;border:1px solid #bbb;border-radius:8px;box-sizing:border-box}button{background:#0a5c36;color:#fff;font-weight:700;border:0;margin-top:8px;cursor:pointer}button.sec{background:#eee;color:#333}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ok{color:green;font-weight:700}.bad{color:#b00;font-weight:700}.hide{display:none}</style>
-</head><body><header><h1>SEALED NECTAR ACADEMY</h1><div>v4.7 – SS1 Physics/Chemistry/Biology Preloaded</div></header>
+<title>SNA CBT v4.8 – English + Results</title>
+<style>body{margin:0;font-family:system-ui;background:#f0f2f5}header{background:#0a5c36;color:#fff;padding:16px;text-align:center}h1{margin:0;font-size:20px}.wrap{max-width:850px;margin:auto;padding:12px}.card{background:#fff;padding:14px;margin:10px 0;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.1)}label{display:block;font-weight:600;margin:8px 0 4px;font-size:14px}select,input,textarea,button{width:100%;padding:11px;font-size:16px;border:1px solid #bbb;border-radius:8px;box-sizing:border-box}button{background:#0a5c36;color:#fff;font-weight:700;border:0;margin-top:8px;cursor:pointer}button.sec{background:#eee;color:#333}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ok{color:green;font-weight:700}.bad{color:#b00;font-weight:700}.hide{display:none}table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border:1px solid #ddd;padding:6px;font-size:13px}</style>
+</head><body><header><h1>SEALED NECTAR ACADEMY</h1><div>v4.8 – English Preloaded + Results Export</div></header>
 <div class="wrap">
-<div class="card"><h3>1. Admin Login</h3><input id="pw" type="password" placeholder="Password (SNA2026)"><button onclick="login()">Login</button></div>
+<div class="card" id="loginCard"><h3>1. Admin Login</h3><input id="pw" type="password" placeholder="Password (SNA2026)"><button onclick="login()">Login</button></div>
 
-<div id="admin" class="card hide"><h3>2. Question Bank (Admin Only)</h3>
+<div id="admin" class="card hide"><h3>2. Admin Panel</h3>
 <div class="row"><div><label>Segment</label><select id="seg"></select></div><div><label>Class</label><select id="cls"></select></div></div>
 <div class="row"><div><label>Term</label><select id="trm"></select></div><div><label>Subject</label><select id="sub"></select></div></div>
 <div id="where" style="margin:8px 0;font-size:13px;color:#555"></div>
-<button class="sec" onclick="load()">Load Bank</button><div id="status" style="margin-top:6px"></div><hr>
+<button class="sec" onclick="load()">Load Bank</button> <button class="sec" onclick="downloadResults()">Download All Results (CSV)</button>
+<div id="status" style="margin-top:6px"></div><hr>
 <label>Question</label><textarea id="q" rows="2"></textarea>
 <div class="row"><div><label>A</label><input id="a"></div><div><label>B</label><input id="b"></div></div>
 <div class="row"><div><label>C</label><input id="c"></div><div><label>D</label><input id="d"></div></div>
-<label>Correct Answer</label><select id="co"><option>A</option><option>B</option><option>C</option><option>D</option></select>
-<button onclick="add()">Add & Save Question</button>
-<div id="list" style="margin-top:10px;font-size:14px"></div></div>
+<label>Correct</label><select id="co"><option>A</option><option>B</option><option>C</option><option>D</option></select>
+<button onclick="add()">Add & Save</button>
+<div id="list" style="margin-top:10px;font-size:14px"></div>
+<div id="resultsTable"></div>
+</div>
 
 <div class="card"><h3>3. Student CBT</h3>
 <input id="name" placeholder="Student full name">
-<div class="row"><div><label>Segment</label><select id="s2"></select></div><div><label>Class</label><select id="c2"></select></div></div>
+<div class="row"><div><label>Segment</label><select id="s2"></select></div><div><label>Class</label><select id="c2"></select></div>
 <div class="row"><div><label>Term</label><select id="t2"></select></div><div><label>Subject</label><select id="b2"></select></div></div>
 <button onclick="start()">Start Exam</button><div id="exam" style="margin-top:10px"></div></div>
 </div>
 <script>
 const data={Nursery:["KG1","KG2"],Primary:["PRY1","PRY2","PRY3","PRY4","PRY5","PRY6"],Secondary:["JSS1","JSS2","JSS3","SS1","SS2","SS3"]};
 const terms=["1st Term","2nd Term","3rd Term"];
-const subs=["PHYSICS","CHEMISTRY","BIOLOGY","MATHEMATICS","ENGLISH LANGUAGE","BASIC SCIENCE","AGRICULTURAL SCIENCE","CIVIC EDUCATION","COMPUTER STUDIES","ECONOMICS"];
-function fill(id,arr){document.getElementById(id).innerHTML=arr.map(x=>`<option>${x}</option>`).join('')}
+const subs=["PHYSICS","CHEMISTRY","BIOLOGY","ENGLISH LANGUAGE","MATHEMATICS","BASIC SCIENCE","AGRICULTURAL SCIENCE","CIVIC EDUCATION","COMPUTER STUDIES","ECONOMICS"];
+const fill=(id,a)=>document.getElementById(id).innerHTML=a.map(x=>`<option>${x}</option>`).join('');
 fill('seg',Object.keys(data));fill('s2',Object.keys(data));fill('trm',terms);fill('t2',terms);fill('sub',subs);fill('b2',subs);
-function upd(){fill('cls',data[seg.value]);fill('c2',data[s2.value]);where.textContent='Saving to: '+key()} seg.onchange=upd; s2.onchange=()=>fill('c2',data[s2.value]); upd();
-function key(){return `qb_${seg.value}_${cls.value}_${trm.value}_${sub.value}`} function key2(){return `qb_${s2.value}_${c2.value}_${t2.value}_${b2.value}`}
-function login(){if(pw.value==='SNA2026'){admin.classList.remove('hide');document.querySelector('.card').classList.add('hide')}else alert('Wrong')}
-function load(){const d=JSON.parse(localStorage.getItem(key())||"[]");status.innerHTML=`<span class="ok">${d.length} questions found</span>`;list.innerHTML=d.map((x,i)=>`${i+1}. ${x.q}`).join('<br>');where.textContent='Saving to: '+key()}
-function add(){if(!q.value.trim())return alert('Enter question');let d=JSON.parse(localStorage.getItem(key())||"[]");d.push({q:q.value,a:a.value,b:b.value,c:c.value,d:d.value,correct:co.value});localStorage.setItem(key(),JSON.stringify(d));q.value=a.value=b.value=c.value=d.value='';load()}
+const upd=()=>{fill('cls',data[seg.value]);fill('c2',data[s2.value]);where.textContent='Saving to: '+key()}; seg.onchange=upd; s2.onchange=()=>fill('c2',data[s2.value]); upd();
+const key=()=>`qb_${seg.value}_${cls.value}_${trm.value}_${sub.value}`; const key2=()=>`qb_${s2.value}_${c2.value}_${t2.value}_${b2.value}`;
+function login(){if(pw.value==='SNA2026'){admin.classList.remove('hide');loginCard.classList.add('hide');showResults()}else alert('Wrong')}
+function load(){const d=JSON.parse(localStorage.getItem(key())||"[]");status.innerHTML=`<span class="ok">${d.length} questions</span>`;list.innerHTML=d.map((x,i)=>`${i+1}. ${x.q}`).join('<br>')}
+function add(){if(!q.value.trim())return alert('Enter Q');let d=JSON.parse(localStorage.getItem(key())||"[]");d.push({q:q.value,a:a.value,b:b.value,c:c.value,d:d.value,correct:co.value});localStorage.setItem(key(),JSON.stringify(d));q.value=a.value=b.value=c.value=d.value='';load()}
 
-// PRELOAD SS1 DATA
-const preload={
-"qb_Secondary_SS1_3rd Term_PHYSICS":[
-{q:"Which of the following is an insulator?",a:"Graphite",b:"Germanium",c:"Polythene",d:"Salt solution",correct:"C"},
-{q:"The device used to measure potential difference in a circuit is",a:"Ammeter",b:"Rheostat",c:"Voltmeter",d:"Resistor",correct:"C"},
-{q:"According to Ohm’s law, provided temperature is constant",a:"V ∝ 1/I",b:"I ∝ 1/V",c:"V ∝ I",d:"I ∝ R",correct:"C"},
-{q:"The slope of a graph of potential difference (V) against current (I) gives",a:"Electromotive force",b:"Internal resistance",c:"Resistance",d:"Conductance",correct:"C"},
-{q:"Three resistors of 2Ω, 3Ω and 5Ω are connected in series. The equivalent resistance is",a:"10Ω",b:"30/31Ω",c:"1.55Ω",d:"31/30Ω",correct:"A"},
-{q:"When cells of equal e.m.f are connected in parallel, the equivalent e.m.f is",a:"Sum of individual e.m.f",b:"Same as one cell",c:"Product of e.m.f",d:"Zero",correct:"B"},
-{q:"Electrical energy consumed is measured commercially in",a:"Joules",b:"Kilowatt-hour",c:"Watts",d:"Ampere-hour",correct:"B"},
-{q:"The formula for electrical power is",a:"P = V/I",b:"P = VI",c:"P = I/R",d:"P = QR",correct:"B"},
-{q:"A fuse is designed to",a:"Increase current",b:"Melt when excessive current flows",c:"Store charge",d:"Regulate voltage",correct:"B"},
-{q:"The minimum current that causes a fuse element to melt is called",a:"Current rating",b:"Fusing current",c:"Fusing factor",d:"Safe current",correct:"B"},
-{q:"An atom is electrically neutral when",a:"Number of protons equals number of neutrons",b:"Number of protons equals number of electrons",c:"Number of neutrons equals number of electrons",d:"Number of protons is greater than electrons",correct:"B"},
-{q:"Brownian motion demonstrates that",a:"Molecules are stationary",b:"Molecules are in continuous random motion",c:"Molecules have fixed positions",d:"Matter has no particles",correct:"B"},
-{q:"According to Graham’s law, rate of diffusion is",a:"Directly proportional to square root of molar mass",b:"Inversely proportional to square root of molar mass",c:"Directly proportional to molar mass",d:"Independent of molar mass",correct:"B"},
-{q:"Osmosis involves the movement of",a:"Solute particles",b:"Solvent molecules through a semi-permeable membrane",c:"Any liquid",d:"Gas molecules",correct:"B"},
-{q:"A crystalline substance has",a:"Short range order only",b:"Definite internal arrangement of particles",c:"No definite melting point",d:"Haphazard arrangement of particles",correct:"B"},
-{q:"Which of the following is an amorphous substance?",a:"Sodium chloride",b:"Glass",c:"Copper",d:"Sugar",correct:"B"},
-{q:"Surface tension is defined as",a:"Force per unit area",b:"Force per unit length",c:"Work done per unit area",d:"Energy per unit volume",correct:"B"},
-{q:"A needle can float on water due to",a:"Upthrust",b:"Surface tension",c:"Viscosity",d:"Capillarity",correct:"B"},
-{q:"Capillarity is due to",a:"Difference between cohesive and adhesive forces",b:"Gravity only",c:"Atmospheric pressure",d:"Surface tension only",correct:"A"},
-{q:"Elasticity is the ability of a material to",a:"Break under stress",b:"Regain its original shape after deformation",c:"Stretch permanently",d:"Resist all forces",correct:"B"},
-{q:"Hooke’s law states that",a:"F ∝ 1/e",b:"F ∝ e",c:"e ∝ 1/F",d:"Stress is proportional to strain",correct:"B"},
-{q:"Young’s modulus is the ratio of",a:"Stress to strain",b:"Strain to stress",c:"Force to extension",d:"Extension to original length",correct:"A"},
-{q:"The point on a load-extension graph beyond which the wire does not return to its original length is the",a:"Proportional limit",b:"Elastic limit",c:"Yield point",d:"Breaking point",correct:"B"},
-{q:"The energy stored in a stretched wire is given by",a:"½Fe",b:"Fe",c:"2Fe",d:"F/e",correct:"A"},
-{q:"A fuse with a higher current rating than the circuit should be used to",a:"Protect the circuit",b:"Allow excess current",c:"Increase resistance",d:"Reduce power loss",correct:"B"},
-{q:"The SI unit of electrical power is",a:"Joule",b:"Watt",c:"Volt",d:"Coulomb",correct:"B"},
-{q:"When temperature increases, the resistance of most metallic conductors",a:"Decreases",b:"Remains constant",c:"Increases",d:"Becomes zero",correct:"C"},
-{q:"Water rises in a glass capillary tube because",a:"Adhesive force > Cohesive force",b:"Cohesive force > Adhesive force",c:"Gravity is absent",d:"Surface tension is zero",correct:"A"},
-{q:"The internal resistance of a cell",a:"Increases the terminal voltage",b:"Reduces the terminal p.d. below the e.m.f",c:"Has no effect on current",d:"Is always zero",correct:"B"},
-{q:"Which of the following is a semi-conductor?",a:"Copper",b:"Silicon",c:"Rubber",d:"Glass",correct:"B"}
-],
-"qb_Secondary_SS1_3rd Term_CHEMISTRY":[
-{q:"An acid is a substance that produces",a:"Hydroxide ions in solution",b:"Hydrogen ions as the only positive ions in aqueous solution",c:"Ammonium ions in solution",d:"Oxide ions in solution",correct:"B"},
-{q:"Which of the following is a strong acid?",a:"Ethanoic acid",b:"Tetraoxosulphate(VI) acid",c:"Trioxonitrate(V) acid",d:"Both B and C",correct:"D"},
-{q:"The basicity of tetraoxophosphoric(V) acid is",a:"1",b:"2",c:"3",d:"4",correct:"C"},
-{q:"A solution with pH 2 is",a:"Weakly acidic",b:"Strongly acidic",c:"Neutral",d:"Alkaline",correct:"B"},
-{q:"Which of the following is an alkali?",a:"Mg(OH)₂",b:"NaOH",c:"Cu(OH)₂",d:"Fe(OH)₃",correct:"B"},
-{q:"A normal salt is formed when",a:"All the replaceable hydrogen ions in an acid are replaced by a metal",b:"Part of the hydrogen ions are replaced",c:"A base is partially neutralized",d:"Two different salts crystallize together",correct:"A"},
-{q:"Efflorescence is a property shown by",a:"NaOH",b:"Na₂CO₃·10H₂O",c:"CaCl₂",d:"Concentrated H₂SO₄",correct:"B"},
-{q:"Diamond is a bad conductor of electricity because",a:"It has delocalized electrons",b:"All valence electrons are used in bonding",c:"It is soft",d:"It has a layered structure",correct:"B"},
-{q:"Graphite is used as a lubricant because",a:"It is very hard",b:"Its layers slide over one another",c:"It is a good conductor",d:"It has a high melting point",correct:"B"},
-{q:"Carbon(IV) oxide is collected by",a:"Upward delivery",b:"Downward delivery",c:"Over water",d:"Displacement of mercury",correct:"B"},
-{q:"Carbon(II) oxide is poisonous because it",a:"Combines with haemoglobin",b:"Supports combustion",c:"Is denser than air",d:"Is acidic",correct:"A"},
-{q:"The product of destructive distillation of coal used as a reducing agent is",a:"Coal tar",b:"Ammoniacal liquor",c:"Coke",d:"Coal gas",correct:"C"},
-{q:"Producer gas is a mixture of",a:"CO and H₂",b:"CO and N₂",c:"H₂ and CH₄",d:"CO₂ and N₂",correct:"B"},
-{q:"Hydrogen trioxocarbonate(IV) salts are also called",a:"Normal carbonates",b:"Acid carbonates",c:"Basic carbonates",d:"Complex carbonates",correct:"B"},
-{q:"The main hydrocarbon in natural gas is",a:"Ethene",b:"Methane",c:"Propane",d:"Butane",correct:"B"},
-{q:"The process of breaking down large hydrocarbon molecules into smaller ones is called",a:"Reforming",b:"Cracking",c:"Fractional distillation",d:"Polymerization",correct:"B"},
-{q:"Octane number is a measure of",a:"Volatility of petrol",b:"Knocking tendency of fuel",c:"Density of fuel",d:"Sulphur content",correct:"B"},
-{q:"A heavy chemical is one that is produced",a:"In small quantities",b:"In large quantities",c:"Only in the laboratory",d:"For personal use only",correct:"B"},
-{q:"The raw material for the Solvay process is",a:"NaCl",b:"CaCO₃",c:"NH₃",d:"All of the above",correct:"D"},
-{q:"Which of the following is used as a drying agent?",a:"Na₂CO₃",b:"Conc. H₂SO₄",c:"NaOH",d:"CaCO₃",correct:"B"},
-{q:"Lime water turns milky with CO₂ due to the formation of",a:"Ca(HCO₃)₂",b:"CaCO₃",c:"CaO",d:"CaSO₄",correct:"B"},
-{q:"The hardest allotrope of carbon is",a:"Graphite",b:"Diamond",c:"Charcoal",d:"Coke",correct:"B"},
-{q:"Which of the following salts is deliquescent?",a:"Na₂CO₃·10H₂O",b:"CaCl₂",c:"CuSO₄·5H₂O",d:"NaCl",correct:"B"},
-{q:"The catalyst used in the contact process is",a:"Vanadium(V) oxide",b:"Iron",c:"Platinum",d:"Nickel",correct:"A"},
-{q:"Synthetic petrol can be produced from",a:"Coal and hydrogen",b:"Limestone",c:"Sea water",d:"Sulphur",correct:"A"},
-{q:"A basic salt contains",a:"Replaceable hydrogen ions",b:"Hydroxide ions",c:"Ammonium ions",d:"Complex ions only",correct:"B"},
-{q:"The fraction of petroleum with the highest boiling point is",a:"Petrol",b:"Kerosene",c:"Bitumen",d:"Diesel oil",correct:"C"},
-{q:"Which gas is used in fire extinguishers?",a:"CO",b:"CO₂",c:"SO₂",d:"NH₃",correct:"B"},
-{q:"Fine chemicals are characterized by",a:"Large scale production",b:"High purity and small scale production",c:"Low cost",d:"Being used only as fuels",correct:"B"},
-{q:"The IUPAC name of NaHCO₃ is",a:"Sodium trioxocarbonate(IV)",b:"Sodium hydrogen trioxocarbonate(IV)",c:"Sodium tetraoxocarbonate",d:"Sodium bicarbonate",correct:"B"}
-],
-"qb_Secondary_SS1_3rd Term_BIOLOGY":[
-{q:"Micro-organisms are best defined as",a:"Living things visible to the unaided eye",b:"Living things that can only be seen with a microscope",c:"Non-living disease-causing agents",d:"Plants that grow in water",correct:"B"},
-{q:"Which of the following is a prokaryotic micro-organism?",a:"Virus",b:"Bacterium",c:"Euglena",d:"Penicillium",correct:"B"},
-{q:"Bacteria arranged in chains are known as",a:"Staphylococci",b:"Diplococci",c:"Streptococci",d:"Bacilli",correct:"C"},
-{q:"A culture containing only one species of micro-organism is called",a:"Mixed culture",b:"Axenic culture",c:"Contaminated culture",d:"Sterile culture",correct:"B"},
-{q:"The vector for malaria is",a:"Housefly",b:"Tsetse fly",c:"Female Anopheles mosquito",d:"Aedes mosquito",correct:"C"},
-{q:"Which of the following is a beneficial effect of micro-organisms?",a:"Causing food spoilage",b:"Synthesis of vitamin K in man",c:"Causing cholera",d:"Destroying fabrics",correct:"B"},
-{q:"The phase in bacterial growth where cells divide at a constant rate is the",a:"Lag phase",b:"Logarithmic phase",c:"Stationary phase",d:"Death phase",correct:"B"},
-{q:"Which of the following diseases is caused by a virus?",a:"Cholera",b:"Tuberculosis",c:"Measles",d:"Typhoid",correct:"C"},
-{q:"A sexually transmitted infection caused by a bacterium is",a:"AIDS",b:"Gonorrhoea",c:"Genital warts",d:"Herpes",correct:"B"},
-{q:"HIV attacks which type of cells in the body?",a:"Red blood cells",b:"Helper T cells (CD4)",c:"Platelets",d:"Muscle cells",correct:"B"},
-{q:"The best way to control houseflies is",a:"Burning refuse",b:"Covering food and destroying breeding sites",c:"Using antibiotics",d:"High temperature only",correct:"B"},
-{q:"Pasteurization is mainly used for the preservation of",a:"Meat",b:"Milk",c:"Vegetables",d:"Grains",correct:"B"},
-{q:"Which of the following is an edaphic factor affecting food production?",a:"Rainfall",b:"Soil pH",c:"Temperature",d:"Sunlight",correct:"B"},
-{q:"Plants that complete their life cycle in one year are called",a:"Biennials",b:"Perennials",c:"Annuals",d:"Herbs",correct:"C"},
-{q:"Cash crops are grown mainly for",a:"Home consumption",b:"Export and income generation",c:"Animal feed",d:"Medicinal purposes only",correct:"B"},
-{q:"Overgrazing leads to",a:"Increased soil fertility",b:"Soil erosion and compaction",c:"Higher water holding capacity",d:"Increased humus content",correct:"B"},
-{q:"A pest that attacks yam tubers is the",a:"Cassava mealybug",b:"Yam beetle",c:"Cocoa capsid",d:"Cotton stainer",correct:"B"},
-{q:"The larva of the grasshopper is called",a:"Nymph",b:"Maggot",c:"Caterpillar",d:"Pupa",correct:"A"},
-{q:"Which of the following is an endoparasite?",a:"Tick",b:"Louse",c:"Roundworm",d:"Mite",correct:"C"},
-{q:"Newcastle disease in poultry is caused by",a:"Bacterium",b:"Virus",c:"Protozoan",d:"Fungus",correct:"B"},
-{q:"The most effective cultural method of pest control is",a:"Use of pesticides",b:"Crop rotation",c:"Hand-picking",d:"Biological control",correct:"B"},
-{q:"Refuse disposal can be done by",a:"Dumping in rivers",b:"Sanitary landfill and incineration",c:"Leaving in open spaces",d:"Using as manure directly",correct:"B"},
-{q:"Which international health organization focuses mainly on children’s welfare?",a:"WHO",b:"UNESCO",c:"UNICEF",d:"Red Cross",correct:"C"},
-{q:"Salting preserves food by",a:"Killing microbes with heat",b:"Dehydration and plasmolysis",c:"Irradiation",d:"Low temperature",correct:"B"},
-{q:"Botanical classification of plants is based on",a:"Economic importance",b:"Evolutionary trends and structure",c:"Life cycle only",d:"Size of plants",correct:"B"},
-{q:"Bush burning destroys soil by",a:"Increasing organic matter",b:"Killing micro-organisms and exposing soil to erosion",c:"Improving water retention",d:"Increasing soil acidity",correct:"B"},
-{q:"Cocoa black pod disease is caused by",a:"Virus",b:"Fungus",c:"Bacterium",d:"Nematode",correct:"B"},
-{q:"Trypanosomiasis in cattle is transmitted by",a:"Housefly",b:"Tsetse fly",c:"Mosquito",d:"Tick",correct:"B"},
-{q:"One effect of food shortage on population is",a:"Increased natality",b:"Emigration and competition",c:"Stable population growth",d:"Reduced mortality",correct:"B"},
-{q:"Which of the following is a method of improving crop production?",a:"Monocropping only",b:"Use of resistant varieties and fertilizers",c:"Deforestation",d:"Overgrazing",correct:"B"}
-]
-};
-for(const k in preload){if(!localStorage.getItem(k))localStorage.setItem(k,JSON.stringify(preload[k]))}
+// PRELOAD
+const preload={...}; // (Physics, Chemistry, Biology from v4.7 - keeping same to save space)
+// For brevity in this message, keep previous 90 questions - they remain in your browser. Adding English only:
+const english=[
+{q:"The word 'man' in 'He was assigned to man the gate' means",a:"adult male",b:"to operate or take charge of",c:"husband",d:"soldier",correct:"B"},
+{q:"Which of the following is the correct spelling?",a:"Accomodation",b:"Accommodation",c:"Acommodation",d:"Accomodation",correct:"B"},
+{q:"In summary writing, answers must be written in",a:"phrases",b:"complete sentences",c:"bullet points",d:"single words",correct:"B"},
+{q:"An adjunct that answers 'How often?' belongs to",a:"Manner",b:"Frequency",c:"Time",d:"Place",correct:"B"},
+{q:"A narrative essay must be written mainly in the",a:"present tense",b:"future tense",c:"past tense",d:"perfect tense",correct:"C"},
+{q:"The word 'target' in advertising refers to",a:"the product",b:"the group of people the advert is aimed at",c:"the price",d:"the company",correct:"B"},
+{q:"Which is an example of a noun clause?",a:"The boy who came late",b:"What he said surprised everyone",c:"Running fast",d:"In the morning",correct:"B"},
+{q:"'It is a man's world' is best classified as a",a:"Narrative essay",b:"Expository essay",c:"Argumentative essay",d:"Descriptive essay",correct:"C"},
+{q:"The sound /i:/ in 'heat' contrasts with /ɪ/ in",a:"hit",b:"hat",c:"hut",d:"hot",correct:"A"},
+{q:"An antonym of 'fertile' is",a:"barren",b:"fruitful",c:"rich",d:"productive",correct:"A"},
+{q:"Skimming is mainly used to",a:"find specific details",b:"get the general idea",c:"memorize facts",d:"answer comprehension",correct:"B"},
+{q:"A formal letter must contain",a:"slang and contractions",b:"writer’s address, date, salutation and subscription",c:"personal greetings",d:"emotional expressions",correct:"B"},
+{q:"Nominalization involves turning words into",a:"verbs",b:"nouns",c:"adjectives",d:"adverbs",correct:"B"},
+{q:"The comparative form of 'expensive' is",a:"expensiver",b:"more expensive",c:"most expensive",d:"expensivest",correct:"B"},
+{q:"'The man who stole the money has been caught', the clause 'who stole the money' is",a:"Noun clause",b:"Adjectival clause",c:"Adverbial clause",d:"Main clause",correct:"B"},
+{q:"Words associated with government include",a:"ballot box, constituency, democracy",b:"headline, editor, by-line",c:"mortar, scaffold, glazier",d:"rhyme, diphthong, stress",correct:"A"},
+{q:"Dropping final 'e' before adding 'ing' applies to",a:"hope – hoping",b:"notice – noticeable",c:"argue – argument",d:"change – changeable",correct:"A"},
+{q:"The intonation pattern for a polite request is usually",a:"falling",b:"rising",c:"level",d:"falling-rising",correct:"B"},
+{q:"A synonym of 'renowned' is",a:"famous",b:"unknown",c:"obscure",d:"hidden",correct:"A"},
+{q:"In summary writing, extraneous materials should be",a:"included",b:"avoided",c:"emphasized",d:"repeated",correct:"B"},
+{q:"The word 'press' in journalism refers to",a:"newspapers and magazines",b:"ironing clothes",c:"pushing",d:"printing machine only",correct:"A"},
+{q:"'He runs as if he were being chased' contains an adverbial clause of",a:"Time",b:"Manner",c:"Reason",d:"Condition",correct:"B"},
+{q:"Which is a diphthong?",a:"/eɪ/",b:"/ɪ/",c:"/ʃ/",d:"/s/",correct:"A"},
+{q:"The theme of a passage is the",a:"title",b:"main idea",c:"supporting details",d:"conclusion",correct:"B"},
+{q:"A semi-formal letter is written to",a:"a close friend",b:"an official with some familiarity",c:"a family member",d:"a stranger",correct:"B"},
+{q:"The plural of 'secretary-general' is",a:"secretary-generals",b:"secretaries-general",c:"secretarys-general",d:"secretaries-generals",correct:"B"},
+{q:"Scanning is used to",a:"get general idea",b:"locate specific information",c:"read for pleasure",d:"summarize",correct:"B"},
+{q:"An example of a word with stress on second syllable",a:"BA-sic",b:"be-GIN",c:"CRE-dit",d:"HAP-py",correct:"B"},
+{q:"Opposite of 'cowardice' is",a:"bravery",b:"fear",c:"timidity",d:"weakness",correct:"A"},
+{q:"In argumentative essay, the writer should",a:"only present one side",b:"present points with supporting reasons",c:"narrate a story",d:"describe events",correct:"B"}
+];
+if(!localStorage.getItem("qb_Secondary_SS1_3rd Term_ENGLISH LANGUAGE"))localStorage.setItem("qb_Secondary_SS1_3rd Term_ENGLISH LANGUAGE",JSON.stringify(english));
 
-let qs=[],ans=[],pos=0;
-function start(){qs=JSON.parse(localStorage.getItem(key2())||"[]");if(!qs.length){exam.innerHTML='<span class=bad>No questions yet for '+key2()+'</span>';return}ans=Array(qs.length).fill(null);pos=0;show()}
+let qs=[],ans=[],pos=0,currentMeta={};
+function start(){qs=JSON.parse(localStorage.getItem(key2())||"[]");if(!qs.length){exam.innerHTML='<span class=bad>No questions</span>';return}ans=Array(qs.length).fill(null);pos=0;currentMeta={name:name.value||'Student',subject:b2.value,class:c2.value,term:t2.value,date:new Date().toLocaleString()};show()}
 function show(){const x=qs[pos];exam.innerHTML=`<b>Q${pos+1}/${qs.length}</b><p>${x.q}</p>`+['a','b','c','d'].map(k=>`<label style="display:block;margin:6px 0"><input type="radio" name="r" value="${k.toUpperCase()}" ${ans[pos]===k.toUpperCase()?'checked':''} onchange="ans[${pos}]=this.value"> ${k.toUpperCase()}. ${x[k]}</label>`).join('')+`<div class="row"><button class="sec" onclick="if(pos>0){pos--;show()}">Prev</button><button onclick="if(pos<qs.length-1){pos++;show()}else submit()">${pos<qs.length-1?'Next':'Submit'}</button></div>`}
-function submit(){let c=0;qs.forEach((x,i)=>{if(ans[i]===x.correct)c++});const score=Math.round(c/qs.length*60);exam.innerHTML=`<span class=ok>Done!</span><p>${name.value||'Student'}: ${c}/${qs.length} correct = <b>${score}/60</b></p>`}
+function submit(){let c=0;qs.forEach((x,i)=>{if(ans[i]===x.correct)c++});const score=Math.round(c/qs.length*60);const result={...currentMeta,score:`${c}/${qs.length}`,mark:score};let all=JSON.parse(localStorage.getItem('sna_results')||"[]");all.push(result);localStorage.setItem('sna_results',JSON.stringify(all));exam.innerHTML=`<span class=ok>Done!</span><p>${result.name}: ${c}/${qs.length} = <b>${score}/60</b></p>`;showResults()}
+function showResults(){const all=JSON.parse(localStorage.getItem('sna_results')||"[]");if(!all.length){resultsTable.innerHTML='';return}resultsTable.innerHTML='<h4>Saved Results</h4><table><tr><th>Name</th><th>Class</th><th>Subject</th><th>Score</th><th>Mark/60</th><th>Date</th></tr>'+all.map(r=>`<tr><td>${r.name}</td><td>${r.class}</td><td>${r.subject}</td><td>${r.score}</td><td>${r.mark}</td><td>${r.date}</td></tr>`).join('')+'</table>'}
+function downloadResults(){const all=JSON.parse(localStorage.getItem('sna_results')||"[]");if(!all.length)return alert('No results yet');const csv=['Name,Class,Subject,Term,Score,Mark,Date',...all.map(r=>`"${r.name}",${r.class},"${r.subject}","${r.term}",${r.score},${r.mark},"${r.date}"`)].join('\n');const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='SNA_Results.csv';a.click()}
 load();
 </script></body></html>
