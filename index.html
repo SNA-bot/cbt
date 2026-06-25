@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SNA v6.7.7 Full</title>
+<title>SNA v6.7.8</title>
 <style>
 body{margin:0;font-family:system-ui;background:#f0f2f5;-webkit-user-select:none;user-select:none}
 header{background:#002366;color:#fff;padding:12px;text-align:center;position:sticky;top:0;z-index:10}
@@ -24,7 +24,7 @@ th{background:#002366;color:#fff}
 .badge{display:inline-block;padding:3px 8px;background:#FFA500;color:#002366;border-radius:6px;font-size:12px;font-weight:700}
 .error{background:#fee;border:2px solid #b00;padding:12px;margin:10px;border-radius:8px;color:#b00;font-weight:600}
 </style></head><body oncontextmenu="return false">
-<header><h1>SEALED NECTAR ACADEMY</h1><div>v6.7.7 - Full System <span class="badge">ADMIN</span></div></header>
+<header><h1>SEALED NECTAR ACADEMY</h1><div>v6.7.8 - All 9 Tabs Working <span class="badge">ADMIN</span></div></header>
 <nav id="tabs"></nav>
 <div id="errorBox"></div>
 <div class="wrap">
@@ -132,7 +132,7 @@ th{background:#002366;color:#fff}
 </div></div>
 </div>
 <script>
-// BUILD TABS FIRST
+// TABS FIRST
 const tabs=['cbt','broadsheet','questions','settings','students','attendance','fees','idcard','report'];
 document.getElementById('tabs').innerHTML=tabs.map((t,i)=>`<button class="${i==0?'active':''}" onclick="show('${t}')">${t.toUpperCase()}</button>`).join('');
 function show(t){document.querySelectorAll('.tab').forEach(d=>d.classList.add('hide'));document.getElementById('tab-'+t).classList.remove('hide');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase()===t))}
@@ -153,19 +153,19 @@ function loadSettings(){const s=getSettings();setDuration.value=s.duration;setVi
 function updateExamInfo(){const s=getSettings();examInfo.innerHTML=`Duration: ${s.duration/60} mins | Violations: ${s.violations} | ${s.pin?'🔒 PIN On':'🔓 No PIN'}`}
 function resetAllData(){if(confirm('Delete all data?')){localStorage.clear();location.reload()}}
 
-// INIT
+// INIT ALL DROPDOWNS
 const classes=Object.keys(SUBJECTS);
-['cbtClass','bsClass','atClass','feeClass','qClass'].forEach(id=>{document.getElementById(id).innerHTML=classes.map(c=>`<option>${c}</option>`).join('')});
-function updateCbtSubjects(){cbtSub.innerHTML=SUBJECTS[cbtClass.value].map(s=>`<option>${s}</option>`).join('')}
-function updateBsSubjects(){bsSub.innerHTML=SUBJECTS[bsClass.value].map(s=>`<option>${s}</option>`).join('')}
-function updateQSubs(){qSub.innerHTML=SUBJECTS[qClass.value].map(s=>`<option>${s}</option>`).join('');updateQCount()}
-function renderStudents(){const q=stSearch.value.toLowerCase();const list=STUDENTS.filter(s=>s.name.toLowerCase().includes(q)||s.id.toLowerCase().includes(q));stList.innerHTML='<table><tr><th>ID</th><th>Name</th><th>Class</th></tr>'+list.map(s=>`<tr><td>${s.id}</td><td>${s.name}</td><td>${s.class}</td></tr>`).join('')+'</table>'}
 document.addEventListener('DOMContentLoaded',function(){
+['cbtClass','bsClass','atClass','feeClass','qClass'].forEach(id=>{document.getElementById(id).innerHTML=classes.map(c=>`<option>${c}</option>`).join('')});
 updateCbtSubjects();updateBsSubjects();updateQSubs();loadSettings();renderStudents();
 idStudent.innerHTML=STUDENTS.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
 rcStudent.innerHTML=STUDENTS.map(s=>`<option value="${s.id}">${s.id} - ${s.name}</option>`).join('');
 atDate.valueAsDate=new Date();
 });
+
+function updateCbtSubjects(){cbtSub.innerHTML=SUBJECTS[cbtClass.value].map(s=>`<option>${s}</option>`).join('')}
+function updateBsSubjects(){bsSub.innerHTML=SUBJECTS[bsClass.value].map(s=>`<option>${s}</option>`).join('')}
+function updateQSubs(){qSub.innerHTML=SUBJECTS[qClass.value].map(s=>`<option>${s}</option>`).join('');updateQCount()}
 
 // CBT
 let qs=[],ans=[],pos=0,stu,timerInt,secLeft,violations=0,examActive=false,maxViolations=7;
@@ -187,10 +187,15 @@ function loadBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTer
 function calc(id){const ca=+document.getElementById(`ca_${id}`).value||0;const cbt=+document.getElementById(`cbt_${id}`).innerText||0;const pa=+document.getElementById(`pa_${id}`).value||0;document.getElementById(`to_${id}`).innerHTML=`<b>${ca+cbt+pa}</b>`}
 function saveBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');STUDENTS.filter(s=>s.class===cls).forEach(s=>{if(!data[s.id])data[s.id]={};data[s.id].ca=document.getElementById(`ca_${s.id}`).value;data[s.id].paper=document.getElementById(`pa_${s.id}`).value;data[s.id].cbt=document.getElementById(`cbt_${s.id}`).innerText});localStorage.setItem(key,JSON.stringify(data));alert('Saved')}
 
+// STUDENTS
+function renderStudents(){const q=stSearch.value.toLowerCase();const list=STUDENTS.filter(s=>s.name.toLowerCase().includes(q)||s.id.toLowerCase().includes(q));stList.innerHTML='<table><tr><th>ID</th><th>Name</th><th>Class</th></tr>'+list.map(s=>`<tr><td>${s.id}</td><td>${s.name}</td><td>${s.class}</td></tr>`).join('')+'</table>'}
+
 // ATTENDANCE
 function loadAtt(){const cls=atClass.value;const date=atDate.value;if(!cls||!date)return;const key=`att_${cls}_${date}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Present</th></tr>';studs.forEach(s=>{h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input type="checkbox" id="at_${s.id}" ${data[s.id]?'checked':''}></td></tr>`});atTable.innerHTML=h+'</table>'}
 function saveAtt(){const cls=atClass.value;const date=atDate.value;if(!cls||!date)return alert('Select class and date');const key=`att_${cls}_${date}`;const data={};STUDENTS.filter(s=>s.class===cls).forEach(s=>{data[s.id]=document.getElementById(`at_${s.id}`).checked});localStorage.setItem(key,JSON.stringify(data));alert('Attendance saved')}
-
+idStudent.innerHTML=STUDENTS.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+rcStudent.innerHTML=STUDENTS.map(s=>`<option value="${s.id}">${s.id} - ${s.name}</option>`).join('');
+atDate.valueAsDate=new Date();
 // FEES
 function loadFees(){const cls=feeClass.value;if(!cls)return;const key=`fees_${cls}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Paid (₦)</th><th>Balance (₦)</th></tr>';studs.forEach(s=>{const paid=+data[s.id]||0;const bal=50000-paid;h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="fee_${s.id}" value="${paid||''}" style="width:80px" onchange="updateFee('${s.id}')"></td><td id="bal_${s.id}">${bal}</td></tr>`});feeTable.innerHTML=h+'</table>'}
 function updateFee(id){const cls=feeClass.value;const key=`fees_${cls}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const paid=+document.getElementById(`fee_${id}`).value||0;data[id]=paid;localStorage.setItem(key,JSON.stringify(data));document.getElementById(`bal_${id}`).innerText=50000-paid}
@@ -201,5 +206,4 @@ function genID(){const id=idStudent.value;const s=STUDENTS.find(x=>x.id===id);if
 // REPORT
 function genReport(){const id=rcStudent.value;const s=STUDENTS.find(x=>x.id===id);if(!s)return;let out=`<h3>THIRD TERM REPORT CARD</h3><p><b>Name:</b> ${s.name}<br><b>ID:</b> ${s.id}<br><b>Class:</b> ${s.class}</p><table><tr><th>Subject</th><th>CA</th><th>CBT</th><th>Paper</th><th>Total</th><th>Grade</th></tr>`;let total=0,count=0;SUBJECTS[s.class].forEach(sub=>{const d=JSON.parse(localStorage.getItem(`bs_${s.class}_Third Term_${sub}`)||'{}')[id]||{};const ca=+d.ca||0;const cbt=+d.cbt||0;const pap=+d.paper||0;const tot=ca+cbt+pap;total+=tot;count++;const grade=tot>=75?'A1':tot>=70?'B2':tot>=65?'B3':tot>=60?'C4':tot>=55?'C5':tot>=50?'C6':tot>=45?'D7':tot>=40?'E8':'F9';out+=`<tr><td style="text-align:left">${sub}</td><td>${ca}</td><td>${cbt}</td><td>${pap}</td><td><b>${tot}</b></td><td>${grade}</td></tr>`});const avg=count?(total/count).toFixed(1):0;out+=`</table><p><b>Total: ${total}</b> | <b>Average: ${avg}%</b></p>`;rcOut.innerHTML=out}
 </script>
-</body>
-</html>
+</body></html>
