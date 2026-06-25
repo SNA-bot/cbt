@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SNA v6.7.11</title>
+<title>SNA v6.7.12</title>
 <style>
 body{margin:0;font-family:system-ui;background:#f0f2f5;-webkit-user-select:none;user-select:none}
 header{background:#002366;color:#fff;padding:12px;text-align:center;position:sticky;top:0;z-index:10}
@@ -24,7 +24,7 @@ th{background:#002366;color:#fff}
 .badge{display:inline-block;padding:3px 8px;background:#FFA500;color:#002366;border-radius:6px;font-size:12px;font-weight:700}
 .error{background:#fee;border:2px solid #b00;padding:12px;margin:10px;border-radius:8px;color:#b00;font-weight:600}
 </style></head><body oncontextmenu="return false">
-<header><h1>SEALED NECTAR ACADEMY</h1><div>v6.7.11 - All 9 Tabs REAL FIX <span class="badge">ADMIN</span></div></header>
+<header><h1>SEALED NECTAR ACADEMY</h1><div>v6.7.12 - ALL TABLES FIXED <span class="badge">ADMIN</span></div></header>
 <nav id="tabs"></nav>
 <div id="errorBox"></div>
 <div class="wrap">
@@ -190,7 +190,7 @@ function addQ(){const sub=qSub.value;const q={q:qText.value.trim(),a:qA.value.tr
 function updateQCount(){const sub=qSub.value;const key=`custom_${sub}`;const arr=JSON.parse(localStorage.getItem(key)||'[]');qCount.innerHTML=`<b>${sub} has ${arr.length} custom questions</b>`}
 function clearQs(){if(confirm('Delete all questions for '+qSub.value+'?')){localStorage.removeItem(`custom_${qSub.value}`);updateQCount()}}
 
-// BROADSHEET - ALREADY FIXED IN v6.7.10
+// BROADSHEET - FIXED
 function loadBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>CA(40)</th><th>CBT(20)</th><th>Paper(40)</th><th>Total</th></tr>';studs.forEach(s=>{const d=data[s.id]||{};h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="ca_${s.id}" value="${d.ca||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="cbt_${s.id}">${d.cbt||0}</td><td><input id="pa_${s.id}" value="${d.paper||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="to_${s.id}"><b>0</b></td></tr>`});bsTable.innerHTML=h+'</table>';studs.forEach(s=>calc(s.id))}
 function calc(id){const ca=+document.getElementById(`ca_${id}`).value||0;const cbt=+document.getElementById(`cbt_${id}`).innerText||0;const pa=+document.getElementById(`pa_${id}`).value||0;document.getElementById(`to_${id}`).innerHTML=`<b>${ca+cbt+pa}</b>`}
 function saveBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');STUDENTS.filter(s=>s.class===cls).forEach(s=>{if(!data[s.id])data[s.id]={};data[s.id].ca=document.getElementById(`ca_${s.id}`).value;data[s.id].paper=document.getElementById(`pa_${s.id}`).value;data[s.id].cbt=document.getElementById(`cbt_${s.id}`).innerText});localStorage.setItem(key,JSON.stringify(data));alert('Saved')}
