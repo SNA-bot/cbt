@@ -1,144 +1,82 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SNA v6.7.13</title>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sealed Nectar Academy</title>
 <style>
-body{margin:0;font-family:system-ui;background:#f0f2f5;-webkit-user-select:none;user-select:none}
-header{background:#002366;color:#fff;padding:12px;text-align:center;position:sticky;top:0;z-index:10}
-header h1{margin:0;color:#FFA500;font-size:26px}
-nav{display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:#fff}
-nav button{flex:1 18%;padding:9px;border:0;background:#eee;border-radius:8px;font-weight:600;color:#333;font-size:12px}
-nav button.active{background:#002366;color:#fff}
-.wrap{max-width:1100px;margin:auto;padding:12px}
-.card{background:#fff;padding:14px;margin:10px 0;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-input,select,textarea,button{width:100%;padding:10px;font-size:15px;border:1px solid #bbb;border-radius:8px;margin:4px 0;box-sizing:border-box}
-button{background:#002366;color:#fff;font-weight:700;border:0;cursor:pointer}
-button.secondary{background:#666}
-button.danger{background:#b00}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{border:1px solid #ddd;padding:6px;text-align:center}
-th{background:#002366;color:#fff}
-.hide{display:none}
-.timer{background:#0a0;color:#fff;padding:10px;text-align:center;font-weight:700;font-size:18px;position:sticky;top:76px;z-index:9}
-.timer.warn{background:#b00;animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
-.badge{display:inline-block;padding:3px 8px;background:#FFA500;color:#002366;border-radius:6px;font-size:12px;font-weight:700}
-.error{background:#fee;border:2px solid #b00;padding:12px;margin:10px;border-radius:8px;color:#b00;font-weight:600}
-</style></head><body oncontextmenu="return false">
-<header><h1>SEALED NECTAR ACADEMY</h1><div>v6.7.13 - FINAL FIX <span class="badge">ADMIN</span></div></header>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f5f5f5;color:#333}
+header{background:#002366;color:#fff;padding:12px;text-align:center}header h1{font-size:22px;color:#FFA500}header .v{font-size:11px;opacity:.8}
+nav{display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:#e9ecef}nav button{flex:1;min-width:80px;padding:8px 4px;border:0;background:#fff;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}nav button.active{background:#002366;color:#fff}
+.tab{padding:12px}.hide{display:none}.card{background:#fff;border-radius:8px;padding:12px;margin:8px 0;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+input,select,textarea{width:100%;padding:8px;margin:4px 0;border:1px solid #ddd;border-radius:6px;font-size:14px}
+button{width:100%;padding:10px;background:#002366;color:#fff;border:0;border-radius:6px;font-weight:600;margin:6px 0;cursor:pointer}
+button.secondary{background:#6c757d}.row{display:flex;gap:8px}.row>*{flex:1}
+table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px;text-align:center}
+.error{background:#dc3545;color:#fff;padding:10px;border-radius:6px;margin:8px}
+.badge{background:#FFA500;color:#002366;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:700}
+.timer{background:#e7f3ff;padding:8px;border-radius:6px;text-align:center;font-weight:700;margin:8px 0}
+.timer.warn{background:#ffe7e7;color:#c00}
+</style></head><body>
+<header><h1>SEALED NECTAR ACADEMY</h1><div class="v">v6.7.13 - FINAL FIX <span class="badge">ADMIN</span></div></header>
 <nav id="tabs"></nav>
+<div id="main">
 <div id="errorBox"></div>
-<div class="wrap">
-<div id="tab-cbt" class="tab"><div class="card">
-<h3>CBT Login</h3>
-<input id="cbtId" placeholder="SNA/2038/001">
-<select id="cbtClass" onchange="updateCbtSubjects()"></select>
-<select id="cbtSub"></select>
-<div id="examInfo" style="background:#eef;padding:8px;border-radius:6px;margin:8px 0;font-size:13px"></div>
-<button onclick="startCBT()">Start Exam</button>
-</div><div id="cbtExam" class="card hide"></div></div>
-<div id="tab-broadsheet" class="tab hide"><div class="card">
-<h3>Broadsheet</h3>
-<div class="grid">
-<select id="bsClass" onchange="updateBsSubjects()"></select>
-<select id="bsSub"></select>
-<select id="bsTerm"><option>Third Term</option><option>First Term</option><option>Second Term</option></select>
-<button onclick="loadBS()">Load</button>
+
+<div id="tab-cbt" class="tab">
+<div class="card"><h3>CBT Login</h3>
+<input id="cbtId" placeholder="Student ID e.g. SNA/2038/001" value="SNA/2038/001">
+<select id="cbtClass"></select><select id="cbtSub"></select>
+<div id="examInfo" style="font-size:12px;color:#666;margin:6px 0"></div>
+<button onclick="startCBT()">Start Exam</button></div>
+<div id="cbtExam"></div>
 </div>
-<div id="bsTable" style="overflow:auto;max-height:60vh;margin-top:10px"></div>
-<button onclick="saveBS()">Save CA & Paper</button>
-</div></div>
-<div id="tab-questions" class="tab hide"><div class="card">
-<h3>Add Questions</h3>
-<div class="grid">
-<select id="qClass"></select>
-<select id="qSub"></select>
-</div>
-<textarea id="qText" rows="2" placeholder="Question"></textarea>
-<input id="qA" placeholder="Option A">
-<input id="qB" placeholder="Option B">
-<input id="qC" placeholder="Option C">
-<input id="qD" placeholder="Option D">
-<select id="qAns"><option value="A">Correct: A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select>
-<button onclick="addQ()">Add Question</button>
-<div id="qCount" style="margin-top:8px"></div>
-<button class="secondary" onclick="clearQs()">Clear All for this Subject</button>
-</div></div>
-<div id="tab-settings" class="tab hide"><div class="card">
-<h3>⚙️ Exam Settings</h3>
-<div class="grid">
-<div>
-<label><b>Exam Duration</b></label>
-<select id="setDuration">
-<option value="1800">30 Minutes</option>
-<option value="2700">45 Minutes</option>
-<option value="3600">1 Hour</option>
-<option value="5400">1.5 Hours</option>
-<option value="7200">2 Hours</option>
-<option value="9000">2.5 Hours</option>
-</select>
-</div>
-<div>
-<label><b>Violation Limit</b></label>
-<select id="setViolations">
-<option value="2">2 attempts</option>
-<option value="3">3 attempts</option>
-<option value="4">4 attempts</option>
-<option value="5">5 attempts</option>
-<option value="6">6 attempts</option>
-<option value="7">7 attempts</option>
-</select>
-</div>
-<label><b>Teacher PIN</b> (Optional)</label>
-<input id="setPin" type="password" placeholder="Leave blank for no PIN" maxlength="6">
-<button onclick="saveSettings()">💾 Save Settings</button>
-<div id="setStatus" style="margin-top:10px;color:#0a0;font-weight:600"></div>
-<hr style="margin:20px 0">
-<button class="danger" onclick="resetAllData()">⚠️ Reset All CBT Data</button>
-</div></div>
-<div id="tab-students" class="tab hide"><div class="card">
-<h3>Students (35)</h3>
-<input id="stSearch" placeholder="Search name or ID" oninput="renderStudents()">
-<div id="stList"></div>
-</div></div>
-<div id="tab-attendance" class="tab hide"><div class="card">
-<h3>Attendance</h3>
-<div class="grid">
-<select id="atClass"></select>
-<input id="atDate" type="date">
-<button onclick="loadAtt()">Load Class</button>
-</div>
-<div id="atTable" style="margin-top:10px"></div>
-<button onclick="saveAtt()">Save Attendance</button>
-</div></div>
-<div id="tab-fees" class="tab hide"><div class="card">
-<h3>Fees Management</h3>
-<div class="grid">
-<select id="feeClass"></select>
-<button onclick="loadFees()">Load Class</button>
-</div>
-<div id="feeTable" style="margin-top:10px"></div>
-</div></div>
-<div id="tab-idcard" class="tab hide"><div class="card">
-<h3>ID Card Generator</h3>
-<select id="idStudent"></select>
-<button onclick="genID()">Generate ID Card</button>
-<div id="idOut"></div>
-</div></div>
-<div id="tab-report" class="tab hide"><div class="card">
-<h3>Report Card Generator</h3>
-<select id="rcStudent"></select>
-<button onclick="genReport()">Generate Report Card</button>
-<div id="rcOut" style="margin-top:10px"></div>
-</div></div>
+
+<div id="tab-broadsheet" class="tab hide">
+<div class="card"><h3>Broadsheet</h3><div class="row">
+<select id="bsClass"></select><select id="bsSub"></select><select id="bsTerm"><option>First Term</option><option>Second Term</option><option>Third Term</option></select>
+</div><button onclick="loadBS()">Load</button><button class="secondary" onclick="saveBS()">Save</button></div>
+<div id="bsTable" class="card"></div></div>
+
+<div id="tab-questions" class="tab hide">
+<div class="card"><h3>Add Questions</h3><select id="qClass" onchange="updateQSubs()"></select><select id="qSub"></select>
+<textarea id="qText" placeholder="Question" rows="2"></textarea>
+<input id="qA" placeholder="Option A"><input id="qB" placeholder="Option B">
+<input id="qC" placeholder="Option C"><input id="qD" placeholder="Option D">
+<select id="qAns"><option value="A">Correct: A</option><option value="B">Correct: B</option><option value="C">Correct: C</option><option value="D">Correct: D</option></select>
+<button onclick="addQ()">Add Question</button><button class="secondary" onclick="clearQs()">Clear All for Subject</button>
+<div id="qCount"></div></div></div>
+
+<div id="tab-settings" class="tab hide">
+<div class="card"><h3>Exam Settings</h3>
+<label>Duration (seconds): <input id="setDuration" type="number" value="7200"></label>
+<label>Max Violations: <input id="setViolations" type="number" value="7"></label>
+<label>PIN (optional): <input id="setPin" placeholder="Leave blank for no PIN"></label>
+<button onclick="saveSettings()">Save Settings</button><div id="setStatus"></div></div>
+<div class="card"><h3>Reset</h3><button class="secondary" onclick="resetAllData()">⚠️ Reset All Data</button></div></div>
+
+<div id="tab-students" class="tab hide">
+<div class="card"><h3>Students <span id="stCount"></span></h3><input id="stSearch" placeholder="Search name or ID" oninput="renderStudents()"></div>
+<div id="stList" class="card"></div></div>
+
+<div id="tab-attendance" class="tab hide">
+<div class="card"><h3>Attendance</h3><div class="row"><select id="atClass"></select><input id="atDate" type="date"></div>
+<button onclick="loadAtt()">Load</button><button class="secondary" onclick="saveAtt()">Save</button></div>
+<div id="atTable" class="card"></div></div>
+
+<div id="tab-fees" class="tab hide">
+<div class="card"><h3>Fees - ₦50,000 per term</h3><select id="feeClass"></select><button onclick="loadFees()">Load</button></div>
+<div id="feeTable" class="card"></div></div>
+
+<div id="tab-idcard" class="tab hide">
+<div class="card"><h3>ID Card Generator</h3><select id="idStudent"></select><button onclick="genID()">Generate</button></div>
+<div id="idOut"></div></div>
+
+<div id="tab-report" class="tab hide">
+<div class="card"><h3>Report Card - Third Term</h3><select id="rcStudent"></select><button onclick="genReport()">Generate</button></div>
+<div id="rcOut" class="card"></div></div>
+
 </div>
 <script>
-// ERROR CATCHER - Shows errors on screen
-window.onerror=function(msg,url,line,col,err){
-  document.getElementById('errorBox').innerHTML=`<div class="error">⚠️ JS Error: ${msg}<br>Line: ${line}</div>`;
-  return false
-};
-END OF PART 1
- // TABS
+// ERROR CATCHER
+window.onerror=function(m,s,l,c,e){document.getElementById('errorBox').innerHTML=`<div class="error">⚠️ ${m}<br>Line: ${l}</div>`;return true};
+  // TABS
 const tabs=['cbt','broadsheet','questions','settings','students','attendance','fees','idcard','report'];
 document.getElementById('tabs').innerHTML=tabs.map((t,i)=>`<button class="${i==0?'active':''}" onclick="show('${t}')">${t.toUpperCase()}</button>`).join('');
 function show(t){
@@ -179,8 +117,7 @@ document.addEventListener('DOMContentLoaded',function(){
     document.getElementById('errorBox').innerHTML=`<div class="error">⚠️ Init Error: ${e.message}</div>`;
   }
 });
-END OF PART 2
- function updateCbtSubjects(){cbtSub.innerHTML=SUBJECTS[cbtClass.value].map(s=>`<option>${s}</option>`).join('')}
+  function updateCbtSubjects(){cbtSub.innerHTML=SUBJECTS[cbtClass.value].map(s=>`<option>${s}</option>`).join('')}
 function updateBsSubjects(){bsSub.innerHTML=SUBJECTS[bsClass.value].map(s=>`<option>${s}</option>`).join('')}
 function updateQSubs(){qSub.innerHTML=SUBJECTS[qClass.value].map(s=>`<option>${s}</option>`).join('');updateQCount()}
 
@@ -205,12 +142,20 @@ function calc(id){const ca=+document.getElementById(`ca_${id}`).value||0;const c
 function saveBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');STUDENTS.filter(s=>s.class===cls).forEach(s=>{if(!data[s.id])data[s.id]={};data[s.id].ca=document.getElementById(`ca_${s.id}`).value;data[s.id].paper=document.getElementById(`pa_${s.id}`).value;data[s.id].cbt=document.getElementById(`cbt_${s.id}`).innerText});localStorage.setItem(key,JSON.stringify(data));alert('Saved')}
 
 // STUDENTS
-function renderStudents(){const q=stSearch.value.toLowerCase();const list=STUDENTS.filter(s=>s.name.toLowerCase().includes(q)||s.id.toLowerCase().includes(q));stList.innerHTML='<table><tr><th>ID</th><th>Name</th><th>Class</th></tr>'+list.map(s=>`<tr><td>${s.id}</td><td>${s.name}</td><td>${s.class}</td></tr>`).join('')+'</table>'}
+function renderStudents(){const q=stSearch.value.toLowerCase();const list=STUDENTS.filter(s=>s.name.toLowerCase().includes(q)||s.id.toLowerCase().includes(q));stList.innerHTML='<table><tr><th>ID</th><th>Name</th><th>Class</th></tr>'+list.map(s=>`<tr><td>${s.id}</td><td>${s.name}</td><td>${s.class}</td></tr>`).join('')+'</table>';stCount.innerText=`(${list.length})`}
 END OF PART 3
   // ATTENDANCE
 function loadAtt(){const cls=atClass.value;const date=atDate.value;if(!cls||!date){atTable.innerHTML='<p style="padding:10px;color:#666">Select class and date, then click Load</p>';return}const key=`att_${cls}_${date}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Present</th></tr>';studs.forEach(s=>{h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input type="checkbox" id="at_${s.id}" ${data[s.id]?'checked':''}></td></tr>`});atTable.innerHTML=h+'</table>'}
 function saveAtt(){const cls=atClass.value;const date=atDate.value;if(!cls||!date)return alert('Select class and date');const key=`att_${cls}_${date}`;const data={};STUDENTS.filter(s=>s.class===cls).forEach(s=>{data[s.id]=document.getElementById(`at_${s.id}`).checked});localStorage.setItem(key,JSON.stringify(data));alert('Attendance saved')}
 
 // FEES
-function loadFees(){const cls=feeClass.value;if(!cls){feeTable.innerHTML='<p style="padding:10px;color:#666">Select class and click Load</p>';return}const key=`fees_${cls}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Paid (₦)</th><th>Balance (₦)</th></tr>';studs.forEach(s=>{const paid=+data[s.id]||0;const bal=50000-paid;h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="fee_${s.id}" value="${paid||
-  
+function loadFees(){const cls=feeClass.value;if(!cls){feeTable.innerHTML='<p style="padding:10px;color:#666">Select class and click Load</p>';return}const key=`fees_${cls}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Paid (₦)</th><th>Balance (₦)</th></tr>';studs.forEach(s=>{const paid=+data[s.id]||0;const bal=50000-paid;h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="fee_${s.id}" value="${paid||''}" style="width:80px" onchange="updateFee('${s.id}')"></td><td id="bal_${s.id}">${bal}</td></tr>`});feeTable.innerHTML=h+'</table>'}
+function updateFee(id){const cls=feeClass.value;const key=`fees_${cls}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const paid=+document.getElementById(`fee_${id}`).value||0;data[id]=paid;localStorage.setItem(key,JSON.stringify(data));document.getElementById(`bal_${id}`).innerText=50000-paid}
+
+// ID CARD
+function genID(){const id=idStudent.value;const s=STUDENTS.find(x=>x.id===id);if(!s)return;idOut.innerHTML=`<div style="width:320px;height:200px;background:linear-gradient(135deg,#002366,#0044aa);color:#fff;border-radius:12px;padding:12px;margin:10px auto;box-shadow:0 4px 8px rgba(0,0,0,.2)"><h3 style="margin:0;color:#FFA500">SEALED NECTAR ACADEMY</h3><div style="margin-top:20px;font-size:14px;line-height:1.6"><b>${s.name}</b><br>ID: ${s.id}<br>Class: ${s.class}<br>Session: 2024/2025</div></div>`}
+
+// REPORT
+function genReport(){const id=rcStudent.value;const s=STUDENTS.find(x=>x.id===id);if(!s)return;let out=`<h3>THIRD TERM REPORT CARD</h3><p><b>Name:</b> ${s.name}<br><b>ID:</b> ${s.id}<br><b>Class:</b> ${s.class}</p><table><tr><th>Subject</th><th>CA</th><th>CBT</th><th>Paper</th><th>Total</th><th>Grade</th></tr>`;let total=0,count=0;SUBJECTS[s.class].forEach(sub=>{const d=JSON.parse(localStorage.getItem(`bs_${s.class}_Third Term_${sub}`)||'{}')[id]||{};const ca=+d.ca||0;const cbt=+d.cbt||0;const pap=+d.paper||0;const tot=ca+cbt+pap;total+=tot;count++;const grade=tot>=75?'A1':tot>=70?'B2':tot>=65?'B3':tot>=60?'C4':tot>=55?'C5':tot>=50?'C6':tot>=45?'D7':tot>=40?'E8':'F9';out+=`<tr><td style="text-align:left">${sub}</td><td>${ca}</td><td>${cbt}</td><td>${pap}</td><td><b>${tot}</b></td><td>${grade}</td></tr>`});const avg=count?(total/count).toFixed(1):0;out+=`</table><p><b>Total: ${total}</b> | <b>Average: ${avg}%</b></p>`;rcOut.innerHTML=out}
+</script>
+</body></html>
