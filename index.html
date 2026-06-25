@@ -1,37 +1,205 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>SNA Test</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SNA v6.7.7 Full</title>
 <style>
-body{margin:0;font-family:system-ui;background:#f0f2f5}
-header{background:#002366;color:#fff;padding:12px;text-align:center}
-header h1{margin:0;color:#FFA500}
+body{margin:0;font-family:system-ui;background:#f0f2f5;-webkit-user-select:none;user-select:none}
+header{background:#002366;color:#fff;padding:12px;text-align:center;position:sticky;top:0;z-index:10}
+header h1{margin:0;color:#FFA500;font-size:26px}
 nav{display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:#fff}
-nav button{flex:1 1 18%;padding:9px;border:0;background:#eee;border-radius:8px;font-weight:600;font-size:12px}
+nav button{flex:1 1 18%;padding:9px;border:0;background:#eee;border-radius:8px;font-weight:600;color:#333;font-size:12px}
 nav button.active{background:#002366;color:#fff}
-.card{background:#fff;padding:14px;margin:10px;border-radius:12px}
+.wrap{max-width:1100px;margin:auto;padding:12px}
+.card{background:#fff;padding:14px;margin:10px 0;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+input,select,textarea,button{width:100%;padding:10px;font-size:15px;border:1px solid #bbb;border-radius:8px;margin:4px 0;box-sizing:border-box}
+button{background:#002366;color:#fff;font-weight:700;border:0;cursor:pointer}
+button.secondary{background:#666}
+button.danger{background:#b00}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border:1px solid #ddd;padding:6px;text-align:center}
+th{background:#002366;color:#fff}
 .hide{display:none}
-</style>
-</head>
-<body>
-<header><h1>SEALED NECTAR ACADEMY</h1><div>TEST - 9 TABS</div></header>
+.timer{background:#0a0;color:#fff;padding:10px;text-align:center;font-weight:700;font-size:18px;position:sticky;top:76px;z-index:9}
+.timer.warn{background:#b00;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.badge{display:inline-block;padding:3px 8px;background:#FFA500;color:#002366;border-radius:6px;font-size:12px;font-weight:700}
+.error{background:#fee;border:2px solid #b00;padding:12px;margin:10px;border-radius:8px;color:#b00;font-weight:600}
+</style></head><body oncontextmenu="return false">
+<header><h1>SEALED NECTAR ACADEMY</h1><div>v6.7.7 - Full System <span class="badge">ADMIN</span></div></header>
 <nav id="tabs"></nav>
-<div style="padding:12px">
-<div id="tab-cbt" class="tab"><div class="card"><h3>CBT</h3></div></div>
-<div id="tab-broadsheet" class="tab hide"><div class="card"><h3>BROADSHEET</h3></div></div>
-<div id="tab-questions" class="tab hide"><div class="card"><h3>QUESTIONS</h3></div></div>
-<div id="tab-settings" class="tab hide"><div class="card"><h3>SETTINGS</h3></div></div>
-<div id="tab-students" class="tab hide"><div class="card"><h3>STUDENTS</h3></div></div>
-<div id="tab-attendance" class="tab hide"><div class="card"><h3>ATTENDANCE</h3></div></div>
-<div id="tab-fees" class="tab hide"><div class="card"><h3>FEES</h3></div></div>
-<div id="tab-idcard" class="tab hide"><div class="card"><h3>ID CARD</h3></div></div>
-<div id="tab-report" class="tab hide"><div class="card"><h3>REPORT</h3></div></div>
+<div id="errorBox"></div>
+<div class="wrap">
+<div id="tab-cbt" class="tab"><div class="card">
+<h3>CBT Login</h3>
+<input id="cbtId" placeholder="SNA/2038/001">
+<select id="cbtClass" onchange="updateCbtSubjects()"></select>
+<select id="cbtSub"></select>
+<div id="examInfo" style="background:#eef;padding:8px;border-radius:6px;margin:8px 0;font-size:13px"></div>
+<button onclick="startCBT()">Start Exam</button>
+</div><div id="cbtExam" class="card hide"></div></div>
+<div id="tab-broadsheet" class="tab hide"><div class="card">
+<h3>Broadsheet</h3>
+<div class="grid">
+<select id="bsClass" onchange="updateBsSubjects()"></select>
+<select id="bsSub"></select>
+<select id="bsTerm"><option>Third Term</option><option>First Term</option><option>Second Term</option></select>
+<button onclick="loadBS()">Load</button>
+</div>
+<div id="bsTable" style="overflow:auto;max-height:60vh;margin-top:10px"></div>
+<button onclick="saveBS()">Save CA & Paper</button>
+</div></div>
+<div id="tab-questions" class="tab hide"><div class="card">
+<h3>Add Questions</h3>
+<div class="grid">
+<select id="qClass"></select>
+<select id="qSub"></select>
+</div>
+<textarea id="qText" rows="2" placeholder="Question"></textarea>
+<input id="qA" placeholder="Option A">
+<input id="qB" placeholder="Option B">
+<input id="qC" placeholder="Option C">
+<input id="qD" placeholder="Option D">
+<select id="qAns"><option value="A">Correct: A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select>
+<button onclick="addQ()">Add Question</button>
+<div id="qCount" style="margin-top:8px"></div>
+<button class="secondary" onclick="clearQs()">Clear All for this Subject</button>
+</div></div>
+<div id="tab-settings" class="tab hide"><div class="card">
+<h3>⚙️ Exam Settings</h3>
+<div class="grid">
+<div>
+<label><b>Exam Duration</b></label>
+<select id="setDuration">
+<option value="1800">30 Minutes</option>
+<option value="2700">45 Minutes</option>
+<option value="3600">1 Hour</option>
+<option value="5400">1.5 Hours</option>
+<option value="7200">2 Hours</option>
+<option value="9000">2.5 Hours</option>
+</select>
+</div>
+<div>
+<label><b>Violation Limit</b></label>
+<select id="setViolations">
+<option value="2">2 attempts</option>
+<option value="3">3 attempts</option>
+<option value="4">4 attempts</option>
+<option value="5">5 attempts</option>
+<option value="6">6 attempts</option>
+<option value="7">7 attempts</option>
+</select>
+</div>
+<label><b>Teacher PIN</b> (Optional)</label>
+<input id="setPin" type="password" placeholder="Leave blank for no PIN" maxlength="6">
+<button onclick="saveSettings()">💾 Save Settings</button>
+<div id="setStatus" style="margin-top:10px;color:#0a0;font-weight:600"></div>
+<hr style="margin:20px 0">
+<button class="danger" onclick="resetAllData()">⚠️ Reset All CBT Data</button>
+</div></div>
+<div id="tab-students" class="tab hide"><div class="card">
+<h3>Students (35)</h3>
+<input id="stSearch" placeholder="Search name or ID" oninput="renderStudents()">
+<div id="stList"></div>
+</div></div>
+<div id="tab-attendance" class="tab hide"><div class="card">
+<h3>Attendance</h3>
+<div class="grid">
+<select id="atClass"></select>
+<input id="atDate" type="date">
+<button onclick="loadAtt()">Load Class</button>
+</div>
+<div id="atTable" style="margin-top:10px"></div>
+<button onclick="saveAtt()">Save Attendance</button>
+</div></div>
+<div id="tab-fees" class="tab hide"><div class="card">
+<h3>Fees Management</h3>
+<div class="grid">
+<select id="feeClass"></select>
+<button onclick="loadFees()">Load Class</button>
+</div>
+<div id="feeTable" style="margin-top:10px"></div>
+</div></div>
+<div id="tab-idcard" class="tab hide"><div class="card">
+<h3>ID Card Generator</h3>
+<select id="idStudent"></select>
+<button onclick="genID()">Generate ID Card</button>
+<div id="idOut"></div>
+</div></div>
+<div id="tab-report" class="tab hide"><div class="card">
+<h3>Report Card Generator</h3>
+<select id="rcStudent"></select>
+<button onclick="genReport()">Generate Report Card</button>
+<div id="rcOut" style="margin-top:10px"></div>
+</div></div>
 </div>
 <script>
+// BUILD TABS FIRST
 const tabs=['cbt','broadsheet','questions','settings','students','attendance','fees','idcard','report'];
 document.getElementById('tabs').innerHTML=tabs.map((t,i)=>`<button class="${i==0?'active':''}" onclick="show('${t}')">${t.toUpperCase()}</button>`).join('');
 function show(t){document.querySelectorAll('.tab').forEach(d=>d.classList.add('hide'));document.getElementById('tab-'+t).classList.remove('hide');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase()===t))}
+window.onerror=function(m,l){document.getElementById('errorBox').innerHTML=`<div class="error">⚠️ Error: ${m}</div>`;return false};
+
+// DATA
+const STUDENTS=[{"id":"SNA/2031/002","name":"Amao Khalid","class":"Primary 3"},{"id":"SNA/2031/006","name":"Ajani Aishat","class":"Primary 3"},{"id":"SNA/2031/007","name":"Abdussalam Aminah","class":"Primary 3"},{"id":"SNA/2031/008","name":"Akinlabi Zainab","class":"Primary 3"},{"id":"SNA/2033/001","name":"Abdlateef Atiyah","class":"Primary 5"},{"id":"SNA/2033/002","name":"AbdulHameed Adam","class":"Primary 5"},{"id":"SNA/2033/003","name":"Mariam Bashiru","class":"Primary 5"},{"id":"SNA/2033/004","name":"Yusuf Mustakim","class":"Primary 5"},{"id":"SNA/2033/005","name":"Murijanat Tairu","class":"Primary 5"},{"id":"SNA/2035/001","name":"Adeleke AbdulHameed Pelumi","class":"JSS 1"},{"id":"SNA/2035/002","name":"Oyem Seyi","class":"JSS 1"},{"id":"SNA/2035/003","name":"Muhammad Ibrahim","class":"JSS 1"},{"id":"SNA/2035/004","name":"Oladoja AbdulRasak","class":"JSS 1"},{"id":"SNA/2035/005","name":"Bello Abdulhafeez","class":"JSS 1"},{"id":"SNA/2035/006","name":"Yusuf Zeenatallahi","class":"JSS 1"},{"id":"SNA/2035/007","name":"Akinlabi Islamiyah","class":"JSS 1"},{"id":"SNA/2035/008","name":"Muftau Islamiyah Nifemi","class":"JSS 1"},{"id":"SNA/2035/009","name":"Olawale Rhodiat Nifemi","class":"JSS 1"},{"id":"SNA/2035/010","name":"Olawale Roqeebah Ayomide","class":"JSS 1"},{"id":"SNA/2035/011","name":"AbdulQadir Maryam","class":"JSS 1"},{"id":"SNA/2035/012","name":"Ogunbiyi Omodesire","class":"JSS 1"},{"id":"SNA/2035/013","name":"Tahiru Khadijah","class":"JSS 1"},{"id":"SNA/2036/001","name":"Abdlateef Abdulmuqsit","class":"JSS 2"},{"id":"SNA/2036/002","name":"Akinlade Awwau Olabisi","class":"JSS 2"},{"id":"SNA/2036/003","name":"Ahmad Faosiyah","class":"JSS 2"},{"id":"SNA/2036/004","name":"Badejo Khadijah","class":"JSS 2"},{"id":"SNA/2036/005","name":"Eleduwe Mahmun","class":"JSS 2"},{"id":"SNA/2037/001","name":"Adeleke Zulikha Adetutu","class":"JSS 3"},{"id":"SNA/2037/002","name":"Abdussalam AbdurRahman","class":"JSS 3"},{"id":"SNA/2037/003","name":"Ahmad Fawaz Adinoyi","class":"JSS 3"},{"id":"SNA/2038/001","name":"Abdlateef AbdulMumin","class":"SSS 1"},{"id":"SNA/2038/002","name":"Olanrewaju Sheriffdeen","class":"SSS 1"},{"id":"SNA/2038/003","name":"Akinlade Aishat Olamide","class":"SSS 1"},{"id":"SNA/2038/004","name":"Muhammad Faatimah Oyindamola","class":"SSS 1"},{"id":"SNA/2038/005","name":"Akinbolu Imaan","class":"SSS 1"},{"id":"SNA/2038/006","name":"Akinsulie Ireoluwa","class":"SSS 1"},{"id":"SNA/2039/001","name":"Onalaja Muhammad Pemisire","class":"SSS 2"},{"id":"SNA/2039/002","name":"Fatai Bilal","class":"SSS 2"}];
+const SUBJECTS={"Primary 3":["English Language","Mathematics","Basic Science","Social Studies","Civic Education","Islamic Studies","Yoruba"],"Primary 5":["English Language","Mathematics","Basic Science","Social Studies","Civic Education","Islamic Studies","Yoruba"],"JSS 1":["English Language","Mathematics","Basic Science","Social Studies","Civic Education","Islamic Studies","Business Studies","Agricultural Science"],"JSS 2":["English Language","Mathematics","Basic Science","Social Studies","Civic Education","Islamic Studies","Business Studies","Agricultural Science"],"JSS 3":["English Language","Mathematics","Basic Science","Social Studies","Civic Education","Islamic Studies","Business Studies","Agricultural Science"],"SSS 1":["Physics","Biology","Chemistry","Mathematics","English Language","Civic Education","Islamic Studies","Economics"],"SSS 2":["Physics","Biology","Chemistry","Mathematics","English Language","Civic Education","Islamic Studies","Economics"]};
+const PHYSICS=[{"q":"Which is an insulator?","a":"Graphite","b":"Polythene","c":"Salt solution","d":"Copper","correct":"B"},{"q":"Device to measure potential difference?","a":"Ammeter","b":"Voltmeter","c":"Resistor","d":"Rheostat","correct":"B"},{"q":"Ohm's law: V is proportional to?","a":"1/I","b":"I","c":"R","d":"P","correct":"B"},{"q":"3 resistors 2Ω,3Ω,5Ω in series =","a":"10Ω","b":"30/31Ω","c":"1.55Ω","d":"31/30Ω","correct":"A"},{"q":"Electrical energy unit?","a":"Joules","b":"Kilowatt-hour","c":"Watts","d":"Amps","correct":"B"}];
+const BIOLOGY=[{"q":"Micro-organisms are?","a":"Visible to eye","b":"Seen with microscope","c":"Non-living","d":"Plants only","correct":"B"},{"q":"Malaria vector?","a":"Housefly","b":"Tsetse fly","c":"Female Anopheles","d":"Aedes","correct":"C"},{"q":"HIV attacks?","a":"RBC","b":"Helper T cells CD4","c":"Platelets","d":"Muscle","correct":"B"},{"q":"Pasteurization preserves?","a":"Meat","b":"Milk","c":"Vegetables","d":"Grains","correct":"B"},{"q":"Cash crops are for?","a":"Home use","b":"Export income","c":"Animal feed","d":"Medicine only","correct":"B"}];
+const CHEMISTRY=[{"q":"Acid produces?","a":"OH- ions","b":"H+ ions","c":"NH4+","d":"O2-","correct":"B"},{"q":"Strong acid?","a":"Ethanoic","b":"H2SO4","c":"HNO3","d":"B and C","correct":"D"},{"q":"pH 2 is?","a":"Weak acid","b":"Strong acid","c":"Neutral","d":"Alkaline","correct":"B"},{"q":"Alkali?","a":"Mg(OH)2","b":"NaOH","c":"Cu(OH)2","d":"Fe(OH)3","correct":"B"},{"q":"Diamond is bad conductor because?","a":"Free electrons","b":"No free electrons","c":"Soft","d":"Layered","correct":"B"}];
+
+// SETTINGS
+const DEFAULT_SETTINGS={duration:7200,violations:7,pin:""};
+function getSettings(){return JSON.parse(localStorage.getItem('sna_settings')||JSON.stringify(DEFAULT_SETTINGS))}
+function saveSettings(){const s={duration:+setDuration.value,violations:+setViolations.value,pin:setPin.value.trim()};localStorage.setItem('sna_settings',JSON.stringify(s));setStatus.textContent='✅ Saved';setTimeout(()=>setStatus.textContent='',2000);updateExamInfo()}
+function loadSettings(){const s=getSettings();setDuration.value=s.duration;setViolations.value=s.violations;setPin.value=s.pin;updateExamInfo()}
+function updateExamInfo(){const s=getSettings();examInfo.innerHTML=`Duration: ${s.duration/60} mins | Violations: ${s.violations} | ${s.pin?'🔒 PIN On':'🔓 No PIN'}`}
+function resetAllData(){if(confirm('Delete all data?')){localStorage.clear();location.reload()}}
+
+// INIT
+const classes=Object.keys(SUBJECTS);
+['cbtClass','bsClass','atClass','feeClass','qClass'].forEach(id=>{document.getElementById(id).innerHTML=classes.map(c=>`<option>${c}</option>`).join('')});
+function updateCbtSubjects(){cbtSub.innerHTML=SUBJECTS[cbtClass.value].map(s=>`<option>${s}</option>`).join('')}
+function updateBsSubjects(){bsSub.innerHTML=SUBJECTS[bsClass.value].map(s=>`<option>${s}</option>`).join('')}
+function updateQSubs(){qSub.innerHTML=SUBJECTS[qClass.value].map(s=>`<option>${s}</option>`).join('');updateQCount()}
+function renderStudents(){const q=stSearch.value.toLowerCase();const list=STUDENTS.filter(s=>s.name.toLowerCase().includes(q)||s.id.toLowerCase().includes(q));stList.innerHTML='<table><tr><th>ID</th><th>Name</th><th>Class</th></tr>'+list.map(s=>`<tr><td>${s.id}</td><td>${s.name}</td><td>${s.class}</td></tr>`).join('')+'</table>'}
+document.addEventListener('DOMContentLoaded',function(){
+updateCbtSubjects();updateBsSubjects();updateQSubs();loadSettings();renderStudents();
+idStudent.innerHTML=STUDENTS.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+rcStudent.innerHTML=STUDENTS.map(s=>`<option value="${s.id}">${s.id} - ${s.name}</option>`).join('');
+atDate.valueAsDate=new Date();
+});
+
+// CBT
+let qs=[],ans=[],pos=0,stu,timerInt,secLeft,violations=0,examActive=false,maxViolations=7;
+function getPool(sub){const key=`custom_${sub}`;const custom=JSON.parse(localStorage.getItem(key)||'[]');if(custom.length>=5)return custom;if(sub==='Physics')return PHYSICS;if(sub==='Biology')return BIOLOGY;if(sub==='Chemistry')return CHEMISTRY;return PHYSICS}
+function startCBT(){const id=cbtId.value.trim().toUpperCase();const cls=cbtClass.value;const sub=cbtSub.value;const s=STUDENTS.find(x=>x.id===id);if(!s)return alert('ID not found');if(s.class!==cls)return alert(`ID belongs to ${s.class}`);stu={...s,sub};const pool=getPool(sub);qs=[...pool].sort(()=>0.5-Math.random()).slice(0,Math.min(20,pool.length));ans=Array(qs.length).fill(null);pos=0;violations=0;examActive=true;cbtExam.classList.remove('hide');const settings=getSettings();secLeft=settings.duration;maxViolations=settings.violations;startTimer();showQ();document.addEventListener('visibilitychange',handleVisibility);window.addEventListener('blur',handleVisibility)}
+function startTimer(){clearInterval(timerInt);updateTimerDisplay();timerInt=setInterval(()=>{secLeft--;updateTimerDisplay();if(secLeft<=0){clearInterval(timerInt);alert('Time up!');submit()}},1000)}
+function updateTimerDisplay(){const m=Math.floor(secLeft/60).toString().padStart(2,'0');const s=(secLeft%60).toString().padStart(2,'0');const el=document.getElementById('timerBar');if(el){el.textContent=`${stu.name} | ${stu.sub} | Time: ${m}:${s} | Violations: ${violations}/${maxViolations}`;el.classList.toggle('warn',secLeft<120)}}
+function handleVisibility(){if(!examActive||!document.hidden)return;violations++;updateTimerDisplay();if(violations>=maxViolations){alert(`${maxViolations} violations. Exam submitted.`);submit()}else{alert(`Warning ${violations}/${maxViolations}`)}}
+function showQ(){const q=qs[pos];cbtExam.innerHTML=`<div id="timerBar" class="timer"></div><b>Q${pos+1}/${qs.length}</b><p>${q.q}</p>`+['a','b','c','d'].map(k=>`<label style="display:block;margin:6px 0"><input type=radio name=r ${ans[pos]===k.toUpperCase()?'checked':''} onchange="ans[${pos}]='${k.toUpperCase()}'"> ${k.toUpperCase()}. ${q[k]}</label>`).join('')+`<div style="display:flex;gap:8px;margin-top:10px"><button class="secondary" onclick="pos>0&&pos--&&showQ()">Prev</button><button onclick="pos<qs.length-1?(pos++&&showQ()):submit()">${pos<qs.length-1?'Next':'Submit'}</button></div>`;updateTimerDisplay()}
+function submit(){if(!examActive)return;examActive=false;clearInterval(timerInt);document.removeEventListener('visibilitychange',handleVisibility);window.removeEventListener('blur',handleVisibility);let sc=0;qs.forEach((q,i)=>{if(ans[i]===q.correct)sc++});const term=bsTerm.value;const key=`bs_${stu.class}_${term}_${stu.sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');if(!data[stu.id])data[stu.id]={};data[stu.id].cbt=sc;localStorage.setItem(key,JSON.stringify(data));cbtExam.innerHTML=`<h3>Submitted</h3><p>Score: <b>${sc}/${qs.length}</b></p><p>Violations: ${violations}/${maxViolations}</p><p>Saved to Broadsheet</p>`}
+
+// QUESTIONS
+function addQ(){const sub=qSub.value;const q={q:qText.value.trim(),a:qA.value.trim(),b:qB.value.trim(),c:qC.value.trim(),d:qD.value.trim(),correct:qAns.value};if(!q.q||!q.a||!q.b||!q.c||!q.d)return alert('Fill all fields');const key=`custom_${sub}`;const arr=JSON.parse(localStorage.getItem(key)||'[]');arr.push(q);localStorage.setItem(key,JSON.stringify(arr));qText.value=qA.value=qB.value=qC.value=qD.value='';updateQCount();alert('Added!')}
+function updateQCount(){const sub=qSub.value;const key=`custom_${sub}`;const arr=JSON.parse(localStorage.getItem(key)||'[]');qCount.innerHTML=`<b>${sub} has ${arr.length} custom questions</b>`}
+function clearQs(){if(confirm('Delete all questions for '+qSub.value+'?')){localStorage.removeItem(`custom_${qSub.value}`);updateQCount()}}
+
+// BROADSHEET
+function loadBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>CA(40)</th><th>CBT(20)</th><th>Paper(40)</th><th>Total</th></tr>';studs.forEach(s=>{const d=data[s.id]||{};h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="ca_${s.id}" value="${d.ca||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="cbt_${s.id}">${d.cbt||0}</td><td><input id="pa_${s.id}" value="${d.paper||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="to_${s.id}"><b>0</b></td></tr>`});bsTable.innerHTML=h+'</table>';studs.forEach(s=>calc(s.id))}
+function calc(id){const ca=+document.getElementById(`ca_${id}`).value||0;const cbt=+document.getElementById(`cbt_${id}`).innerText||0;const pa=+document.getElementById(`pa_${id}`).value||0;document.getElementById(`to_${id}`).innerHTML=`<b>${ca+cbt+pa}</b>`}
+function saveBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');STUDENTS.filter(s=>s.class===cls).forEach(s=>{if(!data[s.id])data[s.id]={};data[s.id].ca=document.getElementById(`ca_${s.id}`).value;data[s.id].paper=document.getElementById(`pa_${s.id}`).value;data[s.id].cbt=document.getElementById(`cbt_${s.id}`).innerText});localStorage.setItem(key,JSON.stringify(data));alert('Saved')}
+
+// ATTENDANCE
+function loadAtt(){const cls=atClass.value;const date=atDate.value;if(!cls||!date)return;const key=`att_${cls}_${date}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Present</th></tr>';studs.forEach(s=>{h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input type="checkbox" id="at_${s.id}" ${data[s.id]?'checked':''}></td></tr>`});atTable.innerHTML=h+'</table>'}
+function saveAtt(){const cls=atClass.value;const date=atDate.value;if(!cls||!date)return alert('Select class and date');const key=`att_${cls}_${date}`;const data={};STUDENTS.filter(s=>s.class===cls).forEach(s=>{data[s.id]=document.getElementById(`at_${s.id}`).checked});localStorage.setItem(key,JSON.stringify(data));alert('Attendance saved')}
+
+// FEES
+function loadFees(){const cls=feeClass.value;if(!cls)return;const key=`fees_${cls}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Paid (₦)</th><th>Balance (₦)</th></tr>';studs.forEach(s=>{const paid=+data[s.id]||0;const bal=50000-paid;h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="fee_${s.id}" value="${paid||''}" style="width:80px" onchange="updateFee('${s.id}')"></td><td id="bal_${s.id}">${bal}</td></tr>`});feeTable.innerHTML=h+'</table>'}
+function updateFee(id){const cls=feeClass.value;const key=`fees_${cls}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const paid=+document.getElementById(`fee_${id}`).value||0;data[id]=paid;localStorage.setItem(key,JSON.stringify(data));document.getElementById(`bal_${id}`).innerText=50000-paid}
+
+// ID CARD
+function genID(){const id=idStudent.value;const s=STUDENTS.find(x=>x.id===id);if(!s)return;idOut.innerHTML=`<div style="width:320px;height:200px;background:linear-gradient(135deg,#002366,#0044aa);color:#fff;border-radius:12px;padding:12px;margin:10px auto;box-shadow:0 4px 8px rgba(0,0,0,.2)"><h3 style="margin:0;color:#FFA500">SEALED NECTAR ACADEMY</h3><div style="margin-top:20px;font-size:14px;line-height:1.6"><b>${s.name}</b><br>ID: ${s.id}<br>Class: ${s.class}<br>Session: 2024/2025</div></div>`}
+
+// REPORT
+function genReport(){const id=rcStudent.value;const s=STUDENTS.find(x=>x.id===id);if(!s)return;let out=`<h3>THIRD TERM REPORT CARD</h3><p><b>Name:</b> ${s.name}<br><b>ID:</b> ${s.id}<br><b>Class:</b> ${s.class}</p><table><tr><th>Subject</th><th>CA</th><th>CBT</th><th>Paper</th><th>Total</th><th>Grade</th></tr>`;let total=0,count=0;SUBJECTS[s.class].forEach(sub=>{const d=JSON.parse(localStorage.getItem(`bs_${s.class}_Third Term_${sub}`)||'{}')[id]||{};const ca=+d.ca||0;const cbt=+d.cbt||0;const pap=+d.paper||0;const tot=ca+cbt+pap;total+=tot;count++;const grade=tot>=75?'A1':tot>=70?'B2':tot>=65?'B3':tot>=60?'C4':tot>=55?'C5':tot>=50?'C6':tot>=45?'D7':tot>=40?'E8':'F9';out+=`<tr><td style="text-align:left">${sub}</td><td>${ca}</td><td>${cbt}</td><td>${pap}</td><td><b>${tot}</b></td><td>${grade}</td></tr>`});const avg=count?(total/count).toFixed(1):0;out+=`</table><p><b>Total: ${total}</b> | <b>Average: ${avg}%</b></p>`;rcOut.innerHTML=out}
 </script>
 </body>
 </html>
