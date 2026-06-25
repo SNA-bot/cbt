@@ -1,4 +1,37 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SNA v6.7.4</title>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SNA Test</title>
 <style>
-body{margin:0;font-family:system-ui
+body{margin:0;font-family:system-ui;background:#f0f2f5}
+header{background:#002366;color:#fff;padding:12px;text-align:center}
+header h1{margin:0;color:#FFA500}
+nav{display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:#fff}
+nav button{flex:1 1 18%;padding:9px;border:0;background:#eee;border-radius:8px;font-weight:600;font-size:12px}
+nav button.active{background:#002366;color:#fff}
+.card{background:#fff;padding:14px;margin:10px;border-radius:12px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<header><h1>SEALED NECTAR ACADEMY</h1><div>TEST - 9 TABS</div></header>
+<nav id="tabs"></nav>
+<div style="padding:12px">
+<div id="tab-cbt" class="tab"><div class="card"><h3>CBT</h3></div></div>
+<div id="tab-broadsheet" class="tab hide"><div class="card"><h3>BROADSHEET</h3></div></div>
+<div id="tab-questions" class="tab hide"><div class="card"><h3>QUESTIONS</h3></div></div>
+<div id="tab-settings" class="tab hide"><div class="card"><h3>SETTINGS</h3></div></div>
+<div id="tab-students" class="tab hide"><div class="card"><h3>STUDENTS</h3></div></div>
+<div id="tab-attendance" class="tab hide"><div class="card"><h3>ATTENDANCE</h3></div></div>
+<div id="tab-fees" class="tab hide"><div class="card"><h3>FEES</h3></div></div>
+<div id="tab-idcard" class="tab hide"><div class="card"><h3>ID CARD</h3></div></div>
+<div id="tab-report" class="tab hide"><div class="card"><h3>REPORT</h3></div></div>
+</div>
+<script>
+const tabs=['cbt','broadsheet','questions','settings','students','attendance','fees','idcard','report'];
+document.getElementById('tabs').innerHTML=tabs.map((t,i)=>`<button class="${i==0?'active':''}" onclick="show('${t}')">${t.toUpperCase()}</button>`).join('');
+function show(t){document.querySelectorAll('.tab').forEach(d=>d.classList.add('hide'));document.getElementById('tab-'+t).classList.remove('hide');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase()===t))}
+</script>
+</body>
+</html>
