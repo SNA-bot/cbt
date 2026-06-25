@@ -1,11 +1,11 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SNA v6.7.8</title>
+<title>SNA v6.7.9</title>
 <style>
 body{margin:0;font-family:system-ui;background:#f0f2f5;-webkit-user-select:none;user-select:none}
 header{background:#002366;color:#fff;padding:12px;text-align:center;position:sticky;top:0;z-index:10}
 header h1{margin:0;color:#FFA500;font-size:26px}
 nav{display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:#fff}
-nav button{flex:1 1 18%;padding:9px;border:0;background:#eee;border-radius:8px;font-weight:600;color:#333;font-size:12px}
+nav button{flex:1 18%;padding:9px;border:0;background:#eee;border-radius:8px;font-weight:600;color:#333;font-size:12px}
 nav button.active{background:#002366;color:#fff}
 .wrap{max-width:1100px;margin:auto;padding:12px}
 .card{background:#fff;padding:14px;margin:10px 0;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
@@ -24,7 +24,7 @@ th{background:#002366;color:#fff}
 .badge{display:inline-block;padding:3px 8px;background:#FFA500;color:#002366;border-radius:6px;font-size:12px;font-weight:700}
 .error{background:#fee;border:2px solid #b00;padding:12px;margin:10px;border-radius:8px;color:#b00;font-weight:600}
 </style></head><body oncontextmenu="return false">
-<header><h1>SEALED NECTAR ACADEMY</h1><div>v6.7.8 - All 9 Tabs Working <span class="badge">ADMIN</span></div></header>
+<header><h1>SEALED NECTAR ACADEMY</h1><div>v6.7.9 - All 9 Tabs Working <span class="badge">ADMIN</span></div></header>
 <nav id="tabs"></nav>
 <div id="errorBox"></div>
 <div class="wrap">
@@ -132,10 +132,18 @@ th{background:#002366;color:#fff}
 </div></div>
 </div>
 <script>
-// TABS FIRST
+// TABS
 const tabs=['cbt','broadsheet','questions','settings','students','attendance','fees','idcard','report'];
 document.getElementById('tabs').innerHTML=tabs.map((t,i)=>`<button class="${i==0?'active':''}" onclick="show('${t}')">${t.toUpperCase()}</button>`).join('');
-function show(t){document.querySelectorAll('.tab').forEach(d=>d.classList.add('hide'));document.getElementById('tab-'+t).classList.remove('hide');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase()===t))}
+function show(t){
+  document.querySelectorAll('.tab').forEach(d=>d.classList.add('hide'));
+  document.getElementById('tab-'+t).classList.remove('hide');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase()===t));
+  // Auto-load content for these tabs when clicked
+  if(t==='students') renderStudents();
+  if(t==='attendance' &&!atTable.innerHTML) loadAtt();
+  if(t==='fees' &&!feeTable.innerHTML) loadFees();
+}
 window.onerror=function(m,l){document.getElementById('errorBox').innerHTML=`<div class="error">⚠️ Error: ${m}</div>`;return false};
 
 // DATA
@@ -153,7 +161,7 @@ function loadSettings(){const s=getSettings();setDuration.value=s.duration;setVi
 function updateExamInfo(){const s=getSettings();examInfo.innerHTML=`Duration: ${s.duration/60} mins | Violations: ${s.violations} | ${s.pin?'🔒 PIN On':'🔓 No PIN'}`}
 function resetAllData(){if(confirm('Delete all data?')){localStorage.clear();location.reload()}}
 
-// INIT ALL DROPDOWNS
+// INIT ALL DROPDOWNS + AUTO LOAD
 const classes=Object.keys(SUBJECTS);
 document.addEventListener('DOMContentLoaded',function(){
 ['cbtClass','bsClass','atClass','feeClass','qClass'].forEach(id=>{document.getElementById(id).innerHTML=classes.map(c=>`<option>${c}</option>`).join('')});
@@ -161,6 +169,8 @@ updateCbtSubjects();updateBsSubjects();updateQSubs();loadSettings();renderStuden
 idStudent.innerHTML=STUDENTS.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
 rcStudent.innerHTML=STUDENTS.map(s=>`<option value="${s.id}">${s.id} - ${s.name}</option>`).join('');
 atDate.valueAsDate=new Date();
+// Auto-load first class for attendance and fees
+loadAtt();loadFees();
 });
 
 function updateCbtSubjects(){cbtSub.innerHTML=SUBJECTS[cbtClass.value].map(s=>`<option>${s}</option>`).join('')}
@@ -183,7 +193,7 @@ function updateQCount(){const sub=qSub.value;const key=`custom_${sub}`;const arr
 function clearQs(){if(confirm('Delete all questions for '+qSub.value+'?')){localStorage.removeItem(`custom_${qSub.value}`);updateQCount()}}
 
 // BROADSHEET
-function loadBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>CA(40)</th><th>CBT(20)</th><th>Paper(40)</th><th>Total</th></tr>';studs.forEach(s=>{const d=data[s.id]||{};h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="ca_${s.id}" value="${d.ca||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="cbt_${s.id}">${d.cbt||0}</td><td><input id="pa_${s.id}" value="${d.paper||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="to_${s.id}"><b>0</b></td></tr>`});bsTable.innerHTML=h+'</table>';studs.forEach(s=>calc(s.id))}
+function loadBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>CA(40)</th><th>CBT(20)</th><th>Paper(40)</th><th>Total</th></tr>';studs.forEach(s=>{const d=data[s.id]||{};h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="ca_${s.id}" value="${d.ca||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="cbt_${s.id}">${d.cbt||0}</td><input id="pa_${s.id}" value="${d.paper||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="to_${s.id}"><b>0</b></td></tr>`});bsTable.innerHTML=h+'</table>';studs.forEach(s=>calc(s.id))}
 function calc(id){const ca=+document.getElementById(`ca_${id}`).value||0;const cbt=+document.getElementById(`cbt_${id}`).innerText||0;const pa=+document.getElementById(`pa_${id}`).value||0;document.getElementById(`to_${id}`).innerHTML=`<b>${ca+cbt+pa}</b>`}
 function saveBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');STUDENTS.filter(s=>s.class===cls).forEach(s=>{if(!data[s.id])data[s.id]={};data[s.id].ca=document.getElementById(`ca_${s.id}`).value;data[s.id].paper=document.getElementById(`pa_${s.id}`).value;data[s.id].cbt=document.getElementById(`cbt_${s.id}`).innerText});localStorage.setItem(key,JSON.stringify(data));alert('Saved')}
 
@@ -191,13 +201,11 @@ function saveBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTer
 function renderStudents(){const q=stSearch.value.toLowerCase();const list=STUDENTS.filter(s=>s.name.toLowerCase().includes(q)||s.id.toLowerCase().includes(q));stList.innerHTML='<table><tr><th>ID</th><th>Name</th><th>Class</th></tr>'+list.map(s=>`<tr><td>${s.id}</td><td>${s.name}</td><td>${s.class}</td></tr>`).join('')+'</table>'}
 
 // ATTENDANCE
-function loadAtt(){const cls=atClass.value;const date=atDate.value;if(!cls||!date)return;const key=`att_${cls}_${date}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Present</th></tr>';studs.forEach(s=>{h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input type="checkbox" id="at_${s.id}" ${data[s.id]?'checked':''}></td></tr>`});atTable.innerHTML=h+'</table>'}
+function loadAtt(){const cls=atClass.value;const date=atDate.value;if(!cls||!date){atTable.innerHTML='<p style="padding:10px;color:#666">Select class and date, then click Load</p>';return}const key=`att_${cls}_${date}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Present</th></tr>';studs.forEach(s=>{h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input type="checkbox" id="at_${s.id}" ${data[s.id]?'checked':''}></td></tr>`});atTable.innerHTML=h+'</table>'}
 function saveAtt(){const cls=atClass.value;const date=atDate.value;if(!cls||!date)return alert('Select class and date');const key=`att_${cls}_${date}`;const data={};STUDENTS.filter(s=>s.class===cls).forEach(s=>{data[s.id]=document.getElementById(`at_${s.id}`).checked});localStorage.setItem(key,JSON.stringify(data));alert('Attendance saved')}
-idStudent.innerHTML=STUDENTS.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-rcStudent.innerHTML=STUDENTS.map(s=>`<option value="${s.id}">${s.id} - ${s.name}</option>`).join('');
-atDate.valueAsDate=new Date();
+
 // FEES
-function loadFees(){const cls=feeClass.value;if(!cls)return;const key=`fees_${cls}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Paid (₦)</th><th>Balance (₦)</th></tr>';studs.forEach(s=>{const paid=+data[s.id]||0;const bal=50000-paid;h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="fee_${s.id}" value="${paid||''}" style="width:80px" onchange="updateFee('${s.id}')"></td><td id="bal_${s.id}">${bal}</td></tr>`});feeTable.innerHTML=h+'</table>'}
+function loadFees(){const cls=feeClass.value;if(!cls){feeTable.innerHTML='<p style="padding:10px;color:#666">Select class and click Load</p>';return}const key=`fees_${cls}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Paid (₦)</th><th>Balance (₦)</th></tr>';studs.forEach(s=>{const paid=+data[s.id]||0;const bal=50000-paid;h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="fee_${s.id}" value="${paid||''}" style="width:80px" onchange="updateFee('${s.id}')"></td><td id="bal_${s.id}">${bal}</td></tr>`});feeTable.innerHTML=h+'</table>'}
 function updateFee(id){const cls=feeClass.value;const key=`fees_${cls}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const paid=+document.getElementById(`fee_${id}`).value||0;data[id]=paid;localStorage.setItem(key,JSON.stringify(data));document.getElementById(`bal_${id}`).innerText=50000-paid}
 
 // ID CARD
