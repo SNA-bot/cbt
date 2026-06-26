@@ -1,7 +1,7 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sealed Nectar Academy</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f5f5f5;color:#333}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f5f5;color:#333}
 header{background:#002366;color:#fff;padding:12px;text-align:center}header h1{font-size:22px;color:#FFA500}header.v{font-size:11px;opacity:.8}
 nav{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:8px;background:#e9ecef}nav button{padding:10px 4px;border:0;background:#fff;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}nav button.active{background:#002366;color:#fff}
 nav button.locked{background:#f8f9fa;color:#999;cursor:not-allowed}nav button.locked::after{content:" 🔒"}
@@ -9,9 +9,10 @@ nav button.locked{background:#f8f9fa;color:#999;cursor:not-allowed}nav button.lo
 input,select,textarea{width:100%;padding:8px;margin:4px 0;border:1px solid #ddd;border-radius:6px;font-size:14px}
 input:disabled,select:disabled{background:#f5f5f5;cursor:not-allowed}
 button{width:100%;padding:10px;background:#002366;color:#fff;border:0;border-radius:6px;font-weight:600;margin:6px 0;cursor:pointer}
-button.secondary{background:#6c757d}button.danger{background:#dc3545}.row{display:flex;gap:8px}.row>*{flex:1}
+button.secondary{background:#6c757d}button.danger{background:#dc3545}button.success{background:#198754}.row{display:flex;gap:8px}.row>*{flex:1}
 table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}th,td{border:1px solid #ddd;padding:6px;text-align:center}
 .error{background:#dc3545;color:#fff;padding:10px;border-radius:6px;margin:8px}
+.success{background:#d1e7dd;color:#0f5132;padding:10px;border-radius:6px;margin:8px}
 .badge{background:#FFA500;color:#002366;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:700}
 .timer{background:#e7f3ff;padding:8px;border-radius:6px;text-align:center;font-weight:700;margin:8px 0}
 .timer.warn{background:#ffe7e7;color:#c00}
@@ -20,9 +21,10 @@ table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}th,td{bord
 .idcard{width:320px;height:200px;background:linear-gradient(135deg,#002366,#0044aa);color:#fff;border-radius:12px;padding:12px;margin:10px auto;box-shadow:0 4px 8px rgba(0,0,0,.2);position:relative;overflow:hidden}
 .idcard::after{content:'SNA';position:absolute;right:-10px;bottom:-20px;font-size:80px;opacity:.1;font-weight:900;color:#FFA500}
 .idphoto{width:70px;height:70px;border-radius:8px;border:2px solid #FFA500;object-fit:cover;position:absolute;right:12px;top:50px}
+.import-preview{max-height:200px;overflow-y:auto;border:1px solid #ddd;border-radius:6px;padding:8px;margin:8px 0;font-size:12px;background:#f8f9fa}
 @media print{nav,header,#errorBox,.card button{display:none!important}#idOut{margin:0}.idcard{box-shadow:none}}
 </style></head><body>
-<header><h1>SEALED NECTAR ACADEMY</h1><div class="v">v6.9.4 - STABLE <span class="badge">SECURE</span></div></header>
+<header><h1>SEALED NECTAR ACADEMY</h1><div class="v">v6.9.5 - BULK UPLOAD <span class="badge">SECURE</span></div></header>
 <nav id="tabs"></nav>
 <div id="main">
 <div id="errorBox"></div>
@@ -43,13 +45,25 @@ table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}th,td{bord
 <div id="bsTable" class="card"></div></div>
 
 <div id="tab-questions" class="tab hide">
-<div class="card"><h3>Add Questions</h3><select id="qClass" onchange="updateQSubs()"></select><select id="qSub"></select>
+<div class="card"><h3>Add Questions - Single</h3><select id="qClass" onchange="updateQSubs()"></select><select id="qSub"></select>
 <textarea id="qText" placeholder="Question" rows="2"></textarea>
 <input id="qA" placeholder="Option A"><input id="qB" placeholder="Option B">
 <input id="qC" placeholder="Option C"><input id="qD" placeholder="Option D">
 <select id="qAns"><option value="A">Correct: A</option><option value="B">Correct: B</option><option value="C">Correct: C</option><option value="D">Correct: D</option></select>
 <button onclick="addQ()">Add Question</button><button class="secondary" onclick="clearQs()">Clear All for Subject</button>
-<div id="qCount"></div></div></div>
+<div id="qCount"></div></div>
+
+<div class="card"><h3>Bulk Upload Questions - CSV</h3>
+<p style="font-size:12px;color:#666;margin:6px 0">Format: Question,A,B,C,D,Correct</p>
+<div class="row">
+<select id="csvClass"></select><select id="csvSub"></select>
+</div>
+<button class="secondary" onclick="downloadCSVTemplate()">📥 Download CSV Template</button>
+<label style="margin-top:8px">Upload CSV File: <input id="csvFile" type="file" accept=".csv" onchange="previewCSV(event)"></label>
+<div id="csvPreview" class="import-preview hide"></div>
+<button class="success" id="importBtn" onclick="importCSV()" style="display:none">Import Questions</button>
+<div id="importStatus"></div>
+</div></div>
 
 <div id="tab-settings" class="tab hide">
 <div class="card"><h3>Exam Settings</h3>
@@ -96,6 +110,7 @@ const tabs=['cbt','broadsheet','questions','settings','students','attendance','f
 const ADMIN_TABS=['broadsheet','questions','settings','attendance','fees','students'];
 let examActive=false;
 let isAdmin=false;
+let csvData=[];
 
 document.getElementById('tabs').innerHTML=tabs.map((t,i)=>`<button class="${i==0?'active':''} ${ADMIN_TABS.includes(t)?'locked':''}" onclick="show('${t}')">${t.toUpperCase()}</button>`).join('');
 
@@ -126,6 +141,7 @@ function show(t){
   if(t==='fees') loadFees();
   if(t==='idcard') loadIdStudents();
   if(t==='report') loadReportStudents();
+  if(t==='questions') updateCSVSubs();
 }
 
 function getStudents(){
@@ -137,7 +153,7 @@ function getStudents(){
 }
 
 let STUDENTS=getStudents();
- const SUBJECTS={
+  const SUBJECTS={
 "Nursery 1":["Numeracy","Literacy","Christian Religious Studies","Physical Health Education","Personal Social Emotional Development","Cultural Creative Arts","Songs and Rhymes","Animal and Soil Science","Knowledge and Understanding of the World","Safety and Health"],
 "Nursery 2":["Numeracy","Literacy","Christian Religious Studies","Physical Health Education","Personal Social Emotional Development","Cultural Creative Arts","Songs and Rhymes","Animal and Soil Science","Knowledge and Understanding of the World","Safety and Health"],
 "KG 1":["Numeracy","Literacy","Christian Religious Studies","Physical Health Education","Personal Social Emotional Development","Cultural Creative Arts","Songs and Rhymes","Animal and Soil Science","Knowledge and Understanding of the World","Safety and Health"],
@@ -151,7 +167,8 @@ let STUDENTS=getStudents();
 "JSS 1":["English Language","Mathematics","Basic Science and Technology","Social Studies","Physical Health Education","Agricultural Science","Cultural Creative Arts","Islamic Religious Studies","Business Studies","Civic Education","Yoruba","ICT","Arabic Studies"],
 "JSS 2":["English Language","Mathematics","Basic Science and Technology","Social Studies","Physical Health Education","Agricultural Science","Cultural Creative Arts","Islamic Religious Studies","Business Studies","Civic Education","Yoruba","ICT","Arabic Studies"],
 "JSS 3":["English Language","Mathematics","Basic Science and Technology","Social Studies","Physical Health Education","Agricultural Science","Cultural Creative Arts","Islamic Religious Studies","Business Studies","Civic Education","Yoruba","ICT","Arabic Studies"],
-"SSS 1":["English Language","Mathematics","Physics","Chemistry","Biology","Further Mathematics","Technical Drawing","Civic Education","Economics","Government","Trade Subject","Yoruba","Islamic Religious Studies","Literature in English","Commerce","Financial Accounting","Cultural Creative Arts","Home Economics","Agricultural Science","Social Studies","Business Studies","Basic Science and Technology","Arabic Studies","Physical Health Education","ICT"],
+"SSS 1":["English Language","Mathematics","Physics","Chemistry","Biology","Further Mathematics","Technica
+  Drawing","Civic Education","Economics","Government","Trade Subject","Yoruba","Islamic Religious Studies","Literature in English","Commerce","Financial Accounting","Cultural Creative Arts","Home Economics","Agricultural Science","Social Studies","Business Studies","Basic Science and Technology","Arabic Studies","Physical Health Education","ICT"],
 "SSS 2":["English Language","Mathematics","Physics","Chemistry","Biology","Further Mathematics","Technical Drawing","Civic Education","Economics","Government","Trade Subject","Yoruba","Islamic Religious Studies","Literature in English","Commerce","Financial Accounting","Cultural Creative Arts","Home Economics","Agricultural Science","Social Studies","Business Studies","Basic Science and Technology","Arabic Studies","Physical Health Education","ICT"],
 "SSS 3":["English Language","Mathematics","Physics","Chemistry","Biology","Further Mathematics","Technical Drawing","Civic Education","Economics","Government","Trade Subject","Yoruba","Islamic Religious Studies","Literature in English","Commerce","Financial Accounting","Cultural Creative Arts","Home Economics","Agricultural Science","Social Studies","Business Studies","Basic Science and Technology","Arabic Studies","Physical Health Education","ICT"]
 };
@@ -184,6 +201,7 @@ function resetAllData(){if(confirm('Delete all data? This cannot be undone!')){l
 function updateCbtSubjects(){cbtSub.innerHTML=(SUBJECTS[cbtClass.value]||[]).map(s=>`<option>${s}</option>`).join('')}
 function updateBsSubjects(){bsSub.innerHTML=(SUBJECTS[bsClass.value]||[]).map(s=>`<option>${s}</option>`).join('')}
 function updateQSubs(){qSub.innerHTML=(SUBJECTS[qClass.value]||[]).map(s=>`<option>${s}</option>`).join('');updateQCount()}
+function updateCSVSubs(){csvSub.innerHTML=(SUBJECTS[csvClass.value]||[]).map(s=>`<option>${s}</option>`).join('')}
 
 let qs=[],ans=[],pos=0,stu,timerInt,secLeft,violations=0,maxViolations=7;
 function getPool(sub){const key=`custom_${sub}`;const custom=JSON.parse(localStorage.getItem(key)||'[]');if(custom.length>=5)return custom;if(sub==='Physics')return PHYSICS;if(sub==='Biology')return BIOLOGY;if(sub==='Chemistry')return CHEMISTRY;return PHYSICS}
@@ -222,71 +240,59 @@ function addQ(){const sub=qSub.value;const q={q:qText.value.trim(),a:qA.value.tr
 function updateQCount(){const sub=qSub.value;const key=`custom_${sub}`;const arr=JSON.parse(localStorage.getItem(key)||'[]');qCount.innerHTML=`<b>${sub} has ${arr.length} custom questions</b>`}
 function clearQs(){if(confirm('Delete all questions for '+qSub.value+'?')){localStorage.removeItem(`custom_${qSub.value}`);updateQCount()}}
 
-function loadBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>CA(40)</th><th>CBT(20)</th><th>Paper(40)</th><th>Total</th></tr>';studs.forEach(s=>{const d=data[s.id]||{};h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="ca_${s.id}" value="${d.ca||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="cbt_${s.id}">${d.cbt||0}</td><td><input id="pa_${s.id}" value="${d.paper||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="to_${s.id}"><b>0</b></td></tr>`});bsTable.innerHTML=h+'</table>';studs.forEach(s=>calc(s.id))}
-function calc(id){const ca=+document.getElementById(`ca_${id}`).value||0;const cbt=+document.getElementById(`cbt_${id}`).innerText||0;const pa=+document.getElementById(`pa_${id}`).value||0;document.getElementById(`to_${id}`).innerHTML=`<b>${ca+cbt+pa}</b>`}
-function saveBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');STUDENTS.filter(s=>s.class===cls).forEach(s=>{if(!data[s.id])data[s.id]={};data[s.id].ca=document.getElementById(`ca_${s.id}`).value;data[s.id].paper=document.getElementById(`pa_${s.id}`).value;data[s.id].cbt=document.getElementById(`cbt_${s.id}`).innerText});localStorage.setItem(key,JSON.stringify(data));alert('Saved')}
- function previewPhoto(e){
+function downloadCSVTemplate(){
+  const csv="Question,Option A,Option B,Option C,Option D,Correct Answer\nWhat is 2+2?,2,3,4,5,C\nCapital of Nigeria?,Lagos,Abuja,Kano,Port Harcourt,B";
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='questions_template.csv';a.click();
+}
+
+function previewCSV(e){
   const file=e.target.files[0];
   if(!file)return;
   const reader=new FileReader();
   reader.onload=function(ev){
-    photoPreview.src=ev.target.result;
-    photoPreview.classList.remove('hide');
+    const text=ev.target.result;
+    const lines=text.split('\n').filter(l=>l.trim());
+    const headers=lines[0].split(',');
+    if(headers.length<6||!headers[0].toLowerCase().includes('question')){
+      importStatus.innerHTML='<div class="error">❌ Invalid CSV format. Use: Question,A,B,C,D,Correct</div>';
+      return;
+    }
+    csvData=lines.slice(1).map(l=>{
+      const cols=l.split(',').map(c=>c.trim().replace(/^"|"$/g,''));
+      return {q:cols[0],a:cols[1],b:cols[2],c:cols[3],d:cols[4],correct:cols[5]?.toUpperCase()};
+    }).filter(q=>q.q&&q.a&&q.b&&q.c&&q.d&&['A','B','C','D'].includes(q.correct));
+    
+    csvPreview.innerHTML=`<b>Found ${csvData.length} valid questions:</b><br>`+csvData.slice(0,5).map((q,i)=>`${i+1}. ${q.q.substring(0,50)}...`).join('<br>')+(csvData.length>5?`<br>...and ${csvData.length-5} more`:'');
+    csvPreview.classList.remove('hide');
+    importBtn.style.display='block';
   };
-  reader.readAsDataURL(file);
+  reader.readAsText(file);
 }
 
-function addStudent(){
-  const id=newId.value.trim().toUpperCase();
-  const name=newName.value.trim();
-  const cls=newClass.value;
-  const photo=photoPreview.src.includes('data:')?photoPreview.src:'';
-
-  if(!id||!name||!cls)return alert('Fill ID, Name, and Class');
-  if(STUDENTS.find(s=>s.id===id))return alert('Student ID already exists');
-
-  STUDENTS.push({id,name,class:cls,photo});
-  localStorage.setItem('sna_students',JSON.stringify(STUDENTS));
-
-  newId.value=newName.value=newPhoto.value='';photoPreview.classList.add('hide');
-  addStudentStatus.innerHTML='<span style="color:green">✅ Student added!</span>';
-  setTimeout(()=>addStudentStatus.innerHTML='',3000);
-  renderStudents();loadIdStudents();loadReportStudents();
+function importCSV(){
+  const sub=csvSub.value;
+  if(!sub)return alert('Select subject first');
+  if(csvData.length===0)return alert('No questions to import');
+  const key=`custom_${sub}`;
+  const existing=JSON.parse(localStorage.getItem(key)||'[]');
+  let added=0,skipped=0;
+  csvData.forEach(q=>{
+    if(!existing.find(e=>e.q===q.q)){
+      existing.push(q);
+      added++;
+    }else{
+      skipped++;
+    }
+  });
+  localStorage.setItem(key,JSON.stringify(existing));
+  importStatus.innerHTML=`<div class="success">✅ Imported ${added} questions to ${sub}. Skipped ${skipped} duplicates.</div>`;
+  csvData=[];csvPreview.classList.add('hide');importBtn.style.display='none';csvFile.value='';
+  updateQCount();
 }
 
-function deleteStudent(id){
-  if(!confirm('Delete student '+id+'? This cannot be undone.'))return;
-  STUDENTS=STUDENTS.filter(s=>s.id!==id);
-  localStorage.setItem('sna_students',JSON.stringify(STUDENTS));
-  renderStudents();loadIdStudents();loadReportStudents();
-}
-
-function renderStudents(){const q=stSearch.value.toLowerCase();const list=STUDENTS.filter(s=>s.name.toLowerCase().includes(q)||s.id.toLowerCase().includes(q));stList.innerHTML='<table><tr><th>Photo</th><th>ID</th><th>Name</th><th>Class</th><th>Action</th></tr>'+list.map(s=>`<tr><td>${s.photo?`<img src="${s.photo}" class="photo-preview" style="width:40px;height:40px">`:'—'}</td><td>${s.id}</td><td>${s.name}</td><td>${s.class}</td><td><button class="danger" style="padding:4px 8px;font-size:11px" onclick="deleteStudent('${s.id}')">Delete</button></td></tr>`).join('')+'</table>';stCount.innerText=`(${list.length})`}
-
-function loadAtt(){const cls=atClass.value;const date=atDate.value;if(!cls||!date){atTable.innerHTML='<p style="padding:10px;color:#666">Select class and date, then click Load</p>';return}const key=`att_${cls}_${date}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Present</th></tr>';studs.forEach(s=>{h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input type="checkbox" id="at_${s.id}" ${data[s.id]?'checked':''}></td></tr>`});atTable.innerHTML=h+'</table>'}
-function saveAtt(){const cls=atClass.value;const date=atDate.value;if(!cls||!date)return alert('Select class and date');const key=`att_${cls}_${date}`;const data={};STUDENTS.filter(s=>s.class===cls).forEach(s=>{data[s.id]=document.getElementById(`at_${s.id}`).checked});localStorage.setItem(key,JSON.stringify(data));alert('Attendance saved')}
-
-function loadFees(){const cls=feeClass.value;if(!cls){feeTable.innerHTML='<p style="padding:10px;color:#666">Select class and click Load</p>';return}const key=`fees_${cls}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Paid (₦)</th><th>Balance (₦)</th></tr>';studs.forEach(s=>{const paid=+data[s.id]||0;const bal=50000-paid;h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="fee_${s.id}" value="${paid||''}" style="width:80px" onchange="updateFee('${s.id}')"></td><td id="bal_${s.id}">${bal}</td></tr>`});feeTable.innerHTML=h+'</table>'}
-function updateFee(id){const cls=feeClass.value;const key=`fees_${cls}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const paid=+document.getElementById(`fee_${id}`).value||0;data[id]=paid;localStorage.setItem(key,JSON.stringify(data));document.getElementById(`bal_${id}`).innerText=50000-paid}
-
-function loadIdStudents(){idStudent.innerHTML=STUDENTS.map(s=>`<option value="${s.id}">${s.name} - ${s.id}</option>`).join('')}
-function loadReportStudents(){rcStudent.innerHTML=STUDENTS.map(s=>`<option value="${s.id}">${s.id} - ${s.name}</option>`).join('')}
-
-function genID(){const id=idStudent.value;const s=STUDENTS.find(x=>x.id===id);if(!s)return;const photo=s.photo||'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="70" height="70"%3E%3Crect fill="%23ddd" width="70" height="70"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%23999" font-size="12"%3ENo Photo%3C/text%3E%3C/svg%3E';idOut.innerHTML=`<div class="idcard"><h3 style="margin:0;color:#FFA500">SEALED NECTAR ACADEMY</h3><div style="margin-top:15px;font-size:14px;line-height:1.6"><b>${s.name}</b><br>ID: ${s.id}<br>Class: ${s.class}<br>Session: 2024/2025</div><img src="${photo}" class="idphoto"></div>`}
-
-function genReport(){const id=rcStudent.value;const s=STUDENTS.find(x=>x.id===id);if(!s)return;let out=`<h3>THIRD TERM REPORT CARD</h3><p><b>Name:</b> ${s.name}<br><b>ID:</b> ${s.id}<br><b>Class:</b> ${s.class}</p><table><tr><th>Subject</th><th>CA</th><th>CBT</th><th>Paper</th><th>Total</th><th>Grade</th></tr>`;let total=0,count=0;(SUBJECTS[s.class]||[]).forEach(sub=>{const d=JSON.parse(localStorage.getItem(`bs_${s.class}_Third Term_${sub}`)||'{}')[id]||{};const ca=+d.ca||0;const cbt=+d.cbt||0;const pap=+d.paper||0;const tot=ca+cbt+pap;total+=tot;count++;const grade=tot>=75?'A1':tot>=70?'B2':tot>=65?'B3':tot>=60?'C4':tot>=55?'C5':tot>=50?'C6':tot>=45?'D7':tot>=40?'E8':'F9';out+=`<tr><td style="text-align:left">${sub}</td><td>${ca}</td><td>${cbt}</td><td>${pap}</td><td><b>${tot}</b></td><td>${grade}</td></tr>`});const avg=count?(total/count).toFixed(1):0;out+=`</table><p><b>Total: ${total}</b> | <b>Average: ${avg}%</b></p>`;rcOut.innerHTML=out}
-
-const classes=Object.keys(SUBJECTS);
-document.addEventListener('DOMContentLoaded',function(){
-  try{
-    ['cbtClass','bsClass','atClass','feeClass','qClass','newClass'].forEach(id=>{document.getElementById(id).innerHTML=classes.map(c=>`<option>${c}</option>`).join('')});
-    updateCbtSubjects();updateBsSubjects();updateQSubs();loadSettings();renderStudents();
-    loadIdStudents();loadReportStudents();
-    atDate.valueAsDate=new Date();
-    loadAtt();loadFees();
-  }catch(e){
-    document.getElementById('errorBox').innerHTML=`<div class="error">⚠️ Init Error: ${e.message}</div>`;
-  }
-});
-</script>
-</body></html> 
+function loadBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>CA(40)</th><th>CBT(20)</th><th>Paper(40)</th><th>Total</th></tr>';studs.forEach(s=>{const d=data[s.id]||{};h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="ca_${s.id}" value="${d.ca||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="cbt_${s.id}">${d.cbt||0}</td><td><input id="pa_${s.id}" value="${d.paper||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="to_${s.id}"><b>0</b></td></tr>`});bsTable.innerHTML=h+'</table>';studs.forEach(s=>calc(s.id))}
+function calc(id){const ca=+document.getElementById(`ca_${id}`).value||0;const cbt=+document.getElementById(`cbt_${id}`).innerText||0;const pa=+document.getElementById(`pa_${id}`).value||0;document.getElementById(`to_${id}`).innerHTML=`<b>${ca+cbt+pa}</b>`}
+function saveBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');STUDENTS.filter(s=>s.class===cls).forEach(s=>{if(!data[s.id])data[s.id]={};data[s.id].ca=document.getElementById(`ca_${s.id}`).value;data[s.id].paper=document.getElementById(`pa_${s.id}`).value;data[s.id].cbt=document.getElementById(`cbt_${s.id}`).innerText});localStorage.setItem(key,JSON.stringify(data));alert('Saved')
+  
