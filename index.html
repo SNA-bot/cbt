@@ -21,7 +21,7 @@ table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}th,td{bord
 .idcard::after{content:'SNA';position:absolute;right:-10px;bottom:-20px;font-size:80px;opacity:.1;font-weight:900;color:#FFA500}
 .idphoto{width:70px;height:70px;border-radius:8px;border:2px solid #FFA500;object-fit:cover;position:absolute;right:12px;top:50px}
 </style></head><body>
-<header><h1>SEALED NECTAR ACADEMY</h1><div class="v">v6.9.2 - PHOTO ID CARDS <span class="badge">SECURE</span></div></header>
+<header><h1>SEALED NECTAR ACADEMY</h1><div class="v">v6.9.3 - FIXED NAV <span class="badge">SECURE</span></div></header>
 <nav id="tabs"></nav>
 <div id="main">
 <div id="errorBox"></div>
@@ -56,7 +56,7 @@ table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}th,td{bord
 <label>Max Violations: <input id="setViolations" type="number" value="7"></label>
 <label>Admin PIN: <input id="setPin" placeholder="Set PIN to lock admin tabs" type="password"></label>
 <button onclick="saveSettings()">Save Settings</button><div id="setStatus"></div></div>
-<div class="card"><h3>Reset</h3><button class="secondary" onclick="resetAllData()">⚠️ Reset All Data</button></div></div>
+<div class="card"><h3>Reset</h3><button class="secondary" onclick="resetAllData()">⚠️ Reset All Data</button></div>
 
 <div id="tab-students" class="tab hide">
 <div class="card"><h3>Add New Student</h3>
@@ -96,7 +96,7 @@ const ADMIN_TABS=['broadsheet','questions','settings','attendance','fees','stude
 let examActive=false;
 let isAdmin=false;
 
-document.getElementById('tabs').innerHTML=tabs.map((t,i)=>`<button class="${i==0?'active':''} ${ADMIN_TABS.includes(t)?'locked':''}" onclick="show('${t}')" data-tab="${t}">${t.toUpperCase()}</button>`).join('');
+document.getElementById('tabs').innerHTML=tabs.map((t,i)=>`<button class="${i==0?'active':''} ${ADMIN_TABS.includes(t)?'locked':''}" onclick="show('${t}')">${t.toUpperCase()}</button>`).join('');
 
 function show(t){
   if(examActive && t!=='cbt'){
@@ -119,7 +119,7 @@ function show(t){
 
   document.querySelectorAll('.tab').forEach(d=>d.classList.add('hide'));
   document.getElementById('tab-'+t).classList.remove('hide');
-  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase().includes(t)));
   if(t==='students') renderStudents();
   if(t==='attendance') loadAtt();
   if(t==='fees') loadFees();
@@ -127,7 +127,6 @@ function show(t){
   if(t==='report') loadReportStudents();
 }
 
-// Load students from localStorage or use default
 function getStudents(){
   const stored=localStorage.getItem('sna_students');
   if(stored) return JSON.parse(stored);
@@ -172,7 +171,7 @@ function saveSettings(){
     alert('🔒 Admin PIN activated. Admin tabs are now locked.');
     isAdmin=false;
     document.querySelectorAll('nav button').forEach(b=>{
-      if(ADMIN_TABS.some(t=>b.dataset.tab===t)) b.classList.add('locked');
+      if(ADMIN_TABS.some(t=>b.textContent.toLowerCase().includes(t))) b.classList.add('locked');
     });
   }else{
     document.querySelectorAll('nav button.locked').forEach(b=>b.classList.remove('locked'));
@@ -263,10 +262,10 @@ function deleteStudent(id){
   renderStudents();loadIdStudents();loadReportStudents();
 }
 
-function renderStudents(){const q=stSearch.value.toLowerCase();const list=STUDENTS.filter(s=>s.name.toLowerCase().includes(q)||s.id.toLowerCase().includes(q));stList.innerHTML='<table><tr><th>Photo</th><th>ID</th><th>Name</th><th>Class</th><th>Action</th></tr>'+list.map(s=>`<tr><td>${s.photo?`<img src="${s.photo}" class="photo-preview" style="width:40px;height:40px">`:'—'}</td><td>${s.id}</td><td>${s.name}</td><td>${s.class}</td><td><button class="danger" style="padding:4px 8px;font-size:11px" onclick="deleteStudent('${s.id}')">Delete</button></td></tr>`).join('')+'</table>';stCount.innerText=`(${list.length})`}
+function renderStudents(){const q=stSearch.value.toLowerCase();const list=STUDENTS.filter(s=>s.name.toLowerCase().includes(q)||s.id.toLowerCase().includes(q));stList.innerHTML='<table><tr><th>Photo</th><th>ID</th><th>Name</th><th>Class</th><th>Action</th></tr>'+list.map(s=>`<tr><td>${s.photo?`<img src="${s.photo}" class="photo-preview" style="width:40px;height:40px">`:'—'}</td><td>${s.id}</td><td>${s.name}</td><td>${s.class}</td><button class="danger" style="padding:4px 8px;font-size:11px" onclick="deleteStudent('${s.id}')">Delete</button></td></tr>`).join('')+'</table>';stCount.innerText=`(${list.length})`}
 
-function loadAtt(){const cls=atClass.value;const date=atDate.value;if(!cls||!date){atTable.innerHTML='<p style="padding:10px;color:#666">Select class and date, then click Load</p>';return}const key=`att_${cls}_${date}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Present</th></tr>';studs.forEach(s=>{h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input type="checkbox" id="at_${s.id}" ${
- ${data[s.id]?'checked':''}></td></tr>`});atTable.innerHTML=h+'</table>'}
+function loadAtt(){const cls=atClass.value;const date=atDate.value;if(!cls||!date){atTable.inner
+ if(!cls||!date){atTable.innerHTML='<p style="padding:10px;color:#666">Select class and date, then click Load</p>';return}const key=`att_${cls}_${date}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Present</th></tr>';studs.forEach(s=>{h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input type="checkbox" id="at_${s.id}" ${data[s.id]?'checked':''}></td></tr>`});atTable.innerHTML=h+'</table>'}
 function saveAtt(){const cls=atClass.value;const date=atDate.value;if(!cls||!date)return alert('Select class and date');const key=`att_${cls}_${date}`;const data={};STUDENTS.filter(s=>s.class===cls).forEach(s=>{data[s.id]=document.getElementById(`at_${s.id}`).checked});localStorage.setItem(key,JSON.stringify(data));alert('Attendance saved')}
 
 function loadFees(){const cls=feeClass.value;if(!cls){feeTable.innerHTML='<p style="padding:10px;color:#666">Select class and click Load</p>';return}const key=`fees_${cls}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>Paid (₦)</th><th>Balance (₦)</th></tr>';studs.forEach(s=>{const paid=+data[s.id]||0;const bal=50000-paid;h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="fee_${s.id}" value="${paid||''}" style="width:80px" onchange="updateFee('${s.id}')"></td><td id="bal_${s.id}">${bal}</td></tr>`});feeTable.innerHTML=h+'</table>'}
@@ -292,4 +291,4 @@ document.addEventListener('DOMContentLoaded',function(){
   }
 });
 </script>
-</body></html> 
+</body></html>                                                                                  
