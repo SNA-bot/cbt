@@ -151,7 +151,7 @@ function getStudents(){
 }
 
 let STUDENTS=getStudents();
-  const SUBJECTS={
+const SUBJECTS={
 "Nursery 1":["Numeracy","Literacy","Christian Religious Studies","Physical Health Education","Personal Social Emotional Development","Cultural Creative Arts","Songs and Rhymes","Animal and Soil Science","Knowledge and Understanding of the World","Safety and Health"],
 "Nursery 2":["Numeracy","Literacy","Christian Religious Studies","Physical Health Education","Personal Social Emotional Development","Cultural Creative Arts","Songs and Rhymes","Animal and Soil Science","Knowledge and Understanding of the World","Safety and Health"],
 "KG 1":["Numeracy","Literacy","Christian Religious Studies","Physical Health Education","Personal Social Emotional Development","Cultural Creative Arts","Songs and Rhymes","Animal and Soil Science","Knowledge and Understanding of the World","Safety and Health"],
@@ -285,8 +285,8 @@ function importCSV(){
   updateQCount();
 }
 
-function loadBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cl
-  ');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>CA(40)</th><th>CBT(20)</th><th>Paper(40)</th><th>Total</th></tr>';studs.forEach(s=>{const d=data[s.id]||{};h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="ca_${s.id}" value="${d.ca||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="cbt_${s.id}">${d.cbt||0}</td><td><input id="pa_${s.id}" value="${d.paper||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="to_${s.id}"><b>0</b></td></tr>`});bsTable.innerHTML=h+'</table>';studs.forEach(s=>calc(s.id))}
+function loadBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>CA(40)</th><th>CBT
+  }_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');const studs=STUDENTS.filter(s=>s.class===cls);let h='<table><tr><th>ID</th><th>Name</th><th>CA(40)</th><th>CBT(20)</th><th>Paper(40)</th><th>Total</th></tr>';studs.forEach(s=>{const d=data[s.id]||{};h+=`<tr><td>${s.id}</td><td style="text-align:left">${s.name}</td><td><input id="ca_${s.id}" value="${d.ca||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="cbt_${s.id}">${d.cbt||0}</td><td><input id="pa_${s.id}" value="${d.paper||''}" oninput="calc('${s.id}')" style="width:55px"></td><td id="to_${s.id}"><b>0</b></td></tr>`});bsTable.innerHTML=h+'</table>';studs.forEach(s=>calc(s.id))}
 function calc(id){const ca=+document.getElementById(`ca_${id}`).value||0;const cbt=+document.getElementById(`cbt_${id}`).innerText||0;const pa=+document.getElementById(`pa_${id}`).value||0;document.getElementById(`to_${id}`).innerHTML=`<b>${ca+cbt+pa}</b>`}
 function saveBS(){const cls=bsClass.value;const sub=bsSub.value;const term=bsTerm.value;const key=`bs_${cls}_${term}_${sub}`;const data=JSON.parse(localStorage.getItem(key)||'{}');STUDENTS.filter(s=>s.class===cls).forEach(s=>{if(!data[s.id])data[s.id]={};data[s.id].ca=document.getElementById(`ca_${s.id}`).value;data[s.id].paper=document.getElementById(`pa_${s.id}`).value;data[s.id].cbt=document.getElementById(`cbt_${s.id}`).innerText});localStorage.setItem(key,JSON.stringify(data));alert('Saved')}
 
