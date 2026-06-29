@@ -17,7 +17,7 @@ table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}th,td{bord
 </style></head><body>
 <header>
   <button id="logoutBtn" class="danger hide" onclick="logoutAdmin()">🔒 Logout Admin</button>
-  <h1>SEALED NECTAR ACADEMY</h1><div class="v">v6.7.15 - SECURED <span class="badge">ADMIN</span></div>
+  <h1>SEALED NECTAR ACADEMY</h1><div class="v">v6.7.16 - SECURED <span class="badge">ADMIN</span></div>
 </header>
 <nav id="tabs"></nav>
 <div id="main">
@@ -78,35 +78,37 @@ table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}th,td{bord
 
 </div>
 <script>
-// === ADMIN SECURITY LOCK - v7.0 ===
-const ADMIN_PIN = "SNA2026!"; // CHANGE THIS TO YOUR NEW PIN
+// === ADMIN SECURITY LOCK - v7.0.2 ===
+const ADMIN_PIN = "CHANGE_THIS_NOW"; // ← YOU MUST CHANGE THIS
 const ADMIN_TABS = ['broadsheet','questions','settings','students','attendance','fees','idcard','report'];
 let isAdmin = sessionStorage.getItem('snaAdmin')==='true';
 
 function checkAdminAccess(){
   if(isAdmin){
-    document.getElementById('logoutBtn').classList.remove('hide');
+    document.getElementById('logoutBtn')?.classList.remove('hide');
     return true;
   }
   const pin = prompt('Enter Admin PIN to access School Management System:\n\nStudents: Cancel to access CBT only');
   if(pin===ADMIN_PIN){
     sessionStorage.setItem('snaAdmin','true');
     isAdmin = true;
-    document.getElementById('logoutBtn').classList.remove('hide');
+    location.reload(); // Reload to show admin tabs
     return true;
   } else {
-    // Student mode: hide admin tabs
-    ADMIN_TABS.forEach(t=>{
-      const btn = document.querySelector(`nav button[onclick="show('${t}')"]`);
-      if(btn) btn.style.display='none';
-    });
+    setTimeout(()=>{
+      ADMIN_TABS.forEach(t=>{
+        const btn = document.querySelector(`nav button[onclick="show('${t}')"]`);
+        if(btn) btn.style.display='none';
+      });
+    },50);
     return false;
   }
 }
 
 function logoutAdmin(){
   sessionStorage.removeItem('snaAdmin');
-  alert('Admin logged out. Page will reload.');
+  isAdmin = false;
+  alert('Admin logged out');
   location.reload();
 }
 // === END ADMIN LOCK ===
@@ -116,15 +118,11 @@ window.onerror=function(m,s,l,c,e){document.getElementById('errorBox').innerHTML
 const tabs=['cbt','broadsheet','questions','settings','students','attendance','fees','idcard','report'];
 document.getElementById('tabs').innerHTML=tabs.map((t,i)=>`<button class="${i==0?'active':''}" onclick="show('${t}')">${t.toUpperCase()}</button>`).join('');
 
-// Run admin check BEFORE anything else
-document.addEventListener('DOMContentLoaded',function(){
-  checkAdminAccess();
-});
+checkAdminAccess();
 
 function show(t){
-  // Block admin tabs if not admin
   if(ADMIN_TABS.includes(t) &&!isAdmin){
-    alert('Admin access required. Please login as Admin.');
+    alert('Admin access required. Refresh page and enter PIN.');
     return;
   }
   document.querySelectorAll('.tab').forEach(d=>d.classList.add('hide'));
