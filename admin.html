@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SNA Admin Portal v7.6.0</title>
+  <title>SNA Admin Portal v7.6.1</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
@@ -49,7 +49,7 @@
   <div class="logout" onclick="logout()">Logout</div>
   <div class="header">
     <h1>SEALED NECTAR ACADEMY</h1>
-    <p>v7.6.0 - ADMIN PORTAL</p>
+    <p>v7.6.1 - ADMIN PORTAL</p>
   </div>
 
   <div class="tabs">
@@ -213,6 +213,51 @@ let questions = JSON.parse(localStorage.getItem('sna_questions') || '{}');
 let attendance = JSON.parse(localStorage.getItem('sna_attendance') || '{}');
 let fees = JSON.parse(localStorage.getItem('sna_fees') || '{}');
 
+// PRE-LOADED QUESTIONS: SSS 1 PHYSICS - 3RD TERM
+if(!questions['Physics']) questions['Physics'] = {};
+if(!questions['Physics']['SSS 1']) {
+  questions['Physics']['SSS 1'] = [
+    ["Which of the following is an insulator?", "Graphite", "Germanium", "Polythene", "Salt solution", "Polythene"],
+    ["The device used to measure potential difference in a circuit is", "Ammeter", "Rheostat", "Voltmeter", "Resistor", "Voltmeter"],
+    ["According to Ohm’s law, provided temperature is constant", "V ∝ 1/I", "I ∝ 1/V", "V ∝ I", "I ∝ R", "V ∝ I"],
+    ["The slope of a graph of potential difference (V) against current (I) gives", "Electromotive force", "Internal resistance", "Resistance", "Conductance", "Resistance"],
+    ["Three resistors of 2Ω, 3Ω and 5Ω are connected in series. The equivalent resistance is", "10Ω", "30/31Ω", "1.55Ω", "31/30Ω", "10Ω"],
+    ["When cells of equal e.m.f are connected in parallel, the equivalent e.m.f is", "Sum of individual e.m.f", "Same as one cell", "Product of e.m.f", "Zero", "Same as one cell"],
+    ["Electrical energy consumed is measured commercially in", "Joules", "Kilowatt-hour", "Watts", "Ampere-hour", "Kilowatt-hour"],
+    ["The formula for electrical power is", "P = V/I", "P = VI", "P = I/R", "P = QR", "P = VI"],
+    ["A fuse is designed to", "Increase current", "Melt when excessive current flows", "Store charge", "Regulate voltage", "Melt when excessive current flows"],
+    ["The minimum current that causes a fuse element to melt is called", "Current rating", "Fusing current", "Fusing factor", "Safe current", "Fusing current"],
+    ["An atom is electrically neutral when", "Number of protons equals number of neutrons", "Number of protons equals number of electrons", "Number of neutrons equals number of electrons", "Number of protons is greater than electrons", "Number of protons equals number of electrons"],
+    ["Brownian motion demonstrates that", "Molecules are stationary", "Molecules are in continuous random motion", "Molecules have fixed positions", "Matter has no particles", "Molecules are in continuous random motion"],
+    ["According to Graham’s law, rate of diffusion is", "Directly proportional to square root of molar mass", "Inversely proportional to square root of molar mass", "Directly proportional to molar mass", "Independent of molar mass", "Inversely proportional to square root of molar mass"],
+    ["Osmosis involves the movement of", "Solute particles", "Solvent molecules through a semi-permeable membrane", "Any liquid", "Gas molecules", "Solvent molecules through a semi-permeable membrane"],
+    ["A crystalline substance has", "Short range order only", "Definite internal arrangement of particles", "No definite melting point", "Haphazard arrangement of particles", "Definite internal arrangement of particles"],
+    ["Which of the following is an amorphous substance?", "Sodium chloride", "Glass", "Copper", "Sugar", "Glass"],
+    ["Surface tension is defined as", "Force per unit area", "Force per unit length", "Work done per unit area", "Energy per unit volume", "Force per unit length"],
+    ["A needle can float on water due to", "Upthrust", "Surface tension", "Viscosity", "Capillarity", "Surface tension"],
+    ["Capillarity is due to", "Difference between cohesive and adhesive forces", "Gravity only", "Atmospheric pressure", "Surface tension only", "Difference between cohesive and adhesive forces"],
+    ["Elasticity is the ability of a material to", "Break under stress", "Regain its original shape after deformation", "Stretch permanently", "Resist all forces", "Regain its original shape after deformation"],
+    ["Hooke’s law states that", "F ∝ 1/e", "F ∝ e", "e ∝ 1/F", "Stress is proportional to strain", "F ∝ e"],
+    ["Young’s modulus is the ratio of", "Stress to strain", "Strain to stress", "Force to extension", "Extension to original length", "Stress to strain"],
+    ["The point on a load-extension graph beyond which the wire does not return to its original length is the", "Proportional limit", "Elastic limit", "Yield point", "Breaking point", "Elastic limit"],
+    ["The energy stored in a stretched wire is given by", "½Fe", "Fe", "2Fe", "F/e", "½Fe"],
+    ["A fuse with a higher current rating than the circuit should be used to", "Protect the circuit", "Allow excess current", "Increase resistance", "Reduce power loss", "Allow excess current"],
+    ["The SI unit of electrical power is", "Joule", "Watt", "Volt", "Coulomb", "Watt"],
+    ["When temperature increases, the resistance of most metallic conductors", "Decreases", "Remains constant", "Increases", "Becomes zero", "Increases"],
+    ["Water rises in a glass capillary tube because", "Adhesive force > Cohesive force", "Cohesive force > Adhesive force", "Gravity is absent", "Surface tension is zero", "Adhesive force > Cohesive force"],
+    ["The internal resistance of a cell", "Increases the terminal voltage", "Reduces the terminal p.d. below the e.m.f", "Has no effect on current", "Is always zero", "Reduces the terminal p.d. below the e.m.f"],
+    ["Which of the following is a semi-conductor?", "Copper", "Silicon", "Rubber", "Glass", "Silicon"]
+  ];
+  localStorage.setItem('sna_questions', JSON.stringify(questions));
+}
+
+// AUTO-ADD PHYSICS TO SSS 1 SUBJECTS LIST
+if(!subjects['SSS 1']) subjects['SSS 1'] = [];
+if(!subjects['SSS 1'].includes('Physics')) {
+  subjects['SSS 1'].push('Physics');
+  localStorage.setItem('sna_subjects', JSON.stringify(subjects));
+}
+
 function checkPIN() {
   if(document.getElementById('pinInput').value === ADMIN_PIN){
     document.getElementById('pinModal').style.display = 'none';
@@ -307,7 +352,7 @@ function uploadQuestions(){
   reader.readAsArrayBuffer(file);
 }
 
-// BROADSHEET - FIXED
+// BROADSHEET
 function getTermTotal(studentID, subject, term){
   let cbt = cbtScores.find(c => c.id === studentID && c.subject === subject && c.term === term)?.score || 0;
   let key = `${studentID}_${subject}_${term}`;
@@ -428,10 +473,8 @@ function loadAttendance(){
   let html = '<tr><th>Name</th><th>Status</th></tr>';
   classStudents.forEach(s => {
     let status = attendance[key]?.[s.id] || 'Present';
-    html += `<tr><td>${s.name}</td><td><select id="att_${s.id}"><option ${status==='Present'?'selected':''}>Present</option><option ${status==='Absent'?'selected':''}>Absent</option><option ${status==='Late'?'selected':''}>Late</option></select></td></tr>`;
-  });
-  attTable.innerHTML = html;
-}
+    html += `<tr><td>${s.name}</td><td><select id="att_${s.id}"><option ${status==='Present'?'selected':''}>Present</option><option ${status==='Absent'?'selected':''}>Absent</option><option ${status==='Late'?'selected':''}>Late</option></select></td></
+    }
 function saveAttendance(){
   let cls = attClass.value; let date = attDate.value;
   let key = `${cls}_${date}`;
@@ -491,14 +534,13 @@ function generateBill(){
   doc.save(`${student.name}_Bill.pdf`);
 }
 
-// INIT - THIS FIXES THE DROPDOWN ISSUES
+// INIT
 function updateSubjects(){
   broadSubject.innerHTML = subjects[broadClass.value]?.map(s => `<option>${s}</option>`).join('') || '<option>No subjects</option>';
   questionSubject.innerHTML = subjects[questionClass.value]?.map(s => `<option>${s}</option>`).join('') || '<option>No subjects</option>';
   loadBroadSheet();
 }
 function init(){
-  // Populate ALL class dropdowns with full list
   [studentClass, subjectClass, broadClass, questionClass, attClass, feeClass].forEach(sel => {
     sel.innerHTML = ALL_CLASSES.map(c => `<option>${c}</option>`).join('');
   });
