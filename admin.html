@@ -1,98 +1,346 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SNA Admin Portal</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f5f5f5;color:#333}
-header{background:#002366;color:#fff;padding:12px;text-align:center;position:relative}header h1{font-size:22px;color:#FFA500}
-header.v{font-size:11px;opacity:.8}.logout{position:absolute;right:12px;top:12px;background:#dc3545;color:#fff;border:0;padding:6px 10px;border-radius:4px;font-size:12px;cursor:pointer}
-nav{display:flex;overflow:auto;background:#fff;border-bottom:1px solid #ddd}nav button{flex:1;min-width:80px;padding:10px;border:0;background:#fff;font-weight:600;border-bottom:3px solid transparent;cursor:pointer;font-size:12px}nav button.active{border-color:#002366;color:#002366}
-.tab{padding:12px;display:none}.tab.active{display:block}.card{background:#fff;border-radius:8px;padding:12px;margin:8px 0;box-shadow:0 1px 3px rgba(0,0,0,.1)}
-input,select,textarea{width:100%;padding:8px;margin:4px 0;border:1px solid #ddd;border-radius:6px;font-size:14px}
-button{width:100%;padding:10px;background:#002366;color:#fff;border:0;border-radius:6px;font-weight:600;margin:6px 0;cursor:pointer}
-button.secondary{background:#6c757d}button.danger{background:#dc3545}table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
-th,td{padding:6px;border:1px solid #ddd;text-align:left}th{background:#f0f0f0}.pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;z-index:9999}
-.pin-box{background:#fff;padding:20px;border-radius:8px;text-align:center;max-width:300px}
-.timer{background:#e7f3ff;padding:8px;border-radius:6px;text-align:center;font-weight:700;margin:8px 0}.timer.warn{background:#ffe7e7;color:#c00}
-</style></head><body>
-<div id="pinLock" class="pin-overlay"><div class="pin-box"><h3>🔒 Admin Access</h3><p style="font-size:12px;color:#666;margin:8px 0">Enter admin PIN</p><input type="password" id="pinInput" placeholder="PIN"><button onclick="checkPin()">Unlock</button></div></div>
-<header><h1>SEALED NECTAR ACADEMY</h1><div class="v">v7.0.0 - ADMIN PORTAL</div><button class="logout" onclick="logout()">Logout</button></header>
-<nav>
-<button onclick="openTab(0)" class="active">CBT</button>
-<button onclick="openTab(1)">Dashboard</button>
-<button onclick="openTab(2)">Students</button>
-<button onclick="openTab(3)">Subjects</button>
-<button onclick="openTab(4)">Scores</button>
-<button onclick="openTab(5)">Results</button>
-<button onclick="openTab(6)">Attendance</button>
-<button onclick="openTab(7)">Broadsheet</button>
-<button onclick="openTab(8)">Settings</button>
-</nav>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SNA Admin Portal v7.4.0</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f9; }
+.header { background: #1e3a8a; color: #fbbf24; padding: 15px; text-align: center; }
+.tabs { display: flex; background: #fff; border-bottom: 2px solid #ddd; overflow-x: auto; }
+.tab { padding: 12px 18px; cursor: pointer; border: none; background: none; font-weight: bold; white-space: nowrap; }
+.tab.active { color: #1e3a8a; border-bottom: 3px solid #1e3a8a; }
+.content { padding: 15px; display: none; }
+.content.active { display: block; }
+.card { background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+    th, td { border: 1px solid #ddd; padding: 5px; text-align: center; }
+    th { background: #f1f5f9; }
+.btn { background: #1e3a8a; color: #fff; padding: 7px 10px; border: none; border-radius: 4px; cursor: pointer; margin: 2px; font-size: 13px; }
+.btn-green { background: #16a34a; }
+.btn-red { background: #dc2626; }
+.btn-orange { background: #ea580c; }
+    input, select { padding: 6px; margin: 3px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+    #pinModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 999; }
+    #pinBox { background: #fff; padding: 30px; border-radius: 10px; text-align: center; width: 300px; }
+.logout { background: #dc2626; color: #fff; padding: 8px; text-align: center; cursor: pointer; font-weight: bold; }
+.form-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; align-items: center; }
+.score-input { width: 45px; text-align: center; }
+.cumulative { background: #fef3c7; font-weight: bold; }
+  </style>
+</head>
+<body>
 
-<div id="tab0" class="tab active">
-<div class="card"><h3>CBT Login</h3>
-<input id="cbtId" placeholder="Student ID e.g. SNA/2038/001" value="SNA/2038/001">
-<select id="cbtClass"></select><select id="cbtSub"></select>
-<div id="examInfo" style="font-size:12px;color:#666;margin:6px 0"></div>
-<button onclick="startCBT()">Start Exam</button></div>
-<div id="cbtExam"></div>
+<div id="pinModal">
+  <div id="pinBox">
+    <h2>🔒 Admin Access</h2>
+    <p>Enter admin PIN</p>
+    <input type="password" id="pinInput" placeholder="PIN">
+    <br><br>
+    <button class="btn" onclick="checkPIN()">Unlock</button>
+    <p id="pinError" style="color:red; display:none;">Wrong PIN</p>
+  </div>
 </div>
 
-<div id="tab1" class="tab"><div class="card"><h3>Dashboard</h3><p>Welcome, Admin. Use Settings to configure PIN, duration & violations.</p><div id="stats"></div></div></div>
+<div id="adminPanel" style="display:none;">
+  <div class="logout" onclick="logout()">Logout</div>
+  <div class="header">
+    <h1>SEALED NECTAR ACADEMY</h1>
+    <p>v7.4.0 - ADMIN PORTAL</p>
+  </div>
 
-<div id="tab2" class="tab"><div class="card"><h3>Students</h3><div id="stuList"></div></div></div>
+  <div class="tabs">
+    <button class="tab active" onclick="openTab('students')">Students</button>
+    <button class="tab" onclick="openTab('subjects')">Subjects</button>
+    <button class="tab" onclick="openTab('broadsheet')">Broadsheet</button>
+    <button class="tab" onclick="openTab('report')">Report Sheet</button>
+    <button class="tab" onclick="openTab('settings')">Settings</button>
+  </div>
 
-<div id="tab3" class="tab"><div class="card"><h3>Subjects by Class</h3><div id="subList"></div></div></div>
+  <!-- STUDENTS TAB -->
+  <div id="students" class="content active">
+    <div class="card">
+      <h3>Register/Edit Student</h3>
+      <div class="form-row">
+        <input type="hidden" id="editIndex">
+        <input type="text" id="studentID" placeholder="ID: SNA/2035/001">
+        <input type="text" id="studentName" placeholder="Full Name">
+        <select id="studentClass">
+          <option>Primary 3</option><option>Primary 5</option><option>JSS 1</option><option>JSS 2</option><option>JSS 3</option>
+          <option>SSS 1</option><option>SSS 2</option><option>SSS 3</option>
+        </select>
+        <input type="text" id="studentPhone" placeholder="Parent Phone">
+        <select id="studentGender"><option>Male</option><option>Female</option></select>
+        <input type="date" id="studentDOB">
+      </div>
+      <button class="btn btn-green" onclick="saveStudent()">Save Student</button>
+      <button class="btn" onclick="clearStudentForm()">Clear</button>
+    </div>
+    <div class="card">
+      <h3>All Students</h3>
+      <table id="studentsTable"></table>
+    </div>
+  </div>
 
-<div id="tab4" class="tab"><div class="card"><h3>Scores</h3><table id="scoreTable"><thead><tr><th>Student</th><th>Class</th><th>Subject</th><th>Score</th><th>Date</th><th>Violations</th></tr></thead><tbody></tbody></table></div></div>
+  <!-- SUBJECTS TAB -->
+  <div id="subjects" class="content">
+    <div class="card">
+      <h3>Add Subject to Class</h3>
+      <div class="form-row">
+        <select id="subjectClass">
+          <option>Primary 3</option><option>Primary 5</option><option>JSS 1</option><option>JSS 2</option><option>JSS 3</option>
+          <option>SSS 1</option><option>SSS 2</option><option>SSS 3</option>
+        </select>
+        <input type="text" id="subjectName" placeholder="e.g. Physics">
+        <button class="btn btn-green" onclick="addSubject()">Add Subject</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Subjects by Class</h3>
+      <div id="subjectsList"></div>
+    </div>
+  </div>
 
-<div id="tab5" class="tab"><div class="card"><h3>Results</h3><select id="resClass"></select><select id="resTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select><button onclick="genResults()">Generate</button><div id="resOut"></div></div></div>
+  <!-- BROADSHEET TAB -->
+  <div id="broadsheet" class="content">
+    <div class="card">
+      <h3>Broadsheet: CBT 20 + Exam 40 + C.A 40 = 100</h3>
+      <div class="form-row">
+        <label>Class:</label><select id="broadClass" onchange="updateSubjects()"></select>
+        <label>Subject:</label><select id="broadSubject" onchange="loadBroadSheet()"></select>
+        <label>Term:</label><select id="broadTerm" onchange="loadBroadSheet()">
+          <option>1st Term</option><option>2nd Term</option><option>3rd Term</option>
+        </select>
+        <button class="btn btn-orange" onclick="saveBroadSheet()">Save All</button>
+        <button class="btn btn-green" onclick="exportBroadSheet()">Download Excel</button>
+      </div>
+      <p style="font-size:12px;color:#555;">Note: 3rd Term Total = (1st + 2nd + 3rd) ÷ 3. CBT scores auto-fill for JSS1-SSS3.</p>
+      <table id="broadTable"></table>
+    </div>
+  </div>
 
-<div id="tab6" class="tab"><div class="card"><h3>Attendance</h3><input type="date" id="attDate"><div id="attList"></div><button onclick="saveAtt()">Save Attendance</button></div></div>
+  <!-- REPORT SHEET TAB -->
+  <div id="report" class="content">
+    <div class="card">
+      <h3>Generate Student Report Sheet</h3>
+      <div class="form-row">
+        <select id="reportStudent"></select>
+        <select id="reportTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
+        <input type="text" id="teacherComment" placeholder="Teacher's Comment">
+        <button class="btn" onclick="generateReport()">Generate PDF Report</button>
+      </div>
+    </div>
+  </div>
 
-<div id="tab7" class="tab"><div class="card"><h3>Broadsheet</h3><select id="brClass"></select><select id="brTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select><button onclick="genBroadsheet()">Generate Broadsheet</button><div id="broadOut"></div></div></div>
+  <!-- SETTINGS TAB -->
+  <div id="settings" class="content">
+    <div class="card">
+      <h3>Current Term Setting</h3>
+      <p>Set this before students take CBT exams so scores save to correct term:</p>
+      <select id="currentTerm" onchange="setTerm()">
+        <option>1st Term</option><option>2nd Term</option><option>3rd Term</option>
+      </select>
+    </div>
+  </div>
 
-<div id="tab8" class="tab"><div class="card"><h3>Settings</h3>
-<label>Exam Duration (minutes)</label><input type="number" id="setDuration" value="120">
-<label>Max Violations Before Auto-Submit</label><input type="number" id="setViolations" value="7">
-<label>Student Exam PIN (leave blank for no PIN)</label><input type="text" id="setPin" placeholder="e.g. CBT2026">
-<button onclick="saveSettings()">Save Settings</button>
-<div style="margin-top:12px;font-size:12px;color:#666">Note: Your admin PIN is set in code and cannot be changed here.</div>
-</div></div>
+</div>
 
 <script>
 const ADMIN_PIN = "SNA@Admin2026!Raji";
-const STUDENTS=[{"id":"SNA/2031/002","name":"Amao Khalid","class":"Primary 3"},{"id":"SNA/2031/006","name":"Ajani Aishat","class":"Primary 3"},{"id":"SNA/2031/007","name":"Abdussalam Aminah","class":"Primary 3"},{"id":"SNA/2031/008","name":"Akinlabi Zainab","class":"Primary 3"},{"id":"SNA/2033/001","name":"Abdlateef Atiyah","class":"Primary 5"},{"id":"SNA/2033/002","name":"AbdulHameed Adam","class":"Primary 5"},{"id":"SNA/2033/003","name":"Mariam Bashiru","class":"Primary 5"},{"id":"SNA/2033/004","name":"Yusuf Mustakim","class":"Primary 5"},{"id":"SNA/2033/005","name":"Murijanat Tairu","class":"Primary 5"},{"id":"SNA/2035/001","name":"Adeleke AbdulHameed Pelumi","class":"JSS 1"},{"id":"SNA/2035/002","name":"Oyem Seyi","class":"JSS 1"},{"id":"SNA/2035/003","name":"Muhammad Ibrahim","class":"JSS 1"},{"id":"SNA/2035/004","name":"Oladoja AbdulRasak","class":"JSS 1"},{"id":"SNA/2035/005","name":"Bello Abdulhafeez","class":"JSS 1"},{"id":"SNA/2035/006","name":"Yusuf Zeenatallahi","class":"JSS 1"},{"id":"SNA/2035/007","name":"Akinlabi Islamiyah","class":"JSS 1"},{"id":"SNA/2035/008","name":"Muftau Islamiyah Nifemi","class":"JSS 1"},{"id":"SNA/2035/009","name":"Olawale Rhodiat Nifemi","class":"JSS 1"},{"id":"SNA/2035/010","name":"Olawale Roqeebah Ayomide","class":"JSS 1"},{"id":"SNA/2035/011","name":"AbdulQadir Maryam","class":"JSS 1"},{"id":"SNA/2035/012","name":"Ogunbiyi Omodesire","class":"JSS 1"},{"id":"SNA/2035/013","name":"Tahiru Khadijah","class":"JSS 1"},{"id":"SNA/2036/001","name":"Abdlateef Abdulmuqsit","class":"JSS 2"},{"id":"SNA/2036/002","name":"Akinlade Awwau Olabisi","class":"JSS 2"},{"id":"SNA/2036/003","name":"Ahmad Faosiyah","class":"JSS 2"},{"id":"SNA/2036/004","name":"Badejo Khadijah","class":"JSS 2"},{"id":"SNA/2036/005","name":"Eleduwe Mahmun","class":"JSS 2"},{"id":"SNA/2037/001","name":"Adeleke Zulikha Adetutu","class":"JSS 3"},{"id":"SNA/2037/002","name":"Abdussalam AbdurRahman","class":"JSS 3"},{"id":"SNA/2037/003","name":"Ahmad Fawaz Adinoyi","class":"JSS 3"},{"id":"SNA/2038/001","name":"Abdlateef AbdulMumin","class":"SSS 1"},{"id":"SNA/2038/002","name":"Olanrewaju Sheriffdeen","class":"SSS 1"},{"id":"SNA/2038/003","name":"Akinlade Aishat Olamide","class":"SSS 1"},{"id":"SNA/2038/004","name":"Muhammad Faatimah Oyindamola","class":"SSS 1"},{"id":"SNA/2038/005","name":"Akinbolu Imaan","class":"SSS 1"},{"id":"SNA/2038/006","name":"Akinsulie Ireoluwa","class":"SSS 1"},{"id":"SNA/2039/001","name":"Onalaja Muhammad Pemisire","class":"SSS 2"},{"id":"SNA/2039/002","name":"Fatai Bilal","class":"SSS 2"}];
-const SUBJECTS={"Primary 3":["English Language","Mathematics","Basic Science","Social Studies","Civic Education","Islamic Studies","Yoruba"],"Primary 5":["English Language","Mathematics","Basic Science","Social Studies","Civic Education","Islamic Studies","Yoruba"],"JSS 1":["English Language","Mathematics","Basic Science","Social Studies","Civic Education","Islamic Studies","Business Studies","Agricultural Science"],"JSS 2":["English Language","Mathematics","Basic Science","Social Studies","Civic Education","Islamic Studies","Business Studies","Agricultural Science"],"JSS 3":["English Language","Mathematics","Basic Science","Social Studies","Civic Education","Islamic Studies","Business Studies","Agricultural Science"],"SSS 1":["Physics","Biology","Chemistry","Mathematics","English Language","Civic Education","Islamic Studies","Economics"],"SSS 2":["Physics","Biology","Chemistry","Mathematics","English Language","Civic Education","Islamic Studies","Economics"]};
-const PHYSICS=[{"q":"Which is an insulator?","a":"Graphite","b":"Polythene","c":"Salt solution","d":"Copper","correct":"B"},{"q":"Device to measure potential difference?","a":"Ammeter","b":"Voltmeter","c":"Resistor","d":"Rheostat","correct":"B"},{"q":"Ohm's law: V is proportional to?","a":"1/I","b":"I","c":"R","d":"P","correct":"B"},{"q":"3 resistors 2ohm,3ohm,5ohm in series =","a":"10ohm","b":"30/31ohm","c":"1.55ohm","d":"31/30ohm","correct":"A"},{"q":"Electrical energy unit?","a":"Joules","b":"Kilowatt-hour","c":"Watts","d":"Amps","correct":"B"}];
-const BIOLOGY=[{"q":"Micro-organisms are?","a":"Visible to eye","b":"Seen with microscope","c":"Non-living","d":"Plants only","correct":"B"},{"q":"Malaria vector?","a":"Housefly","b":"Tsetse fly","c":"Female Anopheles","d":"Aedes","correct":"C"},{"q":"HIV attacks?","a":"RBC","b":"Helper T cells CD4","c":"Platelets","d":"Muscle","correct":"B"},{"q":"Pasteurization preserves?","a":"Meat","b":"Milk","c":"Vegetables","d":"Grains","correct":"B"},{"q":"Cash crops are for?","a":"Home use","b":"Export income","c":"Animal feed","d":"Medicine only","correct":"B"}];
-const CHEMISTRY=[{"q":"Acid produces?","a":"OH- ions","b":"H+ ions","c":"NH4+","d":"O2-","correct":"B"},{"q":"Strong acid?","a":"Ethanoic","b":"H2SO4","c":"HNO3","d":"B and C","correct":"D"},{"q":"pH 2 is?","a":"Weak acid","b":"Strong acid","c":"Neutral","d":"Alkaline","correct":"B"},{"q":"Alkali?","a":"Mg(OH)2","b":"NaOH","c":"Cu(OH)2","d":"Fe(OH)3","correct":"B"},{"q":"Diamond is bad conductor because?","a":"Free electrons","b":"No free electrons","c":"Soft","d":"Layered","correct":"B"}];
-const DEFAULT_SETTINGS={duration:7200,violations:7,pin:""};
-function getSettings(){return JSON.parse(localStorage.getItem('sna_settings')||JSON.stringify(DEFAULT_SETTINGS))}
-function saveSettings(){const s={duration:parseInt(setDuration.value)*60,violations:parseInt(setViolations.value),pin:setPin.value.trim()};localStorage.setItem('sna_settings',JSON.stringify(s));alert('Settings saved');updateExamInfo()}
-function updateExamInfo(){const s=getSettings();examInfo.innerHTML=`Duration: ${s.duration/60} mins | Violations: ${s.violations} | ${s.pin?'🔒 PIN On':'🔓 No PIN'}`}
-function checkPin(){if(pinInput.value===ADMIN_PIN){pinLock.style.display='none';sessionStorage.setItem('adminUnlocked','1')}else{alert('Wrong PIN')}}
-function logout(){sessionStorage.removeItem('adminUnlocked');location.reload()}
-if(sessionStorage.getItem('adminUnlocked')){pinLock.style.display='none'}
-let qs=[],ans=[],pos=0,stu,timerInt,secLeft,violations=0,examActive=false,maxViolations=7;
-function getPool(sub){const key=`custom_${sub}`;const custom=JSON.parse(localStorage.getItem(key)||'[]');if(custom.length>=5)return custom;if(sub==='Physics')return PHYSICS;if(sub==='Biology')return BIOLOGY;if(sub==='Chemistry')return CHEMISTRY;return PHYSICS}
-function startCBT(){const id=cbtId.value.trim().toUpperCase();const cls=cbtClass.value;const sub=cbtSub.value;const s=STUDENTS.find(x=>x.id===id);if(!s)return alert('ID not found');if(s.class!==cls)return alert(`ID belongs to ${s.class}`);const settings=getSettings();if(settings.pin){const entered=prompt('Enter Exam PIN:');if(entered!==settings.pin){return alert('Wrong PIN')}}stu={...s,sub};const pool=getPool(sub);qs=[...pool].sort(()=>0.5-Math.random()).slice(0,Math.min(20,pool.length));ans=Array(qs.length).fill(null);pos=0;violations=0;examActive=true;secLeft=settings.duration;maxViolations=settings.violations;startTimer();showQ();document.addEventListener('visibilitychange',handleVisibility);window.addEventListener('blur',handleVisibility)}
-function startTimer(){clearInterval(timerInt);updateTimerDisplay();timerInt=setInterval(()=>{secLeft--;updateTimerDisplay();if(secLeft<=0){clearInterval(timerInt);alert('Time up!');submit()}},1000)}
-function updateTimerDisplay(){const m=Math.floor(secLeft/60).toString().padStart(2,'0');const s=(secLeft%60).toString().padStart(2,'0');const el=document.getElementById('timerBar');if(el){el.textContent=`${stu.name} | ${stu.sub} | Time: ${m}:${s} | Violations: ${violations}/${maxViolations}`;el.classList.toggle('warn',secLeft<120)}}
-function handleVisibility(){if(!examActive||!document.hidden)return;violations++;updateTimerDisplay();if(violations>=maxViolations){alert(`${maxViolations} violations. Exam submitted.`);submit()}else{alert(`Warning ${violations}/${maxViolations}`)}}
-function showQ(){const q=qs[pos];cbtExam.innerHTML=`<div id="timerBar" class="timer"></div><b>Q${pos+1}/${qs.length}</b><p>${q.q}</p>`+['a','b','c','d'].map(k=>`<label style="display:block;margin:6px 0"><input type=radio name=r ${ans[pos]===k.toUpperCase()?'checked':''} onchange="ans[${pos}]='${k.toUpperCase()}'"> ${k.toUpperCase()}. ${q[k]}</label>`).join('')+`<div style="display:flex;gap:8px;margin-top:10px"><button class="secondary" onclick="pos>0&&pos--&&showQ()">Prev</button><button onclick="pos<qs.length-1?(pos++&&showQ()):submit()">${pos<qs.length-1?'Next':'Submit'}</button></div>`;updateTimerDisplay()}
-function submit(){if(!examActive)return;examActive=false;clearInterval(timerInt);document.removeEventListener('visibilitychange',handleVisibility);window.removeEventListener('blur',handleVisibility);let sc=0;qs.forEach((q,i)=>{if(ans[i]===q.correct)sc++});const scores=JSON.parse(localStorage.getItem('sna_scores')||'[]');scores.push({studentId:stu.id,name:stu.name,class:stu.class,subject:stu.sub,score:sc,total:qs.length,date:new Date().toISOString().split('T')[0],violations});localStorage.setItem('sna_scores',JSON.stringify(scores));cbtExam.innerHTML=`<h3>Submitted</h3><p>Score: <b>${sc}/${qs.length}</b></p><p>Violations: ${violations}/${maxViolations}</p><p>Your result has been saved</p>`;loadScores()}
-function openTab(i){document.querySelectorAll('nav button').forEach((b,j)=>b.classList.toggle('active',i===j));document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j))}
-function loadStudents(){stuList.innerHTML='<table><thead><tr><th>ID</th><th>Name</th><th>Class</th></tr></thead><tbody>'+STUDENTS.map(s=>`<tr><td>${s.id}</td><td>${s.name}</td><td>${s.class}</td></tr>`).join('')+'</tbody></table>'}
-function loadSubjects(){subList.innerHTML=Object.keys(SUBJECTS).map(c=>`<div class="card"><b>${c}</b><ul>${SUBJECTS[c].map(s=>`<li>${s}</li>`).join('')}</ul></div>`).join('')}
-function loadScores(){const scores=JSON.parse(localStorage.getItem('sna_scores')||'[]');scoreTable.querySelector('tbody').innerHTML=scores.map(s=>`<tr><td>${s.name}</td><td>${s.class}</td><td>${s.subject}</td><td>${s.score}/${s.total}</td><td>${s.date}</td><td>${s.violations}</td></tr>`).join('');stats.innerHTML=`<p>Total Exams: ${scores.length}</p>`}
-function genResults(){const cls=resClass.value;const st=STUDENTS.filter(s=>s.class===cls);resOut.innerHTML='<table><thead><tr><th>Student</th><th>Average</th></tr></thead><tbody>'+st.map(s=>`<tr><td>${s.name}</td><td>-</td></tr>`).join('')+'</tbody></table>'}
-function genBroadsheet(){const cls=brClass.value;const st=STUDENTS.filter(s=>s.class===cls);broadOut.innerHTML='<table><thead><tr><th>Student</th>'+SUBJECTS[cls].map(s=>`<th>${s}</th>`).join('')+'</tr></thead><tbody>'+st.map(s=>`<tr><td>${s.name}</td>`+SUBJECTS[cls].map(()=>'<td>-</td>').join('')+'</tr>').join('')+'</tbody></table>'}
-function saveAtt(){alert('Attendance saved')}
-const classes=Object.keys(SUBJECTS);
-document.addEventListener('DOMContentLoaded',function(){
-  cbtClass.innerHTML=classes.map(c=>`<option>${c}</option>`).join('');
-  cbtClass.onchange=()=>{cbtSub.innerHTML=SUBJECTS[cbtClass.value].map(s=>`<option>${s}</option>`).join('')};
-  cbtClass.onchange();resClass.innerHTML=brClass.innerHTML=classes.map(c=>`<option>${c}</option>`).join('');
-  attDate.valueAsDate=new Date();loadStudents();loadSubjects();loadScores();
-  const s=getSettings();setDuration.value=s.duration/60;setViolations.value=s.violations;setPin.value=s.pin;updateExamInfo();
-});
-</script></body></html>
+let students = JSON.parse(localStorage.getItem('sna_students') || '[]');
+let subjects = JSON.parse(localStorage.getItem('sna_subjects') || '{}');
+let cbtScores = JSON.parse(localStorage.getItem('sna_cbt_scores') || '[]');
+let broadsheet = JSON.parse(localStorage.getItem('sna_broadsheet') || '{}');
+
+function checkPIN() {
+  if(document.getElementById('pinInput').value === ADMIN_PIN){
+    document.getElementById('pinModal').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    currentTerm.value = localStorage.getItem('currentTerm') || '1st Term';
+    init();
+  } else { document.getElementById('pinError').style.display = 'block'; }
+}
+function logout(){ location.reload(); }
+function openTab(tabName) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(tabName).classList.add('active');
+  event.target.classList.add('active');
+}
+function setTerm(){ localStorage.setItem('currentTerm', currentTerm.value); alert('Current term set to: ' + currentTerm.value); }
+
+// STUDENTS CRUD
+function saveStudent(){
+  let idx = document.getElementById('editIndex').value;
+  let s = { id: studentID.value.trim(), name: studentName.value.trim(), class: studentClass.value,
+    phone: studentPhone.value.trim(), gender: studentGender.value, dob: studentDOB.value };
+  if(!s.id ||!s.name) return alert('ID and Name required');
+  if(idx === ''){ students.push(s); } else { students[idx] = s; }
+  localStorage.setItem('sna_students', JSON.stringify(students));
+  loadStudents(); clearStudentForm(); init();
+}
+function editStudent(i){ 
+  let s = students[i]; editIndex.value = i; studentID.value = s.id; studentName.value = s.name; 
+  studentClass.value = s.class; studentPhone.value = s.phone; studentGender.value = s.gender; studentDOB.value = s.dob;
+}
+function deleteStudent(i){ 
+  if(confirm('Delete this student? All scores will be lost.')){ students.splice(i,1); localStorage.setItem('sna_students', JSON.stringify(students)); loadStudents(); init(); }
+}
+function clearStudentForm(){ editIndex.value = ''; studentID.value = studentName.value = studentPhone.value = studentDOB.value = ''; }
+function loadStudents(){
+  let html = '<tr><th>ID</th><th>Name</th><th>Class</th><th>Phone</th><th>Action</th></tr>';
+  students.forEach((s,i)=>{ 
+    html += `<tr><td>${s.id}</td><td>${s.name}</td><td>${s.class}</td><td>${s.phone}</td>
+    <td><button class="btn" onclick="editStudent(${i})">Edit</button>
+    <button class="btn btn-red" onclick="deleteStudent(${i})">Del</button></td></tr>` 
+  });
+  studentsTable.innerHTML = html;
+}
+
+// SUBJECTS CRUD
+function addSubject(){
+  let cls = subjectClass.value; let sub = subjectName.value.trim();
+  if(!sub) return alert('Enter subject name');
+  if(!subjects[cls]) subjects[cls] = [];
+  if(!subjects[cls].includes(sub)) subjects[cls].push(sub);
+  localStorage.setItem('sna_subjects', JSON.stringify(subjects));
+  loadSubjects(); subjectName.value = ''; init();
+}
+function deleteSubject(cls,sub){
+  subjects[cls] = subjects[cls].filter(s => s!== sub);
+  localStorage.setItem('sna_subjects', JSON.stringify(subjects)); loadSubjects(); init();
+}
+function loadSubjects(){
+  let html = ''; 
+  for(let cls in subjects){
+    html += `<h4>${cls}</h4><ul>`;
+    subjects[cls].forEach(sub => { html += `<li>${sub} <button class="btn btn-red" onclick="deleteSubject('${cls}','${sub}')">X</button></li>` });
+    html += '</ul>';
+  }
+  subjectsList.innerHTML = html;
+}
+
+// BROADSHEET WITH CUMULATIVE 3RD TERM
+function getTermTotal(studentID, subject, term){
+  let cbt = cbtScores.find(c => c.id === studentID && c.subject === subject && c.term === term)?.score || 0;
+  let key = `${studentID}_${subject}_${term}`;
+  let exam = broadsheet[key]?.exam || 0;
+  let ca = broadsheet[key]?.ca || 0;
+  return Number(cbt) + Number(exam) + Number(ca);
+}
+
+function loadBroadSheet(){
+  let cls = broadClass.value; let sub = broadSubject.value; let term = broadTerm.value;
+  if(!cls ||!sub) return;
+  let classStudents = students.filter(s => s.class === cls);
+  let html = '<tr><th>Name</th><th>CBT /20</th><th>Exam /40</th><th>C.A /40</th><th>Total /100</th><th>Grade</th><th>Pos</th></tr>';
+  let totals = [];
+  
+  classStudents.forEach(s => {
+    let cbt = cbtScores.find(c => c.id === s.id && c.subject === sub && c.term === term)?.score || 0;
+    let key = `${s.id}_${sub}_${term}`;
+    let exam = broadsheet[key]?.exam || 0;
+    let ca = broadsheet[key]?.ca || 0;
+    let total = Number(cbt) + Number(exam) + Number(ca);
+    
+    // 3RD TERM CUMULATIVE LOGIC
+    let displayTotal = total;
+    let isCumulative = false;
+    if(term === '3rd Term'){
+      let t1 = getTermTotal(s.id, sub, '1st Term');
+      let t2 = getTermTotal(s.id, sub, '2nd Term');
+      if(t1 > 0 || t2 > 0){ 
+        displayTotal = Math.round((t1 + t2 + total) / 3);
+        isCumulative = true;
+      }
+    }
+    
+    totals.push({id:s.id, total:displayTotal});
+    let grade = displayTotal >= 70? 'A' : displayTotal >= 60? 'B' : displayTotal >= 50? 'C' : displayTotal >= 45? 'D' : 'F';
+    let rowClass = isCumulative? 'cumulative' : '';
+    html += `<tr class="${rowClass}"><td>${s.name}</td>
+      <td>${cbt}</td>
+      <td><input class="score-input" type="number" max="40" value="${exam}" id="exam_${s.id}"></td>
+      <td><input class="score-input" type="number" max="40" value="${ca}" id="ca_${s.id}"></td>
+      <td><b>${displayTotal}</b>${isCumulative?' *':''}</td><td>${grade}</td><td id="pos_${s.id}">-</td></tr>`;
+  });
+  broadTable.innerHTML = html;
+  
+  totals.sort((a,b)=>b.total-a.total);
+  totals.forEach((t,i)=>{ if(document.getElementById(`pos_${t.id}`)) document.getElementById(`pos_${t.id}`).innerText = i+1; });
+}
+function saveBroadSheet(){
+  let cls = broadClass.value; let sub = broadSubject.value; let term = broadTerm.value;
+  students.filter(s => s.class === cls).forEach(s => {
+    let key = `${s.id}_${sub}_${term}`;
+    broadsheet[key] = {
+      exam: document.getElementById(`exam_${s.id}`).value || 0,
+      ca: document.getElementById(`ca_${s.id}`).value || 0,
+      term: term
+    };
+  });
+  localStorage.setItem('sna_broadsheet', JSON.stringify(broadsheet));
+  alert('Broadsheet saved!'); loadBroadSheet();
+}
+function exportBroadSheet(){ XLSX.writeFile(XLSX.utils.table_to_book(broadTable), `${broadClass.value}_${broadSubject.value}_${broadTerm.value}_Broadsheet.xlsx`); }
+
+// REPORT SHEET
+function generateReport(){
+  const { jsPDF } = window.jspdf;
+  let doc = new jsPDF();
+  let sid = reportStudent.value;
+  let student = students.find(s => s.id === sid);
+  let term = reportTerm.value;
+  
+  doc.setFontSize(16); doc.text("SEALED NECTAR ACADEMY", 105, 15, {align: "center"});
+  doc.setFontSize(12); doc.text(`${term} Report Sheet`, 105, 22, {align: "center"});
+  doc.text(`Name: ${student.name} | Class: ${student.class} | ID: ${student.id}`, 20, 35);
+  
+  let y = 45; doc.text("Subject",20,y); doc.text("CBT",50,y); doc.text("Exam",65,y); doc.text("C.A",80,y); doc.text("Total",95,y); doc.text("Grade",115,y);
+  y+=7;
+  
+  let grandTotal = 0; let subjectCount = 0;
+  subjects[student.class]?.forEach(sub => {
+    let cbt = cbtScores.find(c => c.id === sid && c.subject === sub && c.term === term)?.score || 0;
+    let key = `${sid}_${sub}_${term}`;
+    let exam = broadsheet[key]?.exam || 0;
+    let ca = broadsheet[key]?.ca || 0;
+    let total = Number(cbt) + Number(exam) + Number(ca);
+    
+    if(term === '3rd Term'){
+      let t1 = getTermTotal(sid, sub, '1st Term');
+      let t2 = getTermTotal(sid, sub, '2nd Term');
+      if(t1 > 0 || t2 > 0) total = Math.round((t1 + t2 + total) / 3);
+    }
+    
+    let grade = total >= 70? 'A' : total >= 60? 'B' : total >= 50? 'C' : total >= 45? 'D' : 'F';
+    grandTotal += total; subjectCount++;
+    doc.text(sub.substring(0,15),20,y); doc.text(String(cbt),50,y); doc.text(String(exam),65,y); doc.text(String(ca),80,y); doc.text(String(total),95,y); doc.text(grade,115,y);
+    y+=7;
+  });
+  
+  let avg = (grandTotal/subjectCount).toFixed(1);
+  y+=5; doc.text(`Total: ${grandTotal} | Average: ${avg}%`,20,y);
+  y+=7; doc.text(`Teacher's Comment: ${teacherComment.value}`,20,y);
+  if(term === '3rd Term') { y+=7; doc.text('* 3rd Term scores are cumulative averages',20,y); }
+  
+  doc.save(`${student.name}_${term}_Report.pdf`);
+}
+
+// INIT
+function updateSubjects(){
+  broadSubject.innerHTML = subjects[broadClass.value]?.map(s => `<option>${s}</option>`).join('') || '';
+  loadBroadSheet();
+}
+function init(){
+  loadStudents(); loadSubjects(); 
+  let classes = [...new Set(students.map(s => s.class))];
+  broadClass.innerHTML = classes.map(c => `<option>${c}</option>`).join('');
+  updateSubjects();
+  reportStudent.innerHTML = students.map(s => `<option value="${s.id}">${s.name} - ${s.class}</option>`).join('');
+}
+</script>
+</body>
+</html>
