@@ -366,13 +366,10 @@ function loadBroadSheet(){
       <td><b>${displayTotal}</b>${isCumulative?' *':''}</td><td>${grade}</td><td id="pos_${s.id}">-</td></tr>`;
   });
   broadTable.innerHTML = html;
-}}</td></tr>`;
-  });
-  feesTable.innerHTML = html;
-}
-function generateReceipt(){
-  const { jsPDF } = window.jspdf;
-  let doc = new jsPDF();
+   }
+   function generateReceipt(){  // <-- Add 'funct'
+  const { jsPDF } = window.jspdf;  // <-- Add 'con' 
+   let doc = new jsPDF();  // <-- Add 'let'
   let sid = receiptStudent.value;
   let student = students.find(s => s.id === sid);
   let amt = receiptAmount.value;
