@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SNA Admin Portal v7.4.0</title>
+  <title>SNA Admin Portal v7.6.0</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f9; }
 .header { background: #1e3a8a; color: #fbbf24; padding: 15px; text-align: center; }
 .tabs { display: flex; background: #fff; border-bottom: 2px solid #ddd; overflow-x: auto; }
-.tab { padding: 12px 18px; cursor: pointer; border: none; background: none; font-weight: bold; white-space: nowrap; }
+.tab { padding: 10px 12px; cursor: pointer; border: none; background: none; font-weight: bold; white-space: nowrap; font-size: 12px; }
 .tab.active { color: #1e3a8a; border-bottom: 3px solid #1e3a8a; }
 .content { padding: 15px; display: none; }
 .content.active { display: block; }
@@ -29,6 +29,7 @@
 .form-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; align-items: center; }
 .score-input { width: 45px; text-align: center; }
 .cumulative { background: #fef3c7; font-weight: bold; }
+.empty-msg { color: #666; font-style: italic; padding: 10px; }
   </style>
 </head>
 <body>
@@ -48,14 +49,17 @@
   <div class="logout" onclick="logout()">Logout</div>
   <div class="header">
     <h1>SEALED NECTAR ACADEMY</h1>
-    <p>v7.4.0 - ADMIN PORTAL</p>
+    <p>v7.6.0 - ADMIN PORTAL</p>
   </div>
 
   <div class="tabs">
     <button class="tab active" onclick="openTab('students')">Students</button>
     <button class="tab" onclick="openTab('subjects')">Subjects</button>
     <button class="tab" onclick="openTab('broadsheet')">Broadsheet</button>
-    <button class="tab" onclick="openTab('report')">Report Sheet</button>
+    <button class="tab" onclick="openTab('report')">Report</button>
+    <button class="tab" onclick="openTab('idcard')">ID Card</button>
+    <button class="tab" onclick="openTab('attendance')">Attendance</button>
+    <button class="tab" onclick="openTab('fees')">Fees/Bills</button>
     <button class="tab" onclick="openTab('settings')">Settings</button>
   </div>
 
@@ -67,10 +71,7 @@
         <input type="hidden" id="editIndex">
         <input type="text" id="studentID" placeholder="ID: SNA/2035/001">
         <input type="text" id="studentName" placeholder="Full Name">
-        <select id="studentClass">
-          <option>Primary 3</option><option>Primary 5</option><option>JSS 1</option><option>JSS 2</option><option>JSS 3</option>
-          <option>SSS 1</option><option>SSS 2</option><option>SSS 3</option>
-        </select>
+        <select id="studentClass"></select>
         <input type="text" id="studentPhone" placeholder="Parent Phone">
         <select id="studentGender"><option>Male</option><option>Female</option></select>
         <input type="date" id="studentDOB">
@@ -89,12 +90,17 @@
     <div class="card">
       <h3>Add Subject to Class</h3>
       <div class="form-row">
-        <select id="subjectClass">
-          <option>Primary 3</option><option>Primary 5</option><option>JSS 1</option><option>JSS 2</option><option>JSS 3</option>
-          <option>SSS 1</option><option>SSS 2</option><option>SSS 3</option>
-        </select>
-        <input type="text" id="subjectName" placeholder="e.g. Physics">
+        <select id="subjectClass"></select>
+        <input type="text" id="subjectName" placeholder="e.g. Mathematics">
         <button class="btn btn-green" onclick="addSubject()">Add Subject</button>
+      </div>
+      <h3>Upload Questions via Excel</h3>
+      <div class="form-row">
+        <select id="questionClass"></select>
+        <select id="questionSubject"></select>
+        <button class="btn" onclick="downloadTemplate()">Download Template</button>
+        <input type="file" id="questionFile" accept=".xlsx,.xls">
+        <button class="btn btn-green" onclick="uploadQuestions()">Upload Questions</button>
       </div>
     </div>
     <div class="card">
@@ -116,7 +122,7 @@
         <button class="btn btn-orange" onclick="saveBroadSheet()">Save All</button>
         <button class="btn btn-green" onclick="exportBroadSheet()">Download Excel</button>
       </div>
-      <p style="font-size:12px;color:#555;">Note: 3rd Term Total = (1st + 2nd + 3rd) ÷ 3. CBT scores auto-fill for JSS1-SSS3.</p>
+      <p style="font-size:12px;color:#555;">Note: 3rd Term Total = (1st + 2nd + 3rd) ÷ 3. CBT auto-fills for JSS1-SSS3 only.</p>
       <table id="broadTable"></table>
     </div>
   </div>
@@ -130,6 +136,54 @@
         <select id="reportTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
         <input type="text" id="teacherComment" placeholder="Teacher's Comment">
         <button class="btn" onclick="generateReport()">Generate PDF Report</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ID CARD TAB -->
+  <div id="idcard" class="content">
+    <div class="card">
+      <h3>Generate Student ID Card</h3>
+      <select id="idStudent"></select>
+      <button class="btn" onclick="generateIDCard()">Generate PDF ID Card</button>
+    </div>
+  </div>
+
+  <!-- ATTENDANCE TAB -->
+  <div id="attendance" class="content">
+    <div class="card">
+      <h3>Mark Daily Attendance</h3>
+      <div class="form-row">
+        <select id="attClass"></select>
+        <input type="date" id="attDate">
+        <button class="btn btn-green" onclick="loadAttendance()">Load Class</button>
+        <button class="btn btn-orange" onclick="saveAttendance()">Save Attendance</button>
+        <button class="btn" onclick="exportAttendance()">Download Excel</button>
+      </div>
+      <table id="attTable"></table>
+    </div>
+  </div>
+
+  <!-- FEES/BILLS TAB -->
+  <div id="fees" class="content">
+    <div class="card">
+      <h3>Set School Fees Template</h3>
+      <div class="form-row">
+        <select id="feeClass"></select>
+        <input type="number" id="feeAmount" placeholder="Amount ₦">
+        <input type="text" id="feeDesc" placeholder="Description e.g. 1st Term Fees">
+        <button class="btn btn-green" onclick="setFee()">Set Fee</button>
+      </div>
+      <table id="feesTable"></table>
+    </div>
+    <div class="card">
+      <h3>Generate Receipt / School Bill</h3>
+      <div class="form-row">
+        <select id="receiptStudent"></select>
+        <input type="number" id="receiptAmount" placeholder="Amount Paid ₦">
+        <input type="text" id="receiptFor" placeholder="Payment For">
+        <button class="btn" onclick="generateReceipt()">Generate Receipt PDF</button>
+        <button class="btn btn-green" onclick="generateBill()">Generate Bill PDF</button>
       </div>
     </div>
   </div>
@@ -149,10 +203,15 @@
 
 <script>
 const ADMIN_PIN = "SNA@Admin2026!Raji";
+const ALL_CLASSES = ['Creche','Nursery 1','Nursery 2','K.G','Primary 1','Primary 2','Primary 3','Primary 4','Primary 5','JSS 1','JSS 2','JSS 3','SSS 1','SSS 2','SSS 3'];
+const CBT_CLASSES = ['JSS 1','JSS 2','JSS 3','SSS 1','SSS 2','SSS 3'];
 let students = JSON.parse(localStorage.getItem('sna_students') || '[]');
 let subjects = JSON.parse(localStorage.getItem('sna_subjects') || '{}');
 let cbtScores = JSON.parse(localStorage.getItem('sna_cbt_scores') || '[]');
 let broadsheet = JSON.parse(localStorage.getItem('sna_broadsheet') || '{}');
+let questions = JSON.parse(localStorage.getItem('sna_questions') || '{}');
+let attendance = JSON.parse(localStorage.getItem('sna_attendance') || '{}');
+let fees = JSON.parse(localStorage.getItem('sna_fees') || '{}');
 
 function checkPIN() {
   if(document.getElementById('pinInput').value === ADMIN_PIN){
@@ -171,7 +230,7 @@ function openTab(tabName) {
 }
 function setTerm(){ localStorage.setItem('currentTerm', currentTerm.value); alert('Current term set to: ' + currentTerm.value); }
 
-// STUDENTS CRUD
+// STUDENTS
 function saveStudent(){
   let idx = document.getElementById('editIndex').value;
   let s = { id: studentID.value.trim(), name: studentName.value.trim(), class: studentClass.value,
@@ -196,10 +255,10 @@ function loadStudents(){
     <td><button class="btn" onclick="editStudent(${i})">Edit</button>
     <button class="btn btn-red" onclick="deleteStudent(${i})">Del</button></td></tr>` 
   });
-  studentsTable.innerHTML = html;
+  studentsTable.innerHTML = html || '<tr><td colspan="5" class="empty-msg">No students added yet</td></tr>';
 }
 
-// SUBJECTS CRUD
+// SUBJECTS + QUESTIONS
 function addSubject(){
   let cls = subjectClass.value; let sub = subjectName.value.trim();
   if(!sub) return alert('Enter subject name');
@@ -214,15 +273,41 @@ function deleteSubject(cls,sub){
 }
 function loadSubjects(){
   let html = ''; 
-  for(let cls in subjects){
-    html += `<h4>${cls}</h4><ul>`;
-    subjects[cls].forEach(sub => { html += `<li>${sub} <button class="btn btn-red" onclick="deleteSubject('${cls}','${sub}')">X</button></li>` });
-    html += '</ul>';
-  }
-  subjectsList.innerHTML = html;
+  ALL_CLASSES.forEach(cls => {
+    if(subjects[cls]?.length){
+      html += `<h4>${cls}</h4><ul>`;
+      subjects[cls].forEach(sub => { html += `<li>${sub} <button class="btn btn-red" onclick="deleteSubject('${cls}','${sub}')">X</button></li>` });
+      html += '</ul>';
+    }
+  });
+  subjectsList.innerHTML = html || '<p class="empty-msg">No subjects added yet. Add subjects above first.</p>';
+}
+function downloadTemplate(){
+  let ws = XLSX.utils.aoa_to_sheet([['Question','OptionA','OptionB','OptionC','OptionD','CorrectAnswer']]);
+  let wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Template');
+  XLSX.writeFile(wb, 'SNA_Questions_Template.xlsx');
+}
+function uploadQuestions(){
+  let file = document.getElementById('questionFile').files[0];
+  let cls = questionClass.value; let sub = questionSubject.value;
+  if(!file ||!cls ||!sub) return alert('Select class, subject and file');
+  let reader = new FileReader();
+  reader.onload = function(e){
+    let data = new Uint8Array(e.target.result);
+    let wb = XLSX.read(data, {type: 'array'});
+    let ws = wb.Sheets[wb.SheetNames[0]];
+    let json = XLSX.utils.sheet_to_json(ws, {header:1});
+    json.shift();
+    if(!questions[sub]) questions[sub] = {};
+    questions[sub][cls] = json;
+    localStorage.setItem('sna_questions', JSON.stringify(questions));
+    alert(`Uploaded ${json.length} questions for ${sub} - ${cls}`);
+  };
+  reader.readAsArrayBuffer(file);
 }
 
-// BROADSHEET WITH CUMULATIVE 3RD TERM
+// BROADSHEET - FIXED
 function getTermTotal(studentID, subject, term){
   let cbt = cbtScores.find(c => c.id === studentID && c.subject === subject && c.term === term)?.score || 0;
   let key = `${studentID}_${subject}_${term}`;
@@ -230,11 +315,11 @@ function getTermTotal(studentID, subject, term){
   let ca = broadsheet[key]?.ca || 0;
   return Number(cbt) + Number(exam) + Number(ca);
 }
-
 function loadBroadSheet(){
   let cls = broadClass.value; let sub = broadSubject.value; let term = broadTerm.value;
-  if(!cls ||!sub) return;
+  if(!cls ||!sub || sub === 'No subjects') { broadTable.innerHTML = '<tr><td class="empty-msg">Select class and subject. Add subjects in Subjects tab first.</td></tr>'; return; }
   let classStudents = students.filter(s => s.class === cls);
+  if(classStudents.length === 0){ broadTable.innerHTML = '<tr><td class="empty-msg">No students in this class</td></tr>'; return; }
   let html = '<tr><th>Name</th><th>CBT /20</th><th>Exam /40</th><th>C.A /40</th><th>Total /100</th><th>Grade</th><th>Pos</th></tr>';
   let totals = [];
   
@@ -245,7 +330,6 @@ function loadBroadSheet(){
     let ca = broadsheet[key]?.ca || 0;
     let total = Number(cbt) + Number(exam) + Number(ca);
     
-    // 3RD TERM CUMULATIVE LOGIC
     let displayTotal = total;
     let isCumulative = false;
     if(term === '3rd Term'){
@@ -286,21 +370,18 @@ function saveBroadSheet(){
 }
 function exportBroadSheet(){ XLSX.writeFile(XLSX.utils.table_to_book(broadTable), `${broadClass.value}_${broadSubject.value}_${broadTerm.value}_Broadsheet.xlsx`); }
 
-// REPORT SHEET
+// REPORT + ID CARD + ATTENDANCE + FEES
 function generateReport(){
   const { jsPDF } = window.jspdf;
   let doc = new jsPDF();
   let sid = reportStudent.value;
   let student = students.find(s => s.id === sid);
   let term = reportTerm.value;
-  
   doc.setFontSize(16); doc.text("SEALED NECTAR ACADEMY", 105, 15, {align: "center"});
   doc.setFontSize(12); doc.text(`${term} Report Sheet`, 105, 22, {align: "center"});
   doc.text(`Name: ${student.name} | Class: ${student.class} | ID: ${student.id}`, 20, 35);
-  
   let y = 45; doc.text("Subject",20,y); doc.text("CBT",50,y); doc.text("Exam",65,y); doc.text("C.A",80,y); doc.text("Total",95,y); doc.text("Grade",115,y);
   y+=7;
-  
   let grandTotal = 0; let subjectCount = 0;
   subjects[student.class]?.forEach(sub => {
     let cbt = cbtScores.find(c => c.id === sid && c.subject === sub && c.term === term)?.score || 0;
@@ -308,38 +389,123 @@ function generateReport(){
     let exam = broadsheet[key]?.exam || 0;
     let ca = broadsheet[key]?.ca || 0;
     let total = Number(cbt) + Number(exam) + Number(ca);
-    
     if(term === '3rd Term'){
       let t1 = getTermTotal(sid, sub, '1st Term');
       let t2 = getTermTotal(sid, sub, '2nd Term');
       if(t1 > 0 || t2 > 0) total = Math.round((t1 + t2 + total) / 3);
     }
-    
     let grade = total >= 70? 'A' : total >= 60? 'B' : total >= 50? 'C' : total >= 45? 'D' : 'F';
     grandTotal += total; subjectCount++;
     doc.text(sub.substring(0,15),20,y); doc.text(String(cbt),50,y); doc.text(String(exam),65,y); doc.text(String(ca),80,y); doc.text(String(total),95,y); doc.text(grade,115,y);
     y+=7;
   });
-  
-  let avg = (grandTotal/subjectCount).toFixed(1);
+  let avg = subjectCount > 0? (grandTotal/subjectCount).toFixed(1) : 0;
   y+=5; doc.text(`Total: ${grandTotal} | Average: ${avg}%`,20,y);
   y+=7; doc.text(`Teacher's Comment: ${teacherComment.value}`,20,y);
   if(term === '3rd Term') { y+=7; doc.text('* 3rd Term scores are cumulative averages',20,y); }
-  
   doc.save(`${student.name}_${term}_Report.pdf`);
 }
+function generateIDCard(){
+  const { jsPDF } = window.jspdf;
+  let doc = new jsPDF({format: [85.6, 54]});
+  let sid = idStudent.value;
+  let student = students.find(s => s.id === sid);
+  doc.setFillColor(30, 58, 138); doc.rect(0, 0, 85.6, 15, 'F');
+  doc.setTextColor(251, 191, 36); doc.setFontSize(10); doc.text("SEALED NECTAR ACADEMY", 42.8, 10, {align: "center"});
+  doc.setTextColor(0, 0, 0); doc.setFontSize(8);
+  doc.text(`Name: ${student.name}`, 5, 25);
+  doc.text(`ID: ${student.id}`, 5, 30);
+  doc.text(`Class: ${student.class}`, 5, 35);
+  doc.text(`DOB: ${student.dob}`, 5, 40);
+  doc.text(`Session: 2025/2026`, 5, 45);
+  doc.save(`${student.name}_ID.pdf`);
+}
+function loadAttendance(){
+  let cls = attClass.value; let date = attDate.value;
+  if(!cls ||!date) return alert('Select class and date');
+  let classStudents = students.filter(s => s.class === cls);
+  let key = `${cls}_${date}`;
+  let html = '<tr><th>Name</th><th>Status</th></tr>';
+  classStudents.forEach(s => {
+    let status = attendance[key]?.[s.id] || 'Present';
+    html += `<tr><td>${s.name}</td><td><select id="att_${s.id}"><option ${status==='Present'?'selected':''}>Present</option><option ${status==='Absent'?'selected':''}>Absent</option><option ${status==='Late'?'selected':''}>Late</option></select></td></tr>`;
+  });
+  attTable.innerHTML = html;
+}
+function saveAttendance(){
+  let cls = attClass.value; let date = attDate.value;
+  let key = `${cls}_${date}`;
+  attendance[key] = {};
+  students.filter(s => s.class === cls).forEach(s => {
+    attendance[key][s.id] = document.getElementById(`att_${s.id}`).value;
+  });
+  localStorage.setItem('sna_attendance', JSON.stringify(attendance));
+  alert('Attendance saved!');
+}
+function exportAttendance(){ XLSX.writeFile(XLSX.utils.table_to_book(attTable), `Attendance_${attClass.value}_${attDate.value}.xlsx`); }
+function setFee(){
+  let cls = feeClass.value; let amt = feeAmount.value; let desc = feeDesc.value;
+  if(!cls ||!amt) return alert('Select class and amount');
+  fees[cls] = {amount: amt, desc: desc};
+  localStorage.setItem('sna_fees', JSON.stringify(fees));
+  loadFeesTable();
+  alert(`Fee set for ${cls}: ₦${amt}`);
+}
+function loadFeesTable(){
+  let html = '<tr><th>Class</th><th>Description</th><th>Amount</th></tr>';
+  ALL_CLASSES.forEach(cls => {
+    if(fees[cls]) html += `<tr><td>${cls}</td><td>${fees[cls].desc}</td><td>₦${fees[cls].amount}</td></tr>`;
+  });
+  feesTable.innerHTML = html;
+}
+function generateReceipt(){
+  const { jsPDF } = window.jspdf;
+  let doc = new jsPDF();
+  let sid = receiptStudent.value;
+  let student = students.find(s => s.id === sid);
+  let amt = receiptAmount.value;
+  doc.setFontSize(16); doc.text("SEALED NECTAR ACADEMY", 105, 20, {align: "center"});
+  doc.setFontSize(14); doc.text("SCHOOL FEE RECEIPT", 105, 30, {align: "center"});
+  doc.setFontSize(12);
+  doc.text(`Receipt No: SNA${Date.now()}`, 20, 50);
+  doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 60);
+  doc.text(`Student Name: ${student.name}`, 20, 70);
+  doc.text(`Class: ${student.class}`, 20, 80);
+  doc.text(`Amount Paid: ₦${amt}`, 20, 90);
+  doc.text(`Payment For: ${receiptFor.value || fees[student.class]?.desc || 'School Fees'}`, 20, 100);
+  doc.save(`${student.name}_Receipt.pdf`);
+}
+function generateBill(){
+  const { jsPDF } = window.jspdf;
+  let doc = new jsPDF();
+  let sid = receiptStudent.value;
+  let student = students.find(s => s.id === sid);
+  doc.setFontSize(16); doc.text("SEALED NECTAR ACADEMY", 105, 20, {align: "center"});
+  doc.setFontSize(14); doc.text("SCHOOL BILL", 105, 30, {align: "center"});
+  doc.setFontSize(12);
+  doc.text(`Student Name: ${student.name}`, 20, 50);
+  doc.text(`Class: ${student.class}`, 20, 60);
+  doc.text(`Bill For: ${fees[student.class]?.desc || 'School Fees'}`, 20, 70);
+  doc.text(`Amount Due: ₦${fees[student.class]?.amount || '0'}`, 20, 80);
+  doc.text(`Session: 2025/2026`, 20, 90);
+  doc.save(`${student.name}_Bill.pdf`);
+}
 
-// INIT
+// INIT - THIS FIXES THE DROPDOWN ISSUES
 function updateSubjects(){
-  broadSubject.innerHTML = subjects[broadClass.value]?.map(s => `<option>${s}</option>`).join('') || '';
+  broadSubject.innerHTML = subjects[broadClass.value]?.map(s => `<option>${s}</option>`).join('') || '<option>No subjects</option>';
+  questionSubject.innerHTML = subjects[questionClass.value]?.map(s => `<option>${s}</option>`).join('') || '<option>No subjects</option>';
   loadBroadSheet();
 }
 function init(){
-  loadStudents(); loadSubjects(); 
-  let classes = [...new Set(students.map(s => s.class))];
-  broadClass.innerHTML = classes.map(c => `<option>${c}</option>`).join('');
-  updateSubjects();
+  // Populate ALL class dropdowns with full list
+  [studentClass, subjectClass, broadClass, questionClass, attClass, feeClass].forEach(sel => {
+    sel.innerHTML = ALL_CLASSES.map(c => `<option>${c}</option>`).join('');
+  });
+  loadStudents(); loadSubjects(); updateSubjects(); loadFeesTable();
   reportStudent.innerHTML = students.map(s => `<option value="${s.id}">${s.name} - ${s.class}</option>`).join('');
+  idStudent.innerHTML = students.map(s => `<option value="${s.id}">${s.name} - ${s.class}</option>`).join('');
+  receiptStudent.innerHTML = students.map(s => `<option value="${s.id}">${s.name} - ${s.class}</option>`).join('');
 }
 </script>
 </body>
