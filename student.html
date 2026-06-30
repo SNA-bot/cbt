@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SNA Student Portal v7.4.0</title>
+  <title>SNA Student Portal v7.6.0</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f9; }
 .header { background: #1e3a8a; color: #fbbf24; padding: 15px; text-align: center; }
@@ -12,21 +12,21 @@
 .btn { background: #1e3a8a; color: #fff; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
 .btn-green { background: #16a34a; }
     input, select { padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
- .question { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
- .options label { display: block; margin: 8px 0; cursor: pointer; }
+.question { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+.options label { display: block; margin: 8px 0; cursor: pointer; }
     #examArea, #resultArea { display: none; }
- .timer { font-size: 18px; font-weight: bold; color: #dc2626; text-align: right; }
+.timer { font-size: 18px; font-weight: bold; color: #dc2626; text-align: right; }
+.empty-msg { color: #dc2626; font-style: italic; padding: 10px; background: #fee2e2; border-radius: 5px; }
   </style>
 </head>
 <body>
 
 <div class="header">
   <h1>SEALED NECTAR ACADEMY</h1>
-  <p>STUDENT CBT PORTAL v7.4.0</p>
+  <p>STUDENT CBT PORTAL v7.6.0</p>
 </div>
 
 <div class="container">
-  <!-- LOGIN AREA -->
   <div id="loginArea" class="card">
     <h2>Student Login</h2>
     <input type="text" id="loginID" placeholder="Enter Student ID e.g SNA/2035/001">
@@ -34,16 +34,15 @@
     <p id="loginError" style="color:red; display:none;">Student ID not found. Contact Admin.</p>
   </div>
 
-  <!-- SUBJECT SELECTION -->
   <div id="subjectArea" class="card" style="display:none;">
     <h2>Welcome, <span id="studentName"></span></h2>
     <p>Class: <span id="studentClass"></span></p>
     <h3>Select Subject</h3>
     <select id="examSubject"></select>
-    <button class="btn btn-green" onclick="startExam()">Start Exam</button>
+    <div id="subjectMsg"></div>
+    <button class="btn btn-green" onclick="startExam()" id="startBtn">Start Exam</button>
   </div>
 
-  <!-- EXAM AREA -->
   <div id="examArea" class="card">
     <div class="timer">Time Left: <span id="time">30:00</span></div>
     <h2 id="examTitle"></h2>
@@ -51,7 +50,6 @@
     <button class="btn btn-green" onclick="submitExam()">Submit Exam</button>
   </div>
 
-  <!-- RESULT AREA -->
   <div id="resultArea" class="card">
     <h2>Exam Completed</h2>
     <p>Your CBT score has been submitted to the admin.</p>
@@ -64,6 +62,7 @@
 let students = JSON.parse(localStorage.getItem('sna_students') || '[]');
 let subjects = JSON.parse(localStorage.getItem('sna_subjects') || '{}');
 let questions = JSON.parse(localStorage.getItem('sna_questions') || '{}');
+const CBT_CLASSES = ['JSS 1','JSS 2','JSS 3','SSS 1','SSS 2','SSS 3'];
 let currentStudent = null;
 let currentQuestions = [];
 let timer;
@@ -76,13 +75,22 @@ function loginStudent(){
     document.getElementById('loginError').style.display = 'block'; 
     return; 
   }
+  document.getElementById('loginError').style.display = 'none';
   document.getElementById('loginArea').style.display = 'none';
   document.getElementById('subjectArea').style.display = 'block';
   document.getElementById('studentName').innerText = currentStudent.name;
   document.getElementById('studentClass').innerText = currentStudent.class;
   
   let classSubjects = subjects[currentStudent.class] || [];
-  examSubject.innerHTML = classSubjects.map(s => `<option>${s}</option>`).join('');
+  if(classSubjects.length === 0){
+    examSubject.innerHTML = '<option>No subjects available</option>';
+    subjectMsg.innerHTML = '<p class="empty-msg">No subjects have been added for your class yet. Contact your admin.</p>';
+    document.getElementById('startBtn').disabled = true;
+  } else {
+    examSubject.innerHTML = classSubjects.map(s => `<option>${s}</option>`).join('');
+    subjectMsg.innerHTML = '';
+    document.getElementById('startBtn').disabled = false;
+  }
 }
 
 function startExam(){
@@ -135,8 +143,7 @@ function submitExam(){
   let scoreOutOf20 = Math.round((score / currentQuestions.length) * 20);
   let subject = document.getElementById('examSubject').value;
   
-  let eligibleClasses = ['JSS 1','JSS 2','JSS 3','SSS 1','SSS 2','SSS 3'];
-  if(eligibleClasses.includes(currentStudent.class)){
+  if(CBT_CLASSES.includes(currentStudent.class)){
     saveCBTtoBroadsheet(currentStudent.id, currentStudent.name, currentStudent.class, subject, scoreOutOf20);
   }
   
