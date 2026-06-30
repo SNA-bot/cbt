@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SNA Admin Portal v7.6.3</title>
+  <title>SNA Admin Portal v7.6.4</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
@@ -22,7 +22,7 @@
 .btn-green { background: #16a34a; }
 .btn-red { background: #dc2626; }
 .btn-orange { background: #ea580c; }
-    input, select { padding: 6px; margin: 3px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+    input, select { padding: 6px; margin: 3px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; width: 100%; max-width: 180px; }
 .logout { background: #dc2626; color: #fff; padding: 8px; text-align: center; cursor: pointer; font-weight: bold; }
 .form-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; align-items: center; }
 .score-input { width: 45px; text-align: center; }
@@ -36,7 +36,7 @@
   <div class="logout" onclick="logout()">Logout</div>
   <div class="header">
     <h1>SEALED NECTAR ACADEMY</h1>
-    <p>v7.6.3 - ADMIN PORTAL - PHYSICS LOADED</p>
+    <p>v7.6.4 - ADMIN PORTAL - PHYSICS LOADED</p>
   </div>
 
   <div class="tabs">
@@ -249,10 +249,11 @@ function saveStudent(){
   let idx = document.getElementById('editIndex').value;
   let s = { id: studentID.value.trim(), name: studentName.value.trim(), class: studentClass.value,
     phone: studentPhone.value.trim(), gender: studentGender.value, dob: studentDOB.value };
-  if(!s.id ||!s.name) return alert('ID and Name required');
+  if(!s.id ||!s.name ||!s.class) return alert('ID, Name and Class required');
   if(idx === ''){ students.push(s); } else { students[idx] = s; }
   localStorage.setItem('sna_students', JSON.stringify(students));
   loadStudents(); clearStudentForm(); init();
+  alert('Student saved!');
 }
 function editStudent(i){ 
   let s = students[i]; editIndex.value = i; studentID.value = s.id; studentName.value = s.name; 
@@ -363,109 +364,7 @@ function loadBroadSheet(){
       <td><b>${displayTotal}</b>${isCumulative?' *':''}</td><td>${grade}</td><td id="pos_${s.id}">-</td></tr>`;
   });
   broadTable.innerHTML = html;
-  
-  totals.sort((a,b)=>b.total-a.total);
-  totals.forEach((t,i)=>{ if(document.getElementById(`pos_${t.id}`)) document.getElementById(`pos_${t.id}`).innerText = i+1; });
-}
-function saveBroadSheet(){
-  let cls = broadClass.value; let sub = broadSubject.value; let term = broadTerm.value;
-  students.filter(s => s.class === cls).forEach(s => {
-    let key = `${s.id}_${sub}_${term}`;
-    broadsheet[key] = {
-      exam: document.getElementById(`exam_${s.id}`).value || 0,
-      ca: document.getElementById(`ca_${s.id}`).value || 0,
-      term: term
-    };
-  });
-  localStorage.setItem('sna_broadsheet', JSON.stringify(broadsheet));
-  alert('Broadsheet saved!'); loadBroadSheet();
-}
-function exportBroadSheet(){ XLSX.writeFile(XLSX.utils.table_to_book(broadTable), `${broadClass.value}_${broadSubject.value}_${broadTerm.value}_Broadsheet.xlsx`); }
-
-function generateReport(){
-  const { jsPDF } = window.jspdf;
-  let doc = new jsPDF();
-  let sid = reportStudent.value;
-  let student = students.find(s => s.id === sid);
-  let term = reportTerm.value;
-  doc.setFontSize(16); doc.text("SEALED NECTAR ACADEMY", 105, 15, {align: "center"});
-  doc.setFontSize(12); doc.text(`${term} Report Sheet`, 105, 22, {align: "center"});
-  doc.text(`Name: ${student.name} | Class: ${student.class} | ID: ${student.id}`, 20, 35);
-  let y = 45; doc.text("Subject",20,y); doc.text("CBT",50,y); doc.text("Exam",65,y); doc.text("C.A",80,y); doc.text("Total",95,y); doc.text("Grade",115,y);
-  y+=7;
-  let grandTotal = 0; let subjectCount = 0;
-  subjects[student.class]?.forEach(sub => {
-    let cbt = cbtScores.find(c => c.id === sid && c.subject === sub && c.term === term)?.score || 0;
-    let key = `${sid}_${sub}_${term}`;
-    let exam = broadsheet[key]?.exam || 0;
-    let ca = broadsheet[key]?.ca || 0;
-    let total = Number(cbt) + Number(exam) + Number(ca);
-    if(term === '3rd Term'){
-      let t1 = getTermTotal(sid, sub, '1st Term');
-      let t2 = getTermTotal(sid, sub, '2nd Term');
-      if(t1 > 0 || t2 > 0) total = Math.round((t1 + t2 + total) / 3);
-    }
-    let grade = total >= 70? 'A' : total >= 60? 'B' : total >= 50? 'C' : total >= 45? 'D' : 'F';
-    grandTotal += total; subjectCount++;
-    doc.text(sub.substring(0,15),20,y); doc.text(String(cbt),50,y); doc.text(String(exam),65,y); doc.text(String(ca),80,y); doc.text(String(total),95,y); doc.text(grade,115,y);
-    y+=7;
-  });
-  let avg = subjectCount > 0? (grandTotal/subjectCount).toFixed(1) : 0;
-  y+=5; doc.text(`Total: ${grandTotal} | Average: ${avg}%`,20,y);
-  y+=7; doc.text(`Teacher's Comment: ${teacherComment.value}`,20,y);
-  if(term === '3rd Term') { y+=7; doc.text('* 3rd Term scores are cumulative averages',20,y); }
-  doc.save(`${student.name}_${term}_Report.pdf`);
-}
-function generateIDCard(){
-  const { jsPDF } = window.jspdf;
-  let doc = new jsPDF({format: [85.6, 54]});
-  let sid = idStudent.value;
-  let student = students.find(s => s.id === sid);
-  doc.setFillColor(30, 58, 138); doc.rect(0, 0, 85.6, 15, 'F');
-  doc.setTextColor(251, 191, 36); doc.setFontSize(10); doc.text("SEALED NECTAR ACADEMY", 42.8, 10, {align: "center"});
-  doc.setTextColor(0, 0, 0); doc.setFontSize(8);
-  doc.text(`Name: ${student.name}`, 5, 25);
-  doc.text(`ID: ${student.id}`, 5, 30);
-  doc.text(`Class: ${student.class}`, 5, 35);
-  doc.text(`DOB: ${student.dob}`, 5, 40);
-  doc.text(`Session: 2025/2026`, 5, 45);
-  doc.save(`${student.name}_ID.pdf`);
-}
-function loadAttendance(){
-  let cls = attClass.value; let date = attDate.value;
-  if(!cls ||!date) return alert('Select class and date');
-  let classStudents = students.filter(s => s.class === cls);
-  let key = `${cls}_${date}`;
-  let html = '<tr><th>Name</th><th>Status</th></tr>';
-  classStudents.forEach(s => {
-    let status = attendance[key]?.[s.id] || 'Present';
-    html += `<tr><td>${s.name}</td><td><select id="att_${s.id}"><option ${status==='Present'?'selected':''}>Present</option><option ${status==='Absent'?'selected':''}>Absent</option><option ${status==='Late'?'selected':''}>Late</option></select></td></tr>`;
-  });
-  attTable.innerHTML = html;
-}
-function saveAttendance(){
-  let cls = attClass.value; let date = attDate.value;
-  let key = `${cls}_${date}`;
-  attendance[key] = {};
-  students.filter(s => s.class === cls).forEach(s => {
-    attendance[key][s.id] = document.getElementById(`att_${s.id}`).value;
-  });
-  localStorage.setItem('sna_attendance', JSON.stringify(attendance));
-  alert('Attendance saved!');
-}
-function exportAttendance(){ XLSX.writeFile(XLSX.utils.table_to_book(attTable), `Attendance_${attClass.value}_${attDate.value}.xlsx`); }
-function setFee(){
-  let cls = feeClass.value; let amt = feeAmount.value; let desc = feeDesc.value;
-  if(!cls ||!amt) return alert('Select class and amount');
-  fees[cls] = {amount: amt, desc: desc};
-  localStorage.setItem('sna_fees', JSON.stringify(fees));
-  loadFeesTable();
-  alert(`Fee set for ${cls}: ₦${amt}`);
-}
-function loadFeesTable(){
-  let html = '<tr><th>Class</th><th>Description</th><th>Amount</th></tr>';
-  ALL_CLASSES.forEach(cls => {
-    if(fees[cls]) html += `<tr><td>${cls}</td><td>${fees[cls].desc}</td><td>₦${fees[cls].amount}</td></tr>`;
+}}</td></tr>`;
   });
   feesTable.innerHTML = html;
 }
@@ -475,8 +374,8 @@ function generateReceipt(){
   let sid = receiptStudent.value;
   let student = students.find(s => s.id === sid);
   let amt = receiptAmount.value;
-  doc.setFontSize(16); doc.text("SEALED NECTAR ACADE
-     MY", 105, 20, {align: "center"});
+  if(!student) return alert('Select a student first');
+  doc.setFontSize(16); doc.text("SEALED NECTAR ACADEMY", 105, 20, {align: "center"});
   doc.setFontSize(14); doc.text("SCHOOL FEE RECEIPT", 105, 30, {align: "center"});
   doc.setFontSize(12);
   doc.text(`Receipt No: SNA${Date.now()}`, 20, 50);
@@ -492,6 +391,7 @@ function generateBill(){
   let doc = new jsPDF();
   let sid = receiptStudent.value;
   let student = students.find(s => s.id === sid);
+  if(!student) return alert('Select a student first');
   doc.setFontSize(16); doc.text("SEALED NECTAR ACADEMY", 105, 20, {align: "center"});
   doc.setFontSize(14); doc.text("SCHOOL BILL", 105, 30, {align: "center"});
   doc.setFontSize(12);
@@ -519,8 +419,8 @@ function init(){
   receiptStudent.innerHTML = students.map(s => `<option value="${s.id}">${s.name} - ${s.class}</option>`).join('');
 }
 
-// Auto-run init when page loads
+// Auto-run init when page loads - THIS IS CRITICAL
 window.onload = init;
 </script>
 </body>
-</html>                           
+</html>
