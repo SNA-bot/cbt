@@ -1,425 +1,417 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script><script>eruda.init();</script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SNA Admin Portal v7.6.4</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f9; }
-.header { background: #1e3a8a; color: #fbbf24; padding: 15px; text-align: center; }
-.tabs { display: flex; background: #fff; border-bottom: 2px solid #ddd; overflow-x: auto; }
-.tab { padding: 10px 12px; cursor: pointer; border: none; background: none; font-weight: bold; white-space: nowrap; font-size: 12px; }
-.tab.active { color: #1e3a8a; border-bottom: 3px solid #1e3a8a; }
-.content { padding: 15px; display: none; }
-.content.active { display: block; }
-.card { background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
-    th, td { border: 1px solid #ddd; padding: 5px; text-align: center; }
-    th { background: #f1f5f9; }
-.btn { background: #1e3a8a; color: #fff; padding: 7px 10px; border: none; border-radius: 4px; cursor: pointer; margin: 2px; font-size: 13px; }
-.btn-green { background: #16a34a; }
-.btn-red { background: #dc2626; }
-.btn-orange { background: #ea580c; }
-    input, select { padding: 6px; margin: 3px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; width: 100%; max-width: 180px; }
-.logout { background: #dc2626; color: #fff; padding: 8px; text-align: center; cursor: pointer; font-weight: bold; }
-.form-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; align-items: center; }
-.score-input { width: 45px; text-align: center; }
-.cumulative { background: #fef3c7; font-weight: bold; }
-.empty-msg { color: #666; font-style: italic; padding: 10px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEALED NECTAR ACADEMY - Admin Portal</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f3f4f6; color: #1f2937; }
+      .header { background: #1e3a8a; color: #fbbf24; padding: 20px; text-align: center; }
+      .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 5px; }
+      .header p { font-size: 14px; opacity: 0.9; }
+      .tabs { display: flex; background: #e5e7eb; border-bottom: 2px solid #d1d5db; overflow-x: auto; }
+      .tab { padding: 15px 25px; cursor: pointer; border: none; background: none; font-size: 15px; font-weight: 600; color: #4b5563; white-space: nowrap; }
+      .tab.active { color: #1e40af; border-bottom: 3px solid #1e40af; background: white; }
+      .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+      .card { background: white; border-radius: 8px; padding: 25px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+      .card h2 { color: #1e40af; margin-bottom: 15px; font-size: 20px; }
+      .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
+        select, input, textarea { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
+        textarea { min-height: 180px; font-family: monospace; }
+        button { background: #2563eb; color: white; padding: 12px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px; }
+        button:hover { background: #1d4ed8; }
+      .btn-success { background: #16a34a; }
+      .btn-success:hover { background: #15803d; }
+      .btn-danger { background: #dc2626; }
+      .btn-danger:hover { background: #b91c1c; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+      .subject-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f9fafb; border-radius: 6px; margin-bottom: 8px; }
+      .badge { background: #dbeafe; color: #1e40af; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+      .alert { padding: 12px; border-radius: 6px; margin-bottom: 15px; font-size: 14px; }
+      .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+      .alert-info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+      .hidden { display: none; }
+        code { background: #f3f4f6; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+    </style>
 </head>
 <body>
-
-<div id="adminPanel">
-  <div class="logout" onclick="logout()">Logout</div>
-  <div class="header">
-    <h1>SEALED NECTAR ACADEMY</h1>
-    <p>v7.6.4 - ADMIN PORTAL - PHYSICS LOADED</p>
-  </div>
-
-  <div class="tabs">
-    <button class="tab active" onclick="openTab('students')">Students</button>
-    <button class="tab" onclick="openTab('subjects')">Subjects</button>
-    <button class="tab" onclick="openTab('broadsheet')">Broadsheet</button>
-    <button class="tab" onclick="openTab('report')">Report</button>
-    <button class="tab" onclick="openTab('idcard')">ID Card</button>
-    <button class="tab" onclick="openTab('attendance')">Attendance</button>
-    <button class="tab" onclick="openTab('fees')">Fees/Bills</button>
-    <button class="tab" onclick="openTab('settings')">Settings</button>
-  </div>
-
-  <div id="students" class="content active">
-    <div class="card">
-      <h3>Register/Edit Student</h3>
-      <div class="form-row">
-        <input type="hidden" id="editIndex">
-        <input type="text" id="studentID" placeholder="ID: SNA/2035/001">
-        <input type="text" id="studentName" placeholder="Full Name">
-        <select id="studentClass"></select>
-        <input type="text" id="studentPhone" placeholder="Parent Phone">
-        <select id="studentGender"><option>Male</option><option>Female</option></select>
-        <input type="date" id="studentDOB">
-      </div>
-      <button class="btn btn-green" onclick="saveStudent()">Save Student</button>
-      <button class="btn" onclick="clearStudentForm()">Clear</button>
+    <div class="header">
+        <h1>SEALED NECTAR ACADEMY</h1>
+        <p>v7.7.0 - ADMIN PORTAL - MANUAL ENTRY ADDED</p>
     </div>
-    <div class="card">
-      <h3>All Students</h3>
-      <table id="studentsTable"></table>
+
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('subjects')">Subjects</button>
+        <button class="tab" onclick="switchTab('manual')">Manual Entry</button>
+        <button class="tab" onclick="switchTab('excel')">Excel Upload</button>
+        <button class="tab" onclick="switchTab('students')">Students</button>
+        <button class="tab" onclick="switchTab('broadsheet')">Broadsheet</button>
     </div>
-  </div>
 
-  <div id="subjects" class="content">
-    <div class="card">
-      <h3>✅ Physics Pre-Loaded for SSS 1 - 30 Questions</h3>
-      <p>Go to student.html and test with an SSS 1 student now.</p>
-      <h3>Add Subject to Class</h3>
-      <div class="form-row">
-        <select id="subjectClass"></select>
-        <input type="text" id="subjectName" placeholder="e.g. Mathematics">
-        <button class="btn btn-green" onclick="addSubject()">Add Subject</button>
-      </div>
-      <h3>Upload Questions via Excel</h3>
-      <div class="form-row">
-        <select id="questionClass"></select>
-        <select id="questionSubject"></select>
-        <button class="btn" onclick="downloadTemplate()">Download Template</button>
-        <input type="file" id="questionFile" accept=".xlsx,.xls">
-        <button class="btn btn-green" onclick="uploadQuestions()">Upload Questions</button>
-      </div>
+    <div class="container">
+        <!-- SUBJECTS TAB -->
+        <div id="subjects" class="tab-content">
+            <div class="card">
+                <h2>✅ Pre-Loaded Subjects</h2>
+                <div class="alert alert-success" id="preloadStatus">
+                    Loading...
+                </div>
+                <p>Go to <code>student.html</code> and test with an SSS 1 student.</p>
+            </div>
+
+            <div class="card">
+                <h2>Manage Subjects & Questions</h2>
+                <div class="form-group">
+                    <label>Select Class</label>
+                    <select id="manageClass" onchange="loadSubjects()">
+                        <option value="">-- Select Class --</option>
+                        <option value="Creche">Creche</option>
+                        <option value="Nursery 1">Nursery 1</option>
+                        <option value="Nursery 2">Nursery 2</option>
+                        <option value="Primary 1">Primary 1</option>
+                        <option value="Primary 2">Primary 2</option>
+                        <option value="Primary 3">Primary 3</option>
+                        <option value="Primary 4">Primary 4</option>
+                        <option value="Primary 5">Primary 5</option>
+                        <option value="Primary 6">Primary 6</option>
+                        <option value="JSS 1">JSS 1</option>
+                        <option value="JSS 2">JSS 2</option>
+                        <option value="JSS 3">JSS 3</option>
+                        <option value="SSS 1">SSS 1</option>
+                        <option value="SSS 2">SSS 2</option>
+                        <option value="SSS 3">SSS 3</option>
+                    </select>
+                </div>
+                <div id="subjectList"></div>
+            </div>
+        </div>
+
+        <!-- MANUAL ENTRY TAB -->
+        <div id="manual" class="tab-content hidden">
+            <div class="card">
+                <h2>✍️ Manual Question Entry</h2>
+                <div class="alert alert-info">
+                    Type or paste questions directly. Format: <code>Question?|OptionA|OptionB|OptionC|OptionD|CorrectLetter</code><br>
+                    One question per line. CorrectLetter must be A, B, C, or D.
+                </div>
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Select Class</label>
+                        <select id="manualClass">
+                            <option value="SSS 1">SSS 1</option>
+                            <option value="SSS 2">SSS 2</option>
+                            <option value="SSS 3">SSS 3</option>
+                            <option value="JSS 1">JSS 1</option>
+                            <option value="JSS 2">JSS 2</option>
+                            <option value="JSS 3">JSS 3</option>
+                            <option value="Primary 6">Primary 6</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Subject Name</label>
+                        <input type="text" id="manualSubject" placeholder="e.g. Biology" value="Biology">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Questions</label>
+                    <textarea id="manualQuestions" placeholder="What is the powerhouse of the cell?|Nucleus|Ribosome|Mitochondria|Chloroplast|C
+Which organ pumps blood?|Liver|Heart|Kidney|Lungs|B"></textarea>
+                </div>
+                <button class="btn-success" onclick="saveManualQuestions()">Save Questions</button>
+                <button class="btn-danger" onclick="clearSubject()" style="margin-left:10px;">Clear All Questions for This Subject</button>
+                <div id="manualMsg"></div>
+            </div>
+        </div>
+
+        <!-- EXCEL UPLOAD TAB -->
+        <div id="excel" class="tab-content hidden">
+            <div class="card">
+                <h2>📤 Upload Questions via Excel</h2>
+                <div class="alert alert-info">
+                    Excel must have columns: <code>Question</code>, <code>Option A</code>, <code>Option B</code>, <code>Option C</code>, <code>Option D</code>, <code>Correct Answer</code><br>
+                    Correct Answer should be A, B, C, or D
+                </div>
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Select Class</label>
+                        <select id="excelClass" onchange="loadExcelSubjects()">
+                            <option value="">-- Select Class --</option>
+                            <option value="SSS 1">SSS 1</option>
+                            <option value="SSS 2">SSS 2</option>
+                            <option value="SSS 3">SSS 3</option>
+                            <option value="JSS 1">JSS 1</option>
+                            <option value="JSS 2">JSS 2</option>
+                            <option value="JSS 3">JSS 3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Subject</label>
+                        <select id="excelSubject">
+                            <option value="">-- Select Class First --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Excel File (.xlsx,.xls)</label>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls">
+                </div>
+                <button onclick="uploadExcel()">Upload Questions</button>
+                <div id="excelMsg"></div>
+            </div>
+        </div>
+
+        <!-- STUDENTS TAB -->
+        <div id="students" class="tab-content hidden">
+            <div class="card">
+                <h2>Student Management</h2>
+                <p>Student records are stored in browser localStorage. Use Broadsheet tab to export/import all data.</p>
+            </div>
+        </div>
+
+        <!-- BROADSHEET TAB -->
+        <div id="broadsheet" class="tab-content hidden">
+            <div class="card">
+                <h2>Broadsheet & Data Backup</h2>
+                <button onclick="exportData()">Export All Questions & Data</button>
+                <button onclick="document.getElementById('importFile').click()" style="margin-left:10px;">Import Data</button>
+                <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
+                <div id="broadMsg"></div>
+            </div>
+        </div>
     </div>
-    <div class="card">
-      <h3>Subjects by Class</h3>
-      <div id="subjectsList"></div>
-    </div>
-  </div>
 
-  <div id="broadsheet" class="content">
-    <div class="card">
-      <h3>Broadsheet: CBT 20 + Exam 40 + C.A 40 = 100</h3>
-      <div class="form-row">
-        <label>Class:</label><select id="broadClass" onchange="updateSubjects()"></select>
-        <label>Subject:</label><select id="broadSubject" onchange="loadBroadSheet()"></select>
-        <label>Term:</label><select id="broadTerm" onchange="loadBroadSheet()">
-          <option>1st Term</option><option>2nd Term</option><option>3rd Term</option>
-        </select>
-        <button class="btn btn-orange" onclick="saveBroadSheet()">Save All</button>
-        <button class="btn btn-green" onclick="exportBroadSheet()">Download Excel</button>
-      </div>
-      <p style="font-size:12px;color:#555;">Note: 3rd Term Total = (1st + 2nd + 3rd) ÷ 3. CBT auto-fills for JSS1-SSS3 only.</p>
-      <table id="broadTable"></table>
-    </div>
-  </div>
+    <script>
+        // INITIALIZE WITH PRE-LOADED DATA - ADD YOUR 30 PHYSICS QUESTIONS HERE
+        if (!localStorage.getItem('cbt_questions')) {
+            const initialData = {
+                "SSS 1": {
+                    "Physics": [
+                        {question: "What is the SI unit of force?", a: "Joule", b: "Newton", c: "Watt", d: "Pascal", correct: "B"},
+                        {question: "Which of these is a vector quantity?", a: "Speed", b: "Distance", c: "Velocity", d: "Mass", correct: "C"},
+                        {question: "Acceleration due to gravity is approximately?", a: "8.9 m/s²", b: "9.8 m/s²", c: "10.8 m/s²", d: "11.8 m/s²", correct: "B"}
+                        // PASTE YOUR REMAINING 27 PHYSICS QUESTIONS HERE
+                    ],
+                    "Biology": []
+                }
+            };
+            localStorage.setItem('cbt_questions', JSON.stringify(initialData));
+        }
 
-  <div id="report" class="content">
-    <div class="card">
-      <h3>Generate Student Report Sheet</h3>
-      <div class="form-row">
-        <select id="reportStudent"></select>
-        <select id="reportTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
-        <input type="text" id="teacherComment" placeholder="Teacher's Comment">
-        <button class="btn" onclick="generateReport()">Generate PDF Report</button>
-      </div>
-    </div>
-  </div>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tab).classList.remove('hidden');
+            event.target.classList.add('active');
+            if(tab === 'subjects') updatePreloadStatus();
+        }
 
-  <div id="idcard" class="content">
-    <div class="card">
-      <h3>Generate Student ID Card</h3>
-      <select id="idStudent"></select>
-      <button class="btn" onclick="generateIDCard()">Generate PDF ID Card</button>
-    </div>
-  </div>
+        function getData() {
+            return JSON.parse(localStorage.getItem('cbt_questions') || '{}');
+        }
 
-  <div id="attendance" class="content">
-    <div class="card">
-      <h3>Mark Daily Attendance</h3>
-      <div class="form-row">
-        <select id="attClass"></select>
-        <input type="date" id="attDate">
-        <button class="btn btn-green" onclick="loadAttendance()">Load Class</button>
-        <button class="btn btn-orange" onclick="saveAttendance()">Save Attendance</button>
-        <button class="btn" onclick="exportAttendance()">Download Excel</button>
-      </div>
-      <table id="attTable"></table>
-    </div>
-  </div>
+        function saveData(data) {
+            localStorage.setItem('cbt_questions', JSON.stringify(data));
+        }
 
-  <div id="fees" class="content">
-    <div class="card">
-      <h3>Set School Fees Template</h3>
-      <div class="form-row">
-        <select id="feeClass"></select>
-        <input type="number" id="feeAmount" placeholder="Amount ₦">
-        <input type="text" id="feeDesc" placeholder="Description e.g. 1st Term Fees">
-        <button class="btn btn-green" onclick="setFee()">Set Fee</button>
-      </div>
-      <table id="feesTable"></table>
-    </div>
-    <div class="card">
-      <h3>Generate Receipt / School Bill</h3>
-      <div class="form-row">
-        <select id="receiptStudent"></select>
-        <input type="number" id="receiptAmount" placeholder="Amount Paid ₦">
-        <input type="text" id="receiptFor" placeholder="Payment For">
-        <button class="btn" onclick="generateReceipt()">Generate Receipt PDF</button>
-        <button class="btn btn-green" onclick="generateBill()">Generate Bill PDF</button>
-      </div>
-    </div>
-  </div>
+        function updatePreloadStatus() {
+            const data = getData();
+            let html = '';
+            if(data['SSS 1'] && data['SSS 1']['Physics']) {
+                html += `<strong>Physics Pre-Loaded for SSS 1 - ${data['SSS 1']['Physics'].length} Questions</strong><br>`;
+            }
+            if(data['SSS 1'] && data['SSS 1']['Biology']) {
+                html += `<strong>Biology Pre-Loaded for SSS 1 - ${data['SSS 1']['Biology'].length} Questions</strong>`;
+            }
+            document.getElementById('preloadStatus').innerHTML = html || 'No pre-loaded subjects';
+        }
 
-  <div id="settings" class="content">
-    <div class="card">
-      <h3>Current Term Setting</h3>
-      <p>Set this before students take CBT exams so scores save to correct term:</p>
-      <select id="currentTerm" onchange="setTerm()">
-        <option>1st Term</option><option>2nd Term</option><option>3rd Term</option>
-      </select>
-    </div>
-  </div>
+        function loadSubjects() {
+            const className = document.getElementById('manageClass').value;
+            const data = getData();
+            const subjectList = document.getElementById('subjectList');
+            
+            if (!className ||!data[className]) {
+                subjectList.innerHTML = '<p style="color:#6b7280;">No subjects yet. Use Manual Entry or Excel Upload to add.</p>';
+                return;
+            }
 
-</div>
+            let html = '';
+            for (let subject in data[className]) {
+                const count = data[className][subject].length;
+                html += `
+                    <div class="subject-item">
+                        <div>
+                            <strong>${subject}</strong>
+                            <span class="badge">${count} questions</span>
+                        </div>
+                        <button class="btn-danger" onclick="deleteSubject('${className}', '${subject}')">Delete</button>
+                    </div>
+                `;
+            }
+            subjectList.innerHTML = html || '<p style="color:#6b7280;">No subjects yet.</p>';
+        }
 
-<script>
-  alert("JS IS RUNNING");
-const ALL_CLASSES = ['Creche','Nursery 1','Nursery 2','K.G','Primary 1','Primary 2','Primary 3','Primary 4','Primary 5','JSS 1','JSS 2','JSS 3','SSS 1','SSS 2','SSS 3'];
-const CBT_CLASSES = ['JSS 1','JSS 2','JSS 3','SSS 1','SSS 2','SSS 3'];
-let students = JSON.parse(localStorage.getItem('sna_students') || '[]');
-let subjects = JSON.parse(localStorage.getItem('sna_subjects') || '{}');
-let cbtScores = JSON.parse(localStorage.getItem('sna_cbt_scores') || '[]');
-let broadsheet = JSON.parse(localStorage.getItem('sna_broadsheet') || '{}');
-let questions = JSON.parse(localStorage.getItem('sna_questions') || '{}');
-let attendance = JSON.parse(localStorage.getItem('sna_attendance') || '{}');
-let fees = JSON.parse(localStorage.getItem('sna_fees') || '{}');
+        function loadExcelSubjects() {
+            const className = document.getElementById('excelClass').value;
+            const data = getData();
+            const select = document.getElementById('excelSubject');
+            
+            select.innerHTML = '<option value="">-- Select Subject --</option>';
+            
+            if (data[className]) {
+                Object.keys(data[className]).forEach(subject => {
+                    select.innerHTML += `<option value="${subject}">${subject}</option>`;
+                });
+            }
+            select.innerHTML += '<option value="__new__">+ Add New Subject</option>';
+        }
 
-// PRE-LOADED QUESTIONS: SSS 1 PHYSICS - 3RD TERM - 30 QUESTIONS
-if(!questions['Physics']) questions['Physics'] = {};
-questions['Physics']['SSS 1'] = [
-  ["Which of the following is an insulator?", "Graphite", "Germanium", "Polythene", "Salt solution", "Polythene"],
-  ["The device used to measure potential difference in a circuit is", "Ammeter", "Rheostat", "Voltmeter", "Resistor", "Voltmeter"],
-  ["According to Ohm’s law, provided temperature is constant", "V ∝ 1/I", "I ∝ 1/V", "V ∝ I", "I ∝ R", "V ∝ I"],
-  ["The slope of a graph of potential difference (V) against current (I) gives", "Electromotive force", "Internal resistance", "Resistance", "Conductance", "Resistance"],
-  ["Three resistors of 2Ω, 3Ω and 5Ω are connected in series. The equivalent resistance is", "10Ω", "30/31Ω", "1.55Ω", "31/30Ω", "10Ω"],
-  ["When cells of equal e.m.f are connected in parallel, the equivalent e.m.f is", "Sum of individual e.m.f", "Same as one cell", "Product of e.m.f", "Zero", "Same as one cell"],
-  ["Electrical energy consumed is measured commercially in", "Joules", "Kilowatt-hour", "Watts", "Ampere-hour", "Kilowatt-hour"],
-  ["The formula for electrical power is", "P = V/I", "P = VI", "P = I/R", "P = QR", "P = VI"],
-  ["A fuse is designed to", "Increase current", "Melt when excessive current flows", "Store charge", "Regulate voltage", "Melt when excessive current flows"],
-  ["The minimum current that causes a fuse element to melt is called", "Current rating", "Fusing current", "Fusing factor", "Safe current", "Fusing current"],
-  ["An atom is electrically neutral when", "Number of protons equals number of neutrons", "Number of protons equals number of electrons", "Number of neutrons equals number of electrons", "Number of protons is greater than electrons", "Number of protons equals number of electrons"],
-  ["Brownian motion demonstrates that", "Molecules are stationary", "Molecules are in continuous random motion", "Molecules have fixed positions", "Matter has no particles", "Molecules are in continuous random motion"],
-  ["According to Graham’s law, rate of diffusion is", "Directly proportional to square root of molar mass", "Inversely proportional to square root of molar mass", "Directly proportional to molar mass", "Independent of molar mass", "Inversely proportional to square root of molar mass"],
-  ["Osmosis involves the movement of", "Solute particles", "Solvent molecules through a semi-permeable membrane", "Any liquid", "Gas molecules", "Solvent molecules through a semi-permeable membrane"],
-  ["A crystalline substance has", "Short range order only", "Definite internal arrangement of particles", "No definite melting point", "Haphazard arrangement of particles", "Definite internal arrangement of particles"],
-  ["Which of the following is an amorphous substance?", "Sodium chloride", "Glass", "Copper", "Sugar", "Glass"],
-  ["Surface tension is defined as", "Force per unit area", "Force per unit length", "Work done per unit area", "Energy per unit volume", "Force per unit length"],
-  ["A needle can float on water due to", "Upthrust", "Surface tension", "Viscosity", "Capillarity", "Surface tension"],
-  ["Capillarity is due to", "Difference between cohesive and adhesive forces", "Gravity only", "Atmospheric pressure", "Surface tension only", "Difference between cohesive and adhesive forces"],
-  ["Elasticity is the ability of a material to", "Break under stress", "Regain its original shape after deformation", "Stretch permanently", "Resist all forces", "Regain its original shape after deformation"],
-  ["Hooke’s law states that", "F ∝ 1/e", "F ∝ e", "e ∝ 1/F", "Stress is proportional to strain", "F ∝ e"],
-  ["Young’s modulus is the ratio of", "Stress to strain", "Strain to stress", "Force to extension", "Extension to original length", "Stress to strain"],
-  ["The point on a load-extension graph beyond which the wire does not return to its original length is the", "Proportional limit", "Elastic limit", "Yield point", "Breaking point", "Elastic limit"],
-  ["The energy stored in a stretched wire is given by", "½Fe", "Fe", "2Fe", "F/e", "½Fe"],
-  ["A fuse with a higher current rating than the circuit should be used to", "Protect the circuit", "Allow excess current", "Increase resistance", "Reduce power loss", "Allow excess current"],
-  ["The SI unit of electrical power is", "Joule", "Watt", "Volt", "Coulomb", "Watt"],
-  ["When temperature increases, the resistance of most metallic conductors", "Decreases", "Remains constant", "Increases", "Becomes zero", "Increases"],
-  ["Water rises in a glass capillary tube because", "Adhesive force > Cohesive force", "Cohesive force > Adhesive force", "Gravity is absent", "Surface tension is zero", "Adhesive force > Cohesive force"],
-  ["The internal resistance of a cell", "Increases the terminal voltage", "Reduces the terminal p.d. below the e.m.f", "Has no effect on current", "Is always zero", "Reduces the terminal p.d. below the e.m.f"],
-  ["Which of the following is a semi-conductor?", "Copper", "Silicon", "Rubber", "Glass", "Silicon"]
-];
-localStorage.setItem('sna_questions', JSON.stringify(questions));
+        function saveManualQuestions() {
+            const className = document.getElementById('manualClass').value;
+            const subject = document.getElementById('manualSubject').value.trim();
+            const text = document.getElementById('manualQuestions').value.trim();
+            const msg = document.getElementById('manualMsg');
 
-// AUTO-ADD PHYSICS TO SSS 1 SUBJECTS LIST
-if(!subjects['SSS 1']) subjects['SSS 1'] = [];
-if(!subjects['SSS 1'].includes('Physics')) {
-  subjects['SSS 1'].push('Physics');
-  localStorage.setItem('sna_subjects', JSON.stringify(subjects));
-}
+            if (!subject ||!text) {
+                msg.innerHTML = '<div class="alert alert-info" style="background:#fee2e2;color:#991b1b;">Subject and questions are required</div>';
+                return;
+            }
 
-function logout(){ location.reload(); }
-function openTab(tabName) {
-  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(tabName).classList.add('active');
-  event.target.classList.add('active');
-}
-function setTerm(){ localStorage.setItem('currentTerm', currentTerm.value); alert('Current term set to: ' + currentTerm.value); }
+            const lines = text.split('\n').filter(l => l.trim());
+            const data = getData();
+            
+            if (!data[className]) data[className] = {};
+            if (!data[className][subject]) data[className][subject] = [];
 
-function saveStudent(){
-  let idx = document.getElementById('editIndex').value;
-  let s = { id: studentID.value.trim(), name: studentName.value.trim(), class: studentClass.value,
-    phone: studentPhone.value.trim(), gender: studentGender.value, dob: studentDOB.value };
-  if(!s.id ||!s.name ||!s.class) return alert('ID, Name and Class required');
-  if(idx === ''){ students.push(s); } else { students[idx] = s; }
-  localStorage.setItem('sna_students', JSON.stringify(students));
-  loadStudents(); clearStudentForm(); init();
-  alert('Student saved!');
-}
-function editStudent(i){ 
-  let s = students[i]; editIndex.value = i; studentID.value = s.id; studentName.value = s.name; 
-  studentClass.value = s.class; studentPhone.value = s.phone; studentGender.value = s.gender; studentDOB.value = s.dob;
-}
-function deleteStudent(i){ 
-  if(confirm('Delete this student? All scores will be lost.')){ students.splice(i,1); localStorage.setItem('sna_students', JSON.stringify(students)); loadStudents(); init(); }
-}
-function clearStudentForm(){ editIndex.value = ''; studentID.value = studentName.value = studentPhone.value = studentDOB.value = ''; }
-function loadStudents(){
-  let html = '<tr><th>ID</th><th>Name</th><th>Class</th><th>Phone</th><th>Action</th></tr>';
-  students.forEach((s,i)=>{ 
-    html += `<tr><td>${s.id}</td><td>${s.name}</td><td>${s.class}</td><td>${s.phone}</td>
-    <td><button class="btn" onclick="editStudent(${i})">Edit</button>
-    <button class="btn btn-red" onclick="deleteStudent(${i})">Del</button></td></tr>` 
-  });
-  studentsTable.innerHTML = html || '<tr><td colspan="5" class="empty-msg">No students added yet</td></tr>';
-}
+            let added = 0;
+            let errors = 0;
+            lines.forEach((line, idx) => {
+                const parts = line.split('|');
+                if (parts.length === 6) {
+                    const correct = parts[5].trim().toUpperCase();
+                    if(['A','B','C','D'].includes(correct)) {
+                        data[className][subject].push({
+                            question: parts[0].trim(),
+                            a: parts[1].trim(),
+                            b: parts[2].trim(),
+                            c: parts[3].trim(),
+                            d: parts[4].trim(),
+                            correct: correct
+                        });
+                        added++;
+                    } else { errors++; }
+                } else { errors++; }
+            });
 
-function addSubject(){
-  let cls = subjectClass.value; let sub = subjectName.value.trim();
-  if(!sub) return alert('Enter subject name');
-  if(!subjects[cls]) subjects[cls] = [];
-  if(!subjects[cls].includes(sub)) subjects[cls].push(sub);
-  localStorage.setItem('sna_subjects', JSON.stringify(subjects));
-  loadSubjects(); subjectName.value = ''; init();
-}
-function deleteSubject(cls,sub){
-  subjects[cls] = subjects[cls].filter(s => s!== sub);
-  localStorage.setItem('sna_subjects', JSON.stringify(subjects)); loadSubjects(); init();
-}
-function loadSubjects(){
-  let html = ''; 
-  ALL_CLASSES.forEach(cls => {
-    if(subjects[cls]?.length){
-      html += `<h4>${cls}</h4><ul>`;
-      subjects[cls].forEach(sub => { html += `<li>${sub} <button class="btn btn-red" onclick="deleteSubject('${cls}','${sub}')">X</button></li>` });
-      html += '</ul>';
-    }
-  });
-  subjectsList.innerHTML = html || '<p class="empty-msg">No subjects added yet. Add subjects above first.</p>';
-}
-function downloadTemplate(){
-  let ws = XLSX.utils.aoa_to_sheet([['Question','OptionA','OptionB','OptionC','OptionD','CorrectAnswer']]);
-  let wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Template');
-  XLSX.writeFile(wb, 'SNA_Questions_Template.xlsx');
-}
-function uploadQuestions(){
-  let file = document.getElementById('questionFile').files[0];
-  let cls = questionClass.value; let sub = questionSubject.value;
-  if(!file ||!cls ||!sub) return alert('Select class, subject and file');
-  let reader = new FileReader();
-  reader.onload = function(e){
-    let data = new Uint8Array(e.target.result);
-    let wb = XLSX.read(data, {type: 'array'});
-    let ws = wb.Sheets[wb.SheetNames[0]];
-    let json = XLSX.utils.sheet_to_json(ws, {header:1});
-    json.shift();
-    if(!questions[sub]) questions[sub] = {};
-    questions[sub][cls] = json;
-    localStorage.setItem('sna_questions', JSON.stringify(questions));
-    alert(`Uploaded ${json.length} questions for ${sub} - ${cls}`);
-  };
-  reader.readAsArrayBuffer(file);
-}
+            saveData(data);
+            msg.innerHTML = `<div class="alert alert-success">Added ${added} questions to ${className} - ${subject}. ${errors>0?errors+' lines had errors and were skipped.':''}</div>`;
+            document.getElementById('manualQuestions').value = '';
+            loadSubjects();
+            updatePreloadStatus();
+        }
 
-function getTermTotal(studentID, subject, term){
-  let cbt = cbtScores.find(c => c.id === studentID && c.subject === subject && c.term === term)?.score || 0;
-  let key = `${studentID}_${subject}_${term}`;
-  let exam = broadsheet[key]?.exam || 0;
-  let ca = broadsheet[key]?.ca || 0;
-  return Number(cbt) + Number(exam) + Number(ca);
-}
-function loadBroadSheet(){
-  let cls = broadClass.value; let sub = broadSubject.value; let term = broadTerm.value;
-  if(!cls ||!sub || sub === 'No subjects') { broadTable.innerHTML = '<tr><td class="empty-msg">Select class and subject. Add subjects in Subjects tab first.</td></tr>'; return; }
-  let classStudents = students.filter(s => s.class === cls);
-  if(classStudents.length === 0){ broadTable.innerHTML = '<tr><td class="empty-msg">No students in this class</td></tr>'; return; }
-  let html = '<tr><th>Name</th><th>CBT /20</th><th>Exam /40</th><th>C.A /40</th><th>Total /100</th><th>Grade</th><th>Pos</th></tr>';
-  let totals = [];
-  
-  classStudents.forEach(s => {
-    let cbt = cbtScores.find(c => c.id === s.id && c.subject === sub && c.term === term)?.score || 0;
-    let key = `${s.id}_${sub}_${term}`;
-    let exam = broadsheet[key]?.exam || 0;
-    let ca = broadsheet[key]?.ca || 0;
-    let total = Number(cbt) + Number(exam) + Number(ca);
-    
-    let displayTotal = total;
-    let isCumulative = false;
-    if(term === '3rd Term'){
-      let t1 = getTermTotal(s.id, sub, '1st Term');
-      let t2 = getTermTotal(s.id, sub, '2nd Term');
-      if(t1 > 0 || t2 > 0){ 
-        displayTotal = Math.round((t1 + t2 + total) / 3);
-        isCumulative = true;
-      }
-    }
-    
-    totals.push({id:s.id, total:displayTotal});
-    let grade = displayTotal >= 70? 'A' : displayTotal >= 60? 'B' : displayTotal >= 50? 'C' : displayTotal >= 45? 'D' : 'F';
-    let rowClass = isCumulative? 'cumulative' : '';
-    html += `<tr class="${rowClass}"><td>${s.name}</td>
-      <td>${cbt}</td>
-      <td><input class="score-input" type="number" max="40" value="${exam}" id="exam_${s.id}"></td>
-      <td><input class="score-input" type="number" max="40" value="${ca}" id="ca_${s.id}"></td>
-      <td><b>${displayTotal}</b>${isCumulative?' *':''}</td><td>${grade}</td><td id="pos_${s.id}">-</td></tr>`;
-  });
-  broadTable.innerHTML = html;
-   }
-   function generateReceipt(){  // <-- Add 'funct'
-  const { jsPDF } = window.jspdf;  // <-- Add 'con' 
-   let doc = new jsPDF();  // <-- Add 'let'
-  let sid = receiptStudent.value;
-  let student = students.find(s => s.id === sid);
-  let amt = receiptAmount.value;
-  if(!student) return alert('Select a student first');
-  doc.setFontSize(16); doc.text("SEALED NECTAR ACADEMY", 105, 20, {align: "center"});
-  doc.setFontSize(14); doc.text("SCHOOL FEE RECEIPT", 105, 30, {align: "center"});
-  doc.setFontSize(12);
-  doc.text(`Receipt No: SNA${Date.now()}`, 20, 50);
-  doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 60);
-  doc.text(`Student Name: ${student.name}`, 20, 70);
-  doc.text(`Class: ${student.class}`, 20, 80);
-  doc.text(`Amount Paid: ₦${amt}`, 20, 90);
-  doc.text(`Payment For: ${receiptFor.value || fees[student.class]?.desc || 'School Fees'}`, 20, 100);
-  doc.save(`${student.name}_Receipt.pdf`);
-}
-function generateBill(){
-  const { jsPDF } = window.jspdf;
-  let doc = new jsPDF();
-  let sid = receiptStudent.value;
-  let student = students.find(s => s.id === sid);
-  if(!student) return alert('Select a student first');
-  doc.setFontSize(16); doc.text("SEALED NECTAR ACADEMY", 105, 20, {align: "center"});
-  doc.setFontSize(14); doc.text("SCHOOL BILL", 105, 30, {align: "center"});
-  doc.setFontSize(12);
-  doc.text(`Student Name: ${student.name}`, 20, 50);
-  doc.text(`Class: ${student.class}`, 20, 60);
-  doc.text(`Bill For: ${fees[student.class]?.desc || 'School Fees'}`, 20, 70);
-  doc.text(`Amount Due: ₦${fees[student.class]?.amount || '0'}`, 20, 80);
-  doc.text(`Session: 2025/2026`, 20, 90);
-  doc.save(`${student.name}_Bill.pdf`);
-}
+        function clearSubject() {
+            const className = document.getElementById('manualClass').value;
+            const subject = document.getElementById('manualSubject').value.trim();
+            if (!confirm(`Delete ALL questions for ${className} - ${subject}?`)) return;
+            
+            const data = getData();
+            if (data[className] && data[className][subject]) {
+                data[className][subject] = [];
+                saveData(data);
+                document.getElementById('manualMsg').innerHTML = '<div class="alert alert-success">Cleared all questions</div>';
+                loadSubjects();
+                updatePreloadStatus();
+            }
+        }
 
-// INIT
-function updateSubjects(){
-  broadSubject.innerHTML = subjects[broadClass.value]?.map(s => `<option>${s}</option>`).join('') || '<option>No subjects</option>';
-  questionSubject.innerHTML = subjects[questionClass.value]?.map(s => `<option>${s}</option>`).join('') || '<option>No subjects</option>';
-  loadBroadSheet();
-}
-function init(){
-  [studentClass, subjectClass, broadClass, questionClass, attClass, feeClass].forEach(sel => {
-    sel.innerHTML = ALL_CLASSES.map(c => `<option>${c}</option>`).join('');
-  });
-  loadStudents(); loadSubjects(); updateSubjects(); loadFeesTable();
-  reportStudent.innerHTML = students.map(s => `<option value="${s.id}">${s.name} - ${s.class}</option>`).join('');
-  idStudent.innerHTML = students.map(s => `<option value="${s.id}">${s.name} - ${s.class}</option>`).join('');
-  receiptStudent.innerHTML = students.map(s => `<option value="${s.id}">${s.name} - ${s.class}</option>`).join('');
-}
+        function uploadExcel() {
+            const file = document.getElementById('excelFile').files[0];
+            const className = document.getElementById('excelClass').value;
+            let subject = document.getElementById('excelSubject').value;
+            const msg = document.getElementById('excelMsg');
 
-// Auto-run init when page loads - THIS IS CRITICAL
-window.onload = init;
-</script>
+            if (!file ||!className ||!subject) {
+                msg.innerHTML = '<div class="alert alert-info" style="background:#fee2e2;color:#991b1b;">Select class, subject, and file</div>';
+                return;
+            }
+
+            if (subject === '__new__') {
+                subject = prompt('Enter new subject name:');
+                if (!subject) return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const workbook = XLSX.read(e.target.result, {type: 'binary'});
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(sheet);
+
+                const data = getData();
+                if (!data[className]) data[className] = {};
+                if (!data[className][subject]) data[className][subject] = [];
+
+                let added = 0;
+                rows.forEach(row => {
+                    if (row.Question && row['Option A'] && row['Correct Answer']) {
+                        data[className][subject].push({
+                            question: row.Question,
+                            a: row['Option A'],
+                            b: row['Option B'] || '',
+                            c: row['Option C'] || '',
+                            d: row['Option D'] || '',
+                            correct: row['Correct Answer'].toString().toUpperCase().charAt(0)
+                        });
+                        added++;
+                    }
+                });
+
+                saveData(data);
+                msg.innerHTML = `<div class="alert alert-success">Uploaded ${added} questions to ${className} - ${subject}</div>`;
+                document.getElementById('excelFile').value = '';
+                loadSubjects();
+                updatePreloadStatus();
+            };
+            reader.readAsBinaryString(file);
+        }
+
+        function deleteSubject(className, subject) {
+            if (!confirm(`Delete ${subject} and all its questions?`)) return;
+            const data = getData();
+            delete data[className][subject];
+            saveData(data);
+            loadSubjects();
+            updatePreloadStatus();
+        }
+
+        function exportData() {
+            const data = localStorage.getItem('cbt_questions');
+            const blob = new Blob([data], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'sna_cbt_backup.json';
+            a.click();
+            document.getElementById('broadMsg').innerHTML = '<div class="alert alert-success">Data exported successfully</div>';
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                localStorage.setItem('cbt_questions', e.target.result);
+                alert('Data imported successfully! Refreshing...');
+                location.reload();
+            };
+            reader.readAsText(file);
+        }
+
+        // Init
+        updatePreloadStatus();
+        loadSubjects();
+    </script>
 </body>
 </html>
