@@ -52,7 +52,7 @@
     </div>
 
     <div class="container">
-        <!-- SUBJECTS & MANUAL ENTRY (kept from before) -->
+        <!-- SUBJECTS & MANUAL ENTRY (kept) -->
         <div id="subjects" class="tab-content">
             <div class="card">
                 <h2>Manage Subjects</h2>
@@ -155,26 +155,56 @@
             </div>
         </div>
 
+        <!-- REPORT SHEET -->
+        <div id="report" class="tab-content hidden">
+            <div class="card">
+                <h2>Report Sheet</h2>
+                <div class="form-group">
+                    <label>Select Student</label>
+                    <select id="reportStudent">
+                        <option value="">-- Select Student --</option>
+                    </select>
+                </div>
+                <button class="btn-success" onclick="generateReportSheet()">Generate Report Sheet</button>
+                <div id="reportResult"></div>
+            </div>
+        </div>
+
+        <!-- ATTENDANCE -->
+        <div id="attendance" class="tab-content hidden">
+            <div class="card">
+                <h2>Attendance</h2>
+                <div class="form-group">
+                    <label>Select Class</label>
+                    <select id="attClass">
+                        <option value="Creche">Creche</option>
+                        <option value="Nursery 1">Nursery 1</option>
+                        <option value="Nursery 2">Nursery 2</option>
+                        <option value="Primary 1">Primary 1</option>
+                        <option value="Primary 2">Primary 2</option>
+                        <option value="Primary 3">Primary 3</option>
+                        <option value="Primary 4">Primary 4</option>
+                        <option value="Primary 5">Primary 5</option>
+                        <option value="Primary 6">Primary 6</option>
+                        <option value="JSS 1">JSS 1</option>
+                        <option value="JSS 2">JSS 2</option>
+                        <option value="JSS 3">JSS 3</option>
+                        <option value="SSS 1">SSS 1</option>
+                        <option value="SSS 2">SSS 2</option>
+                        <option value="SSS 3">SSS 3</option>
+                    </select>
+                </div>
+                <button class="btn-success" onclick="markAttendance()">Mark Attendance</button>
+                <div id="attendanceResult"></div>
+            </div>
+        </div>
+
         <!-- Other tabs (placeholders) -->
         <div id="excel" class="tab-content hidden">
             <div class="card">
                 <h2>Excel Upload</h2>
                 <input type="file" id="excelFile" accept=".xlsx,.xls">
                 <button onclick="uploadExcel()">Upload Excel</button>
-            </div>
-        </div>
-
-        <div id="report" class="tab-content hidden">
-            <div class="card">
-                <h2>Report Sheet</h2>
-                <button onclick="generateReportSheet()">Generate Report Sheet</button>
-            </div>
-        </div>
-
-        <div id="attendance" class="tab-content hidden">
-            <div class="card">
-                <h2>Attendance</h2>
-                <p>Mark attendance (feature ready).</p>
             </div>
         </div>
 
@@ -220,16 +250,20 @@
             alert("Report Sheet generated!");
         }
 
+        function markAttendance() {
+            alert("Attendance marked!");
+        }
+
+        function uploadExcel() {
+            alert("Excel uploaded!");
+        }
+
         function generateIDCard() {
             alert("ID Card generated!");
         }
 
         function generateReceipt() {
             alert("Receipt generated!");
-        }
-
-        function uploadExcel() {
-            alert("Excel uploaded!");
         }
     </script>
 </body>
