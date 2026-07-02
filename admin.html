@@ -112,7 +112,8 @@
         <div id="excel" class="tab-content hidden">
             <div class="card">
                 <h2>Excel Upload</h2>
-                <p>Upload Excel file for bulk student data (feature ready).</p>
+                <input type="file" id="excelFile" accept=".xlsx,.xls">
+                <button onclick="uploadExcel()">Upload Excel</button>
             </div>
         </div>
 
@@ -136,7 +137,7 @@
         <div id="report" class="tab-content hidden">
             <div class="card">
                 <h2>Report Sheet</h2>
-                <button onclick="generateReport()">Generate Report Sheet</button>
+                <button onclick="generateReportSheet()">Generate Report Sheet</button>
             </div>
         </div>
 
@@ -187,7 +188,7 @@
             alert("Questions saved successfully!");
         }
 
-        function generateReport() {
+        function generateReportSheet() {
             alert("Report Sheet generated!");
         }
 
@@ -197,6 +198,10 @@
 
         function generateReceipt() {
             alert("Receipt generated!");
+        }
+
+        function uploadExcel() {
+            alert("Excel uploaded!");
         }
     </script>
 </body>
