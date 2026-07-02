@@ -27,16 +27,7 @@
         .btn-success { background: #16a34a; }
         .btn-danger { background: #dc2626; }
         .btn-warning { background: #f59e0b; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
-        .item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f9fafb; border-radius: 6px; margin-bottom: 8px; }
-        .badge { background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-        .alert { padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; }
-        .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-        .alert-info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
         .hidden { display: none; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
-        th, td { border: 1px solid #d1d5db; padding: 6px; text-align: left; }
-        th { background: #f3f4f6; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -118,7 +109,7 @@
             </div>
         </div>
 
-        <!-- Add other tabs here (Excel, Students, Broadsheet, Report, etc.) -->
+        <!-- Add other tabs content here (Excel, Students, Broadsheet, etc.) -->
 
     </div>
 
@@ -131,6 +122,9 @@
         }
 
         // Add your other JavaScript functions here
+        function saveManualQuestions() {
+            alert("Manual questions saved! (Demo)");
+        }
     </script>
 </body>
 </html>
