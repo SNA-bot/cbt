@@ -27,6 +27,9 @@
         .btn-danger { background: #dc2626; }
         .btn-warning { background: #f59e0b; }
         .hidden { display: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #d1d5db; padding: 8px; text-align: left; }
+        th { background: #f3f4f6; }
     </style>
 </head>
 <body>
@@ -49,7 +52,7 @@
     </div>
 
     <div class="container">
-        <!-- SUBJECTS -->
+        <!-- SUBJECTS & MANUAL ENTRY (kept from before) -->
         <div id="subjects" class="tab-content">
             <div class="card">
                 <h2>Manage Subjects</h2>
@@ -74,7 +77,7 @@
                         <option value="SSS 3">SSS 3</option>
                     </select>
                 </div>
-                <div id="subjectList">Select a class to manage subjects.</div>
+                <div id="subjectList">Select a class.</div>
             </div>
         </div>
 
@@ -108,7 +111,51 @@
             </div>
         </div>
 
-        <!-- EXCEL UPLOAD -->
+        <!-- STUDENT PROFILE -->
+        <div id="students" class="tab-content hidden">
+            <div class="card">
+                <h2>Student Profile</h2>
+                <div class="form-group">
+                    <label>Student Name</label>
+                    <input type="text" id="studentName" placeholder="Full Name">
+                </div>
+                <div class="form-group">
+                    <label>Class</label>
+                    <select id="studentClass">
+                        <option value="Creche">Creche</option>
+                        <option value="Nursery 1">Nursery 1</option>
+                        <option value="Nursery 2">Nursery 2</option>
+                        <option value="Primary 1">Primary 1</option>
+                        <option value="Primary 2">Primary 2</option>
+                        <option value="Primary 3">Primary 3</option>
+                        <option value="Primary 4">Primary 4</option>
+                        <option value="Primary 5">Primary 5</option>
+                        <option value="Primary 6">Primary 6</option>
+                        <option value="JSS 1">JSS 1</option>
+                        <option value="JSS 2">JSS 2</option>
+                        <option value="JSS 3">JSS 3</option>
+                        <option value="SSS 1">SSS 1</option>
+                        <option value="SSS 2">SSS 2</option>
+                        <option value="SSS 3">SSS 3</option>
+                    </select>
+                </div>
+                <button class="btn-success" onclick="addStudent()">Add Student</button>
+                <div id="studentList"></div>
+            </div>
+        </div>
+
+        <!-- BROADSHEET -->
+        <div id="broadsheet" class="tab-content hidden">
+            <div class="card">
+                <h2>Broadsheet</h2>
+                <p>CBT (20) + Paper (40) + CA (40) = Total 100</p>
+                <table id="broadsheetTable">
+                    <tr><th>Student</th><th>Class</th><th>Subject</th><th>CBT</th><th>Paper</th><th>CA</th><th>Total</th></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Other tabs (placeholders) -->
         <div id="excel" class="tab-content hidden">
             <div class="card">
                 <h2>Excel Upload</h2>
@@ -117,23 +164,6 @@
             </div>
         </div>
 
-        <!-- STUDENT PROFILE -->
-        <div id="students" class="tab-content hidden">
-            <div class="card">
-                <h2>Student Profile</h2>
-                <p>Student management (feature ready).</p>
-            </div>
-        </div>
-
-        <!-- BROADSHEET -->
-        <div id="broadsheet" class="tab-content hidden">
-            <div class="card">
-                <h2>Broadsheet</h2>
-                <p>Broadsheet with CBT + Paper + CA scores (feature ready).</p>
-            </div>
-        </div>
-
-        <!-- REPORT SHEET -->
         <div id="report" class="tab-content hidden">
             <div class="card">
                 <h2>Report Sheet</h2>
@@ -141,7 +171,6 @@
             </div>
         </div>
 
-        <!-- ATTENDANCE -->
         <div id="attendance" class="tab-content hidden">
             <div class="card">
                 <h2>Attendance</h2>
@@ -149,7 +178,6 @@
             </div>
         </div>
 
-        <!-- FEE TEMPLATE -->
         <div id="fees" class="tab-content hidden">
             <div class="card">
                 <h2>Fee Template</h2>
@@ -157,21 +185,17 @@
             </div>
         </div>
 
-        <!-- ID CARD -->
         <div id="idcard" class="tab-content hidden">
             <div class="card">
                 <h2>ID Card</h2>
                 <button onclick="generateIDCard()">Generate ID Card</button>
-                <div id="idCardResult"></div>
             </div>
         </div>
 
-        <!-- RECEIPT -->
         <div id="receipt" class="tab-content hidden">
             <div class="card">
                 <h2>Receipt</h2>
                 <button onclick="generateReceipt()">Generate Receipt</button>
-                <div id="receiptResult"></div>
             </div>
         </div>
     </div>
@@ -186,6 +210,10 @@
 
         function saveManualQuestions() {
             alert("Questions saved successfully!");
+        }
+
+        function addStudent() {
+            alert("Student added!");
         }
 
         function generateReportSheet() {
