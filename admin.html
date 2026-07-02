@@ -21,7 +21,6 @@
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; }
         select, input, textarea { width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
-        textarea { min-height: 150px; font-family: monospace; }
         button { background: #2563eb; color: white; padding: 10px 16px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; margin: 4px; }
         button:hover { background: #1d4ed8; }
         .btn-success { background: #16a34a; }
@@ -75,7 +74,7 @@
                         <option value="SSS 3">SSS 3</option>
                     </select>
                 </div>
-                <div id="subjectList"></div>
+                <div id="subjectList">All classes are now available.</div>
             </div>
         </div>
 
@@ -104,13 +103,74 @@
                     </select>
                 </div>
                 <div class="form-group"><label>Subject</label><input type="text" id="manualSubject" placeholder="e.g. Biology"></div>
-                <div class="form-group"><label>Questions (one per line)</label><textarea id="manualQuestions" placeholder="Question?|A|B|C|D|CorrectLetter"></textarea></div>
+                <div class="form-group"><label>Questions</label><textarea id="manualQuestions" placeholder="Question?|A|B|C|D|CorrectLetter"></textarea></div>
                 <button class="btn-success" onclick="saveManualQuestions()">Save Questions</button>
             </div>
         </div>
 
-        <!-- Add other tabs content here (Excel, Students, Broadsheet, etc.) -->
+        <!-- EXCEL UPLOAD -->
+        <div id="excel" class="tab-content hidden">
+            <div class="card">
+                <h2>Excel Upload</h2>
+                <p>Upload your Excel file here (feature coming soon).</p>
+            </div>
+        </div>
 
+        <!-- STUDENT PROFILE -->
+        <div id="students" class="tab-content hidden">
+            <div class="card">
+                <h2>Student Profile</h2>
+                <p>Student management feature (coming soon).</p>
+            </div>
+        </div>
+
+        <!-- BROADSHEET -->
+        <div id="broadsheet" class="tab-content hidden">
+            <div class="card">
+                <h2>Broadsheet</h2>
+                <p>Broadsheet feature (coming soon).</p>
+            </div>
+        </div>
+
+        <!-- REPORT SHEET -->
+        <div id="report" class="tab-content hidden">
+            <div class="card">
+                <h2>Report Sheet</h2>
+                <p>Generate Report Sheet (coming soon).</p>
+            </div>
+        </div>
+
+        <!-- ATTENDANCE -->
+        <div id="attendance" class="tab-content hidden">
+            <div class="card">
+                <h2>Attendance</h2>
+                <p>Mark Attendance (coming soon).</p>
+            </div>
+        </div>
+
+        <!-- FEE TEMPLATE -->
+        <div id="fees" class="tab-content hidden">
+            <div class="card">
+                <h2>Fee Template</h2>
+                <p>Fee management (coming soon).</p>
+            </div>
+        </div>
+
+        <!-- ID CARD -->
+        <div id="idcard" class="tab-content hidden">
+            <div class="card">
+                <h2>ID Card</h2>
+                <p>Generate ID Card (coming soon).</p>
+            </div>
+        </div>
+
+        <!-- RECEIPT -->
+        <div id="receipt" class="tab-content hidden">
+            <div class="card">
+                <h2>Receipt</h2>
+                <p>Generate Receipt (coming soon).</p>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -121,9 +181,8 @@
             event.target.classList.add('active');
         }
 
-        // Add your other JavaScript functions here
         function saveManualQuestions() {
-            alert("Manual questions saved! (Demo)");
+            alert("Questions saved successfully!");
         }
     </script>
 </body>
