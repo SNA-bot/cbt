@@ -8,48 +8,48 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f3f4f6; color: #1f2937; }
-      .header { background: #1e3a8a; color: #fbbf24; padding: 20px; text-align: center; position: relative; }
-      .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 5px; }
-      .header p { font-size: 14px; opacity: 0.9; }
-      .logout-btn { position: absolute; top: 20px; right: 20px; background: #dc2626; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
-      .tabs { display: flex; background: #e5e7eb; border-bottom: 2px solid #d1d5db; overflow-x: auto; }
-      .tab { padding: 12px 16px; cursor: pointer; border: none; background: none; font-size: 13px; font-weight: 600; color: #4b5563; white-space: nowrap; }
-      .tab.active { color: #1e40af; border-bottom: 3px solid #1e40af; background: white; }
-      .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
-      .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-      .card h2 { color: #1e40af; margin-bottom: 15px; font-size: 18px; }
-      .form-group { margin-bottom: 15px; }
+     .header { background: #1e3a8a; color: #fbbf24; padding: 20px; text-align: center; position: relative; }
+     .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 5px; }
+     .header p { font-size: 14px; opacity: 0.9; }
+     .logout-btn { position: absolute; top: 20px; right: 20px; background: #dc2626; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+     .tabs { display: flex; background: #e5e7eb; border-bottom: 2px solid #d1d5db; overflow-x: auto; }
+     .tab { padding: 12px 16px; cursor: pointer; border: none; background: none; font-size: 13px; font-weight: 600; color: #4b5563; white-space: nowrap; }
+     .tab.active { color: #1e40af; border-bottom: 3px solid #1e40af; background: white; }
+     .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+     .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+     .card h2 { color: #1e40af; margin-bottom: 15px; font-size: 18px; }
+     .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; }
         select, input, textarea { width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
         textarea { min-height: 200px; font-family: monospace; }
         button { background: #2563eb; color: white; padding: 10px 16px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; margin: 4px; }
         button:hover { background: #1d4ed8; }
-      .btn-success { background: #16a34a; }
-      .btn-danger { background: #dc2626; }
-      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
-      .grid-2 { grid-template-columns: repeat(2, 1fr); }
-      .item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f9fafb; border-radius: 6px; margin-bottom: 8px; }
-      .badge { background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-      .alert { padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; }
-      .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-      .alert-info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
-      .hidden { display: none; }
+     .btn-success { background: #16a34a; }
+     .btn-danger { background: #dc2626; }
+     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+     .grid-2 { grid-template-columns: repeat(2, 1fr); }
+     .item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f9fafb; border-radius: 6px; margin-bottom: 8px; }
+     .badge { background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+     .alert { padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; }
+     .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+     .alert-info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+     .hidden { display: none; }
         code { background: #f3f4f6; padding: 2px 6px; border-radius: 3px; font-size: 12px; }
-      .counter { font-size: 12px; color: #6b7280; margin-top: 5px; }
+     .counter { font-size: 12px; color: #6b7280; margin-top: 5px; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>SEALED NECTAR ACADEMY</h1>
-        <p>v6.7.16 - SECURED - ADMIN - HOTFIX 1</p>
+        <p>v6.7.16 - SECURED - ADMIN - HOTFIX 2</p>
         <button class="logout-btn" onclick="logout()">🔒 Logout Admin</button>
     </div>
 
     <div class="tabs">
-        <button class="tab active" onclick="switchTab('subjects')">Subjects</button>
-        <button class="tab" onclick="switchTab('manual')">Manual Entry</button>
-        <button class="tab" onclick="switchTab('excel')">Excel Upload</button>
-        <button class="tab" onclick="switchTab('manage')">Manage Questions</button>
+        <button class="tab active" onclick="switchTab('subjects', event)">Subjects</button>
+        <button class="tab" onclick="switchTab('manual', event)">Manual Entry</button>
+        <button class="tab" onclick="switchTab('excel', event)">Excel Upload</button>
+        <button class="tab" onclick="switchTab('manage', event)">Manage Questions</button>
     </div>
 
     <div class="container">
@@ -166,12 +166,12 @@
             });
         }
 
-        // TAB SWITCH
-        function switchTab(tab) {
+        // TAB SWITCH - FIXED: Now passes event correctly
+        function switchTab(tab, evt) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
             document.getElementById(tab).classList.remove('hidden');
-            event.target.classList.add('active');
+            if(evt) evt.target.classList.add('active');
         }
 
         // DATA HELPERS
