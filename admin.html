@@ -5,284 +5,272 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SEALED NECTAR ACADEMY - Admin Portal</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f3f4f6; color: #1f2937; }
-    .header { background: #1e3a8a; color: #fbbf24; padding: 20px; text-align: center; }
-    .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 5px; }
-    .header p { font-size: 14px; opacity: 0.9; }
-    .tabs { display: flex; background: #e5e7eb; border-bottom: 2px solid #d1d5db; overflow-x: auto; }
-    .tab { padding: 12px 16px; cursor: pointer; border: none; background: none; font-size: 13px; font-weight: 600; color: #4b5563; white-space: nowrap; }
-    .tab.active { color: #1e40af; border-bottom: 3px solid #1e40af; background: white; }
-    .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
-    .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .card h2 { color: #1e40af; margin-bottom: 15px; font-size: 18px; }
-    .form-group { margin-bottom: 15px; }
+       .header { background: #1e3a8a; color: #fbbf24; padding: 20px; text-align: center; }
+       .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 5px; }
+       .header p { font-size: 14px; opacity: 0.9; }
+       .tabs { display: flex; background: #e5e7eb; border-bottom: 2px solid #d1d5db; overflow-x: auto; }
+       .tab { padding: 12px 16px; cursor: pointer; border: none; background: none; font-size: 13px; font-weight: 600; color: #4b5563; white-space: nowrap; }
+       .tab.active { color: #1e40af; border-bottom: 3px solid #1e40af; background: white; }
+       .container { max-width: 1400px; margin: 20px auto; padding: 0 20px; }
+       .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+       .card h2 { color: #1e40af; margin-bottom: 15px; font-size: 18px; }
+       .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; }
         select, input, textarea { width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
         textarea { min-height: 200px; font-family: monospace; }
         button { background: #2563eb; color: white; padding: 10px 16px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; margin: 4px; }
         button:hover { background: #1d4ed8; }
-    .btn-success { background: #16a34a; }
-    .btn-danger { background: #dc2626; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
-    .grid-2 { grid-template-columns: repeat(2, 1fr); }
-    .item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f9fafb; border-radius: 6px; margin-bottom: 8px; }
-    .badge { background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-    .alert { padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; }
-    .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-    .alert-info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
-    .hidden { display: none; }
+       .btn-success { background: #16a34a; }
+       .btn-danger { background: #dc2626; }
+       .btn-warning { background: #f59e0b; }
+       .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+       .grid-2 { grid-template-columns: repeat(2, 1fr); }
+       .grid-3 { grid-template-columns: repeat(3, 1fr); }
+       .item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f9fafb; border-radius: 6px; margin-bottom: 8px; }
+       .badge { background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+       .alert { padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; }
+       .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+       .alert-info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+       .hidden { display: none; }
         code { background: #f3f4f6; padding: 2px 6px; border-radius: 3px; font-size: 12px; }
-    .counter { font-size: 12px; color: #6b7280; margin-top: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
+        th, td { border: 1px solid #d1d5db; padding: 6px; text-align: left; }
+        th { background: #f3f4f6; font-weight: 600; }
+       .id-card { width: 320px; border: 2px solid #1e40af; border-radius: 8px; padding: 12px; background: white; margin: 10px auto; text-align: center; }
+       .id-card img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #1e40af; }
+       .receipt { width: 400px; border: 1px solid #000; padding: 15px; background: white; margin: 10px auto; font-size: 13px; }
+       .receipt h3 { text-align: center; margin-bottom: 10px; }
+       .counter { font-size: 12px; color: #6b7280; margin-top: 5px; }
+        @media print {.no-print { display: none; }.container { margin: 0; padding: 0; } }
     </style>
 </head>
 <body>
-    <div class="header">
+    <div class="header no-print">
         <h1>SEALED NECTAR ACADEMY</h1>
-        <p>v6.7.16 - EMERGENCY FIX - ALL CLASSES + SUBJECTS</p>
+        <p>v6.7.16 - COMPLETE - ALL CLASSES + ALL SUBJECTS + ALL FEATURES RESTORED</p>
     </div>
 
-    <div class="tabs">
+    <div class="tabs no-print">
         <button class="tab active" onclick="switchTab('subjects', this)">Subjects</button>
         <button class="tab" onclick="switchTab('manual', this)">Manual Entry</button>
         <button class="tab" onclick="switchTab('excel', this)">Excel Upload</button>
-        <button class="tab" onclick="switchTab('manage', this)">Manage Questions</button>
-    </div>
-
-    <div class="container">
-        <!-- 1. SUBJECTS TAB -->
-        <div id="subjects" class="tab-content">
-            <div class="card">
-                <h2>All Classes & Subjects - v6.7.16 FIXED</h2>
-                <div class="alert alert-success">✅ All 16 classes loaded. ✅ All missing subjects added: Arabiyah, Account, Further Maths, etc.</div>
-                <div class="form-group">
-                    <label>Select Class to View Subjects</label>
-                    <select id="viewClass" onchange="loadSubjects()"></select>
-                </div>
-                <div id="subjectList"></div>
-            </div>
-        </div>
-
-        <!-- 2. MANUAL ENTRY TAB -->
-        <div id="manual" class="tab-content hidden">
-            <div class="card">
-                <h2>✍️ Bulk Manual Question Entry</h2>
-                <div class="alert alert-info">
-                    <strong>FOR YOUR EXAMS:</strong> Paste 50-100 questions at once.<br>
-                    Format: <code>Question?|OptionA|OptionB|OptionC|OptionD|CorrectLetter</code> One per line
-                </div>
-                <div class="grid grid-2">
-                    <div class="form-group"><label>Class</label><select id="manualClass" onchange="loadManualSubjects()"></select></div>
-                    <div class="form-group"><label>Subject</label><select id="manualSubject"></select></div>
-                </div>
-                <div class="form-group">
-                    <label>Questions - Paste Multiple</label>
-                    <textarea id="manualQuestions" placeholder="What is 2+2?|3|4|5|6|B&#10;Capital of Nigeria?|Lagos|Abuja|Kano|Ibadan|B" oninput="updateQuestionCount()"></textarea>
-                    <div class="counter" id="qCount">0 questions detected</div>
-                </div>
-                <button class="btn-success" onclick="saveManualQuestions()">Save All Questions</button>
-                <button class="btn-danger" onclick="clearManual()">Clear Textbox</button>
-                <div id="manualMsg"></div>
-            </div>
-        </div>
-
-        <!-- 3. EXCEL UPLOAD TAB -->
-        <div id="excel" class="tab-content hidden">
-            <div class="card">
-                <h2>📤 Upload Questions via Excel</h2>
-                <div class="alert alert-info">Columns: <code>Question</code>, <code>Option A</code>, <code>Option B</code>, <code>Option C</code>, <code>Option D</code>, <code>Correct Answer</code></div>
-                <div class="grid grid-2">
-                    <div class="form-group"><label>Class</label><select id="excelClass" onchange="loadExcelSubjects()"></select></div>
-                    <div class="form-group"><label>Subject</label><select id="excelSubject"><option value="">-- Select Class First --</option></select></div>
-                </div>
-                <div class="form-group"><label>Excel File</label><input type="file" id="excelFile" accept=".xlsx,.xls"></div>
-                <button onclick="uploadExcel()">Upload Questions</button>
-                <div id="excelMsg"></div>
-            </div>
-        </div>
-
-        <!-- 4. MANAGE QUESTIONS TAB -->
-        <div id="manage" class="tab-content hidden">
-            <div class="card">
-                <h2>Manage Questions</h2>
-                <div class="grid grid-2">
-                    <div class="form-group"><label>Class</label><select id="manageClass" onchange="loadManageSubjects()"></select></div>
-                    <div class="form-group"><label>Subject</label><select id="manageSubject" onchange="loadQuestions()"></select></div>
-                </div>
-                <div id="questionCount" class="alert alert-info">Select class and subject</div>
-                <div id="questionList"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // COMPLETE CLASSES - 16 TOTAL - ALL FIXED
-        const CLASSES = ["Creche", "K.G", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2", "Primary 3", "Primary 4", "Primary 5", "Primary 6", "JSS 1", "JSS 2", "JSS 3", "SSS 1", "SSS 2", "SSS 3"];
-        
-        // COMPLETE SUBJECTS - ALL YOUR MISSING SUBJECTS ADDED
-        const SUBJECTS = {
-            "Creche": ["Numeracy", "Literacy", "Social Habits", "Health Habits", "Songs/Rhymes"],
-            "K.G": ["Numeracy", "Literacy", "Social Habits", "Health Habits", "Songs/Rhymes", "Writing"],
-            "Nursery 1": ["Numeracy", "Literacy", "Social Habits", "Health Habits", "Science", "Writing", "Rhymes"],
-            "Nursery 2": ["Numeracy", "Literacy", "Social Habits", "Health Habits", "Basic Science", "Writing", "Verbal Reasoning", "Quantitative Reasoning"],
-            "Primary 1": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
-            "Primary 2": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
-            "Primary 3": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
-            "Primary 4": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
-            "Primary 5": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
-            "Primary 6": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
-            "JSS 1": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "Islamic Studies", "Business Studies", "Agricultural Science", "Arabiyah", "Home Economics", "ICT", "CCA", "PHE", "Yoruba"],
-            "JSS 2": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "Islamic Studies", "Business Studies", "Agricultural Science", "Arabiyah", "Home Economics", "ICT", "CCA", "PHE", "Yoruba"],
-            "JSS 3": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "Islamic Studies", "Business Studies", "Agricultural Science", "Arabiyah", "Home Economics", "ICT", "CCA", "PHE", "Yoruba"],
-            "SSS 1": ["Physics", "Biology", "Chemistry", "Mathematics", "English Language", "Civic Education", "Islamic Studies", "Economics", "Account", "Commerce", "Further Maths", "Lit-in-English", "Animal Husbandry", "Marketing", "Computer", "Data Processing", "Government", "Technical Drawing"],
-            "SSS 2": ["Physics", "Biology", "Chemistry", "Mathematics", "English Language", "Civic Education", "Islamic Studies", "Economics", "Account", "Commerce", "Further Maths", "Lit-in-English", "Animal Husbandry", "Marketing", "Computer", "Data Processing", "Government", "Technical Drawing"],
-            "SSS 3": ["Physics", "Biology", "Chemistry", "Mathematics", "English Language", "Civic Education", "Islamic Studies", "Economics", "Account", "Commerce", "Further Maths", "Lit-in-English", "Animal Husbandry", "Marketing", "Computer", "Data Processing", "Government", "Technical Drawing"]
-        };
-
-        // INIT DATA
-        if (!localStorage.getItem('cbt_questions')) localStorage.setItem('cbt_questions', JSON.stringify({}));
-        
-        // REMOVED AUTH CHECK - THIS WAS CAUSING BLANK SCREEN
-
-        // POPULATE ALL DROPDOWNS ON LOAD
-        function populateAllDropdowns() {
-            const dropdowns = ['viewClass', 'manualClass', 'excelClass', 'manageClass'];
-            dropdowns.forEach(id => {
-                const el = document.getElementById(id);
-                if(el) {
-                    el.innerHTML = '<option value="">-- Select Class --</option>';
-                    CLASSES.forEach(c => el.innerHTML += `<option value="${c}">${c}</option>`);
-                }
-            });
-        }
-
-        // TAB SWITCH - FIXED: Now uses 'this' correctly
-        function switchTab(tab, btn) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-            document.getElementById(tab).classList.remove('hidden');
-            if(btn) btn.classList.add('active');
-        }
-
-        // DATA HELPERS
-        const getQ = () => JSON.parse(localStorage.getItem('cbt_questions') || '{}');
-        const saveQ = d => localStorage.setItem('cbt_questions', JSON.stringify(d));
-
-        // 1. SUBJECTS TAB
-        function loadSubjects() {
-            const c = document.getElementById('viewClass').value;
-            const l = document.getElementById('subjectList');
-            if(!c){l.innerHTML='<p style="color:#6b7280;">Select a class to view subjects.</p>';return;}
-            l.innerHTML = SUBJECTS[c].map(s=>{
-                const count = getQ()[c]?.[s]?.length || 0;
-                return `<div class="item"><div><strong>${s}</strong><span class="badge">${count} questions</span></div></div>`;
-            }).join('');
-        }
-
-        // 2. MANUAL ENTRY
-        function loadManualSubjects() {
-            const c = document.getElementById('manualClass').value;
-            const s = document.getElementById('manualSubject');
-            s.innerHTML = '<option value="">-- Select Subject --</option>';
-            if(SUBJECTS[c]) SUBJECTS[c].forEach(sub=>s.innerHTML+=`<option value="${sub}">${sub}</option>`);
-        }
-
-        function updateQuestionCount() {
-            const text = document.getElementById('manualQuestions').value.trim();
-            const count = text? text.split('\n').filter(l=>l.trim()).length : 0;
-            document.getElementById('qCount').textContent = `${count} questions detected`;
-        }
-
-        function saveManualQuestions() {
-            const c = document.getElementById('manualClass').value;
-            const s = document.getElementById('manualSubject').value;
-            const t = document.getElementById('manualQuestions').value.trim();
-            const m = document.getElementById('manualMsg');
-            if(!c||!s||!t){m.innerHTML='<div class="alert alert-info" style="background:#fee2e2;color:#991b1b;">Select class, subject and paste questions</div>';return;}
-            const d = getQ(); d[c]=d[c]||{}; d[c][s]=d[c][s]||[]; 
-            let add=0, errors=[];
-            t.split('\n').filter(l=>l.trim()).forEach((l,i)=>{
-                const p=l.split('|');
-                if(p.length===6&&['A','B','C','D'].includes(p[5].trim().toUpperCase())){
-                    d[c][s].push({question:p[0].trim(),a:p[1].trim(),b:p[2].trim(),c:p[3].trim(),d:p[4].trim(),correct:p[5].trim().toUpperCase()});
-                    add++;
-                } else {
-                    errors.push(`Line ${i+1}`);
-                }
-            });
-            saveQ(d); 
-            m.innerHTML=`<div class="alert alert-success">Added ${add} questions to ${c} - ${s}. ${errors.length? 'Errors on: ' + errors.join(', ') : ''}</div>`; 
-            if(!errors.length) document.getElementById('manualQuestions').value='';
-            updateQuestionCount();
-        }
-
-        function clearManual() {
-            document.getElementById('manualQuestions').value = '';
-            updateQuestionCount();
-        }
-
-        // 3. EXCEL UPLOAD
-        function loadExcelSubjects() {
-            const c = document.getElementById('excelClass').value;
-            const s = document.getElementById('excelSubject');
-            s.innerHTML = '<option value="">-- Select Subject --</option>';
-            if(SUBJECTS[c]) SUBJECTS[c].forEach(sub=>s.innerHTML+=`<option value="${sub}">${sub}</option>`);
-        }
-
-        function uploadExcel() {
-            const f=document.getElementById('excelFile').files[0];
-            const c=document.getElementById('excelClass').value;
-            const s=document.getElementById('excelSubject').value;
-            const m=document.getElementById('excelMsg');
-            if(!f||!c||!s){m.innerHTML='<div class="alert alert-info" style="background:#fee2e2;color:#991b1b;">Select class, subject and file</div>';return;}
-            const r=new FileReader(); 
-            r.onload=e=>{
-                const w=XLSX.read(e.target.result,{type:'binary'});
-                const sh=w.Sheets[w.SheetNames[0]];
-                const rows=XLSX.utils.sheet_to_json(sh);
-                const d=getQ();d[c]=d[c]||{};d[c][s]=d[c][s]||[];
-                let add=0;
-                rows.forEach(r=>{
-                    if(r.Question&&r['Option A']&&r['Correct Answer']){
-                        d[c][s].push({question:r.Question,a:r['Option A'],b:r['Option B']||'',c:r['Option C']||'',d:r['Option D']||'',correct:r['Correct Answer'].toString().toUpperCase().charAt(0)});
-                        add++;
-                    }
-                });
-                saveQ(d);
-                m.innerHTML=`<div class="alert alert-success">Uploaded ${add} questions to ${c} - ${s}</div>`;
-            }; 
-            r.readAsBinaryString(f);
-        }
-
-        // 4. MANAGE QUESTIONS
-        function loadManageSubjects() {
-            const c = document.getElementById('manageClass').value;
-            const s = document.getElementById('manageSubject');
-            s.innerHTML = '<option value="">-- Select Subject --</option>';
-            if(SUBJECTS[c]) SUBJECTS[c].forEach(sub=>s.innerHTML+=`<option value="${sub}">${sub}</option>`);
-        }
-
-        function loadQuestions() {
-            const c = document.getElementById('manageClass').value;
-            const s = document.getElementById('manageSubject').value;
-            const d = getQ();
-            const q = d[c]?.[s] || [];
-            document.getElementById('questionCount').innerHTML = `<strong>${c} - ${s}:</strong> ${q.length} questions total`;
-            document.getElementById('questionList').innerHTML = q.map((qst,i)=>`
-                <div class="item">
-                    <div><strong>Q${i+1}:</strong> ${qst.question.substring(0,60)}...</div>
-                    <button class="btn-danger" onclick="deleteQuestion('${c}','${s}',${i})">Delete</button>
-                </div>
-            `).join('') || '<p>No questions yet.</p>';
-        }
-
-        function deleteQuestion(c,s,i) {
-            if(!confirm('Delete this question?'))return;
-            const d=getQ();
-            d[c][s].splice(i,1);
+        <button class="tab" onclick
+                     d[c][s].splice(i,1);
             saveQ(d);
             loadQuestions();
+        }
+
+        // 5. STUDENT PROFILE
+        function saveStudent() {
+            const name=document.getElementById('studentName').value.trim();
+            const cls=document.getElementById('studentClass').value;
+            const admNo=document.getElementById('studentAdmNo').value.trim();
+            const gender=document.getElementById('studentGender').value;
+            const dob=document.getElementById('studentDob').value;
+            const photo=document.getElementById('studentPhoto').value.trim();
+            const msg=document.getElementById('studentMsg');
+            if(!name||!cls||!admNo){msg.innerHTML='<div class="alert alert-info" style="background:#fee2e2;color:#991b1b;">Fill Name, Class, Admission No</div>';return;}
+            const s=getS();
+            s.push({id:Date.now(),name,class:cls,admNo,gender,dob,photo});
+            saveS(s);
+            msg.innerHTML='<div class="alert alert-success">Student saved successfully</div>';
+            document.getElementById('studentName').value='';
+            document.getElementById('studentAdmNo').value='';
+            document.getElementById('studentDob').value='';
+            document.getElementById('studentPhoto').value='';
+            loadStudents();
+            loadStudentDropdowns();
+        }
+
+        function loadStudents() {
+            const cls=document.getElementById('filterStudentClass').value;
+            const s=getS().filter(st=>!cls||st.class===cls);
+            document.getElementById('studentList').innerHTML=s.map(st=>`
+                <div class="item">
+                    <div><strong>${st.name}</strong> - ${st.class} - ${st.admNo}</div>
+                    <button class="btn-danger" onclick="deleteStudent(${st.id})">Delete</button>
+                </div>
+            `).join('')||'<p>No students found.</p>';
+        }
+
+        function deleteStudent(id) {
+            if(!confirm('Delete this student?'))return;
+            saveS(getS().filter(s=>s.id!==id));
+            loadStudents();
+            loadStudentDropdowns();
+        }
+
+        function loadStudentDropdowns() {
+            const s=getS();
+            const dropdowns=['reportStudent','idStudent','recStudent'];
+            dropdowns.forEach(id=>{
+                const el=document.getElementById(id);
+                if(el) el.innerHTML='<option value="">-- Select Student --</option>'+s.map(st=>`<option value="${st.id}">${st.name} - ${st.class}</option>`).join('');
+            });
+        }
+
+        // 6. BROADSHEET
+        function generateBroadsheet() {
+            const cls=document.getElementById('broadClass').value;
+            const term=document.getElementById('broadTerm').value;
+            const session=document.getElementById('broadSession').value;
+            const students=getS().filter(s=>s.class===cls);
+            const scores=getSc();
+            if(!cls){alert('Select class');return;}
+            let html=`<h3>SEALED NECTAR ACADEMY</h3><p><strong>Broadsheet - ${cls} - ${term} ${session}</strong></p><table><tr><th>S/N</th><th>Name</th><th>Adm No</th>`;
+            const subjects=SUBJECTS[cls]||[];
+            subjects.forEach(sub=>html+=`<th>${sub}</th>`);
+            html+=`<th>Total</th><th>Average</th></tr>`;
+            students.forEach((st,i)=>{
+                let total=0;
+                html+=`<tr><td>${i+1}</td><td>${st.name}</td><td>${st.admNo}</td>`;
+                subjects.forEach(sub=>{
+                    const score=scores[st.id]?.[term]?.[sub]||'-';
+                    if(score!=='-')total+=Number(score);
+                    html+=`<td>${score}</td>`;
+                });
+                const avg=subjects.length? (total/subjects.length).toFixed(1):0;
+                html+=`<td>${total}</td><td>${avg}</td></tr>`;
+            });
+            html+='</table>';
+            document.getElementById('broadsheetResult').innerHTML=html;
+        }
+
+        // 7. REPORT SHEET
+        function generateReport() {
+            const sid=document.getElementById('reportStudent').value;
+            const term=document.getElementById('reportTerm').value;
+            const session=document.getElementById('reportSession').value;
+            const st=getS().find(s=>s.id==sid);
+            if(!st){alert('Select student');return;}
+            const scores=getSc()[sid]?.[term]||{};
+            let html=`<div style="text-align:center;"><h3>SEALED NECTAR ACADEMY</h3><p><strong>TERMINAL REPORT SHEET</strong></p></div>`;
+            html+=`<p><strong>Name:</strong> ${st.name} | <strong>Class:</strong> ${st.class} | <strong>Adm No:</strong> ${st.admNo}</p>`;
+            html+=`<p><strong>Term:</strong> ${term} | <strong>Session:</strong> ${session}</p>`;
+            html+=`<table><tr><th>Subject</th><th>Score</th><th>Grade</th><th>Remark</th></tr>`;
+            let total=0,count=0;
+            (SUBJECTS[st.class]||[]).forEach(sub=>{
+                const score=scores[sub];
+                if(score){
+                    total+=Number(score);
+                    count++;
+                    let grade='F9',remark='Fail';
+                    if(score>=75){grade='A1';remark='Excellent';}
+                    else if(score>=70){grade='B2';remark='Very Good';}
+                    else if(score>=65){grade='B3';remark='Good';}
+                    else if(score>=60){grade='C4';remark='Credit';}
+                    else if(score>=55){grade='C5';remark='Credit';}
+                    else if(score>=50){grade='C6';remark='Credit';}
+                    else if(score>=45){grade='D7';remark='Pass';}
+                    else if(score>=40){grade='E8';remark='Pass';}
+                    html+=`<tr><td>${sub}</td><td>${score}</td><td>${grade}</td><td>${remark}</td></tr>`;
+                }
+            });
+            const avg=count?(total/count).toFixed(1):0;
+            html+=`<tr><th colspan="4">Total: ${total} | Average: ${avg}</th></tr></table>`;
+            html+=`<br><p><strong>Class Teacher's Comment:</strong> ________________________________</p>`;
+            html+=`<p><strong>Principal's Comment:</strong> ________________________________</p>`;
+            document.getElementById('reportResult').innerHTML=html;
+        }
+
+        // 8. ATTENDANCE
+        function loadAttendanceStudents() {
+            const cls=document.getElementById('attClass').value;
+            const date=document.getElementById('attDate').value;
+            const students=getS().filter(s=>s.class===cls);
+            const att=getA();
+            document.getElementById('attendanceList').innerHTML=students.map(st=>{
+                const status=att[date]?.[st.id]||'Present';
+                return `<div class="item"><div>${st.name} - ${st.admNo}</div>
+                    <select onchange="updateAtt('${date}',${st.id},this.value)">
+                        <option value="Present"${status==='Present'?' selected':''}>Present</option>
+                        <option value="Absent"${status==='Absent'?' selected':''}>Absent</option>
+                        <option value="Late"${status==='Late'?' selected':''}>Late</option>
+                    </select></div>`;
+            }).join('')||'<p>No students in class.</p>';
+        }
+
+        function updateAtt(date,sid,status) {
+            const a=getA();
+            a[date]=a[date]||{};
+            a[date][sid]=status;
+            saveA(a);
+        }
+
+        function saveAttendance() {
+            document.getElementById('attMsg').innerHTML='<div class="alert alert-success">Attendance saved</div>';
+        }
+
+        // 9. FEE TEMPLATE
+        function saveFeeTemplate() {
+            const cls=document.getElementById('feeClass').value;
+            const tuition=document.getElementById('feeTuition').value;
+            const term=document.getElementById('feeTerm').value;
+            if(!cls||!tuition){alert('Select class and enter tuition');return;}
+            const f=getF();
+            f[cls]=f[cls]||{};
+            f[cls][term]={tuition:Number(tuition)};
+            saveF(f);
+            loadFeeTemplates();
+        }
+
+        function loadFeeTemplates() {
+            const f=getF();
+            let html='<table><tr><th>Class</th><th>Term</th><th>Tuition</th></tr>';
+            Object.keys(f).forEach(cls=>{
+                Object.keys(f[cls]).forEach(term=>{
+                    html+=`<tr><td>${cls}</td><td>${term}</td><td>₦${f[cls][term].tuition.toLocaleString()}</td></tr>`;
+                });
+            });
+            html+='</table>';
+            document.getElementById('feeList').innerHTML=html;
+        }
+
+        // 10. ID CARD
+        function generateIDCard() {
+            const sid=document.getElementById('idStudent').value;
+            const st=getS().find(s=>s.id==sid);
+            if(!st){alert('Select student');return;}
+            document.getElementById('idCardResult').innerHTML=`
+                <div class="id-card">
+                    <h3>SEALED NECTAR ACADEMY</h3>
+                    <img src="${st.photo||'https://via.placeholder.com/80'}" alt="Photo">
+                    <p><strong>${st.name}</strong></p>
+                    <p>Class: ${st.class}</p>
+                    <p>Adm No: ${st.admNo}</p>
+                    <p>Session: 2024/2025</p>
+                </div>`;
+        }
+
+        // 11. RECEIPT
+        function generateReceipt() {
+            const sid=document.getElementById('recStudent').value;
+            const amt=document.getElementById('recAmount').value;
+            const term=document.getElementById('recTerm').value;
+            const purpose=document.getElementById('recPurpose').value;
+            const date=document.getElementById('recDate').value;
+            const no=document.getElementById('recNo').value||'SNA'+Date.now();
+            const st=getS().find(s=>s.id==sid);
+            if(!st||!amt){alert('Select student and amount');return;}
+            const recs=getR();
+            recs.push({no,date,student:st.name,class:st.class,amount:amt,term,purpose});
+            saveR(recs);
+            document.getElementById('receiptResult').innerHTML=`
+                <div class="receipt">
+                    <h3>SEALED NECTAR ACADEMY</h3>
+                    <p style="text-align:center;"><strong>OFFICIAL RECEIPT</strong></p>
+                    <p><strong>Receipt No:</strong> ${no}</p>
+                    <p><strong>Date:</strong> ${date}</p>
+                    <p><strong>Received From:</strong> ${st.name}</p>
+                    <p><strong>Class:</strong> ${st.class}</p>
+                    <p><strong>Amount:</strong> ₦${Number(amt).toLocaleString()}</p>
+                    <p><strong>For:</strong> ${purpose} - ${term}</p>
+                    <br><p>____________________<br>Authorized Signature</p>
+                </div>`;
         }
 
         // INIT
@@ -290,4 +278,4 @@
         loadSubjects();
     </script>
 </body>
-</html>
+</html>   
