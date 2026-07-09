@@ -3,1034 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sealed Nectar Academy - School Management</title>
+    <title>SEALED NECTAR ACADEMY - CBT Portal</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; color: #333; }
-   .container { max-width: 1400px; margin: 0 auto; }
-   .header { background: #002366; color: white; padding: 1.5rem; text-align: center; margin-bottom: 2rem; border-radius: 8px; }
-   .header h1 { color: #FFA500; font-size: 2rem; margin-bottom: 0.5rem; }
-   .tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
-   .tab-btn { padding: 0.75rem 1.5rem; border: none; background: white; color: #002366; border-radius: 4px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-   .tab-btn.active { background: #002366; color: white; }
-   .tab-content { display: none; }
-   .tab-content.active { display: block; }
-   .section { background: white; margin: 1.5rem 0; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-   .section h3 { color: #002366; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 3px solid #FFA500; }
-   .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0; }
-   .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #002366; }
-   .form-group input,.form-group select,.form-group textarea { width: 100%; padding: 0.5rem; border: 2px solid #ddd; border-radius: 4px; }
-   .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; margin: 0.25rem; }
-   .btn-primary { background: #002366; color: white; }
-   .btn-success { background: #28a745; color: white; }
-   .btn-warning { background: #FFA500; color: #002366; }
-   .btn-danger { background: #dc3545; color: white; }
-   .btn-info { background: #17a2b8; color: white; }
-   .btn-edit { background: #6c757d; color: white; padding: 0.4rem 0.8rem; font-size: 0.85rem; }
-   .alert { padding: 1rem; margin: 1rem 0; border-radius: 4px; }
-   .alert-success { background: #d4edda; color: #155724; }
-   .alert-danger { background: #f8d7da; color: #721c24; }
-   .alert-info { background: #d1ecf1; color: #0c5460; }
-   .alert-warning { background: #fff3cd; color: #856404; }
-   .table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
-   .table th,.table td { padding: 0.5rem; border: 1px solid #ddd; text-align: center; }
-   .table th { background: #002366; color: white; }
-   .table input,.table select { width: 100%; padding: 0.4rem; border: 1px solid #ddd; }
-   .id-card { width: 350px; margin: 1rem auto; border: 3px solid #002366; border-radius: 10px; overflow: hidden; background: white; }
-   .id-header { background: #002366; color: white; padding: 1rem; text-align: center; }
-   .id-header h2 { color: #FFA500; font-size: 1.2rem; }
-   .id-body { padding: 1rem; }
-   .id-photo { width: 100px; height: 100px; background: #ddd; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
-   .id-info p { margin: 0.5rem 0; font-size: 0.9rem; }
-   .id-info strong { color: #002366; }
-   .id-back { background: #f8f9fa; padding: 1rem; border-top: 2px dashed #002366; font-size: 0.8rem; }
-   .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
-   .modal-content { background: white; margin: 5% auto; padding: 2rem; border-radius: 8px; max-width: 600px; max-height: 80vh; overflow-y: auto; }
-   .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-   .close { font-size: 2rem; cursor: pointer; color: #999; }
-   .close:hover { color: #333; }
-   .student-list { margin-top: 2rem; }
-   .student-item { background: #f8f9fa; padding: 1rem; margin: 0.5rem 0; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
-   .cumulative-row { background: #fff3cd!important; font-weight: 600; }
-   .id-container { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; padding: 20px; }
+       .header { background: #1e3a8a; color: #fbbf24; padding: 20px; text-align: center; border-radius: 8px; margin-bottom: 20px; }
+       .container { max-width: 800px; margin: 0 auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+       .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 16px; }
+        button { background: #2563eb; color: white; padding: 12px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 16px; width: 100%; margin-top: 10px; }
+        button:hover { background: #1d4ed8; }
+       .question-box { margin: 20px 0; padding: 15px; border: 1px solid #e5e7eb; border-radius: 6px; }
+       .options label { display: block; padding: 10px; margin: 8px 0; background: #f9fafb; border-radius: 6px; cursor: pointer; }
+       .options input { width: auto; margin-right: 10px; }
+       .timer { position: fixed; top: 20px; right: 20px; background: #dc2626; color: white; padding: 10px 15px; border-radius: 6px; font-weight: 700; }
+       .hidden { display: none; }
+       .alert { padding: 12px; border-radius: 6px; margin: 15px 0; }
+       .alert-danger { background: #fee2e2; color: #991b1b; }
+       .alert-success { background: #dcfce7; color: #166534; }
     </style>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Sealed Nectar Academy</h1>
-            <p>School Management System — 2025/2026 Session</p>
-        </div>
-
-        <div class="tabs">
-            <button class="tab-btn active" onclick="openTab('broadsheet')">📊 Broadsheet</button>
-            <button class="tab-btn" onclick="openTab('report')">📄 Report Card</button>
-            <button class="tab-btn" onclick="openTab('attendance')">📅 Attendance</button>
-            <button class="tab-btn" onclick="openTab('fees')">💰 Fee Template</button>
-            <button class="tab-btn" onclick="openTab('profile')">👤 Student Profile</button>
-            <button class="tab-btn" onclick="openTab('idcard')">🎫 ID Card</button>
-            <button class="tab-btn" onclick="openTab('receipt')">🧾 Receipt</button>
-        </div>
-
-        <div id="broadsheet" class="tab-content active">
-            <div class="section">
-                <h3>Class Broadsheet — C.A (40%) + Exam (60%)</h3>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Class *</label>
-                        <select id="bsClass" onchange="updateSubjects()">
-                            <option value="">Select Class</option>
-                            <option value="Creche">Creche</option>
-                            <option value="KG 1">KG 1</option>
-                            <option value="KG 2">KG 2</option>
-                            <option value="Nursery 1">Nursery 1</option>
-                            <option value="Nursery 2">Nursery 2</option>
-                            <option value="Nursery 3">Nursery 3</option>
-                            <option value="Primary 1">Primary 1</option>
-                            <option value="Primary 2">Primary 2</option>
-                            <option value="Primary 3">Primary 3</option>
-                            <option value="Primary 4">Primary 4</option>
-                            <option value="Primary 5">Primary 5</option>
-                            <option value="Primary 6">Primary 6</option>
-                            <option value="JSS 1">JSS 1</option>
-                            <option value="JSS 2">JSS 2</option>
-                            <option value="JSS 3">JSS 3</option>
-                            <option value="SSS 1">SSS 1</option>
-                            <option value="SSS 2">SSS 2</option>
-                            <option value="SSS 3">SSS 3</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Term *</label>
-                        <select id="bsTerm" onchange="loadBroadsheet()">
-                            <option value="First Term">First Term</option>
-                            <option value="Second Term">Second Term</option>
-                            <option value="Third Term">Third Term</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Subject *</label>
-                        <select id="bsSubject" onchange="loadBroadsheet()">
-                            <option value="">Select Subject</option>
-                        </select>
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="addStudent()">➕ Add Student</button>
-                <button class="btn btn-success" onclick="saveBroadsheet()">💾 Save Broadsheet</button>
-                <button class="btn btn-warning" onclick="calculatePositions()">🏆 Calculate Positions</button>
-                <div id="bsAlert"></div>
-                <div id="bsTable" style="overflow-x:auto; margin-top:1rem;"></div>
-            </div>
-        </div>
-
-        <div id="report" class="tab-content">
-            <div class="section">
-                <h3>Report Card Generator — With Annual Cumulative</h3>
-                <div class="alert alert-info">
-                    <strong>NEW:</strong> Third Term reports show First + Second + Third Term + Annual Average
-                </div>
-                <div class="form-grid">
-                    <div class="form-group"><label>Student ID *</label><input type="text" id="repId" placeholder="SNA/2025/001"></div>
-                    <div class="form-group">
-                        <label>Class *</label>
-                        <select id="repClass">
-                            <option value="">Select Class</option>
-                            <option value="Creche">Creche</option>
-                            <option value="KG 1">KG 1</option>
-                            <option value="KG 2">KG 2</option>
-                            <option value="Nursery 1">Nursery 1</option>
-                            <option value="Nursery 2">Nursery 2</option>
-                            <option value="Nursery 3">Nursery 3</option>
-                            <option value="Primary 1">Primary 1</option>
-                            <option value="Primary 2">Primary 2</option>
-                            <option value="Primary 3">Primary 3</option>
-                            <option value="Primary 4">Primary 4</option>
-                            <option value="Primary 5">Primary 5</option>
-                            <option value="Primary 6">Primary 6</option>
-                            <option value="JSS 1">JSS 1</option>
-                            <option value="JSS 2">JSS 2</option>
-                            <option value="JSS 3">JSS 3</option>
-                            <option value="SSS 1">SSS 1</option>
-                            <option value="SSS 2">SSS 2</option>
-                            <option value="SSS 3">SSS 3</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Term *</label>
-                        <select id="repTerm">
-                            <option value="First Term">First Term</option>
-                            <option value="Second Term">Second Term</option>
-                            <option value="Third Term">Third Term - With Cumulative</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Session</label>
-                        <input type="text" id="repSession" value="2025/2026">
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="generateReport()">📄 Generate Report Card</button>
-                <button class="btn btn-success" onclick="downloadReportPDF()">📥 Download PDF</button>
-                <div id="repAlert"></div>
-                <div id="repDisplay" style="margin-top:1rem;"></div>
-            </div>
-        </div>
-
-        <div id="attendance" class="tab-content">
-            <div class="section">
-                <h3>Attendance Register</h3>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Class *</label>
-                        <select id="attClass">
-                            <option value="">Select Class</option>
-                            <option value="Creche">Creche</option>
-                            <option value="KG 1">KG 1</option>
-                            <option value="KG 2">KG 2</option>
-                            <option value="Nursery 1">Nursery 1</option>
-                            <option value="Nursery 2">Nursery 2</option>
-                            <option value="Nursery 3">Nursery 3</option>
-                            <option value="Primary 1">Primary 1</option>
-                            <option value="Primary 2">Primary 2</option>
-                            <option value="Primary 3">Primary 3</option>
-                            <option value="Primary 4">Primary 4</option>
-                            <option value="Primary 5">Primary 5</option>
-                            <option value="Primary 6">Primary 6</option>
-                            <option value="JSS 1">JSS 1</option>
-                            <option value="JSS 2">JSS 2</option>
-                            <option value="JSS 3">JSS 3</option>
-                            <option value="SSS 1">SSS 1</option>
-                            <option value="SSS 2">SSS 2</option>
-                            <option value="SSS 3">SSS 3</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Date *</label>
-                        <input type="date" id="attDate">
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="loadAttendance()">📋 Load Class List</button>
-                <button class="btn btn-success" onclick="saveAttendance()">💾 Save Attendance</button>
-                <div id="attAlert"></div>
-                <div id="attTable" style="margin-top:1rem;"></div>
-            </div>
-        </div>
-
-        <div id="fees" class="tab-content">
-            <div class="section">
-                <h3>Fee Template Management — FULLY EDITABLE</h3>
-                <div class="alert alert-success">
-                    <strong>FIXED:</strong> Now supports Creche to SSS 3. Add, edit, and delete fee items.
-                </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Class *</label>
-                        <select id="feeClass" onchange="loadFeeTemplate()">
-                            <option value="">Select Class</option>
-                            <option value="Creche">Creche</option>
-                            <option value="KG 1">KG 1</option>
-                            <option value="KG 2">KG 2</option>
-                            <option value="Nursery 1">Nursery 1</option>
-                            <option value="Nursery 2">Nursery 2</option>
-                            <option value="Nursery 3">Nursery 3</option>
-                            <option value="Primary 1">Primary 1</option>
-                            <option value="Primary 2">Primary 2</option>
-                            <option value="Primary 3">Primary 3</option>
-                            <option value="Primary 4">Primary 4</option>
-                            <option value="Primary 5">Primary 5</option>
-                            <option value="Primary 6">Primary 6</option>
-                            <option value="JSS 1">JSS 1</option>
-                            <option value="JSS 2">JSS 2</option>
-                            <option value="JSS 3">JSS 3</option>
-                            <option value="SSS 1">SSS 1</option>
-                            <option value="SSS 2">SSS 2</option>
-                            <option value="SSS 3">SSS 3</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Term *</label>
-                        <select id="feeTerm" onchange="loadFeeTemplate()">
-                            <option value="First Term">First Term</option>
-                            <option value="Second Term">Second Term</option>
-                            <option value="Third Term">Third Term</option>
-                        </select>
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="addFeeItem()">➕ Add Fee Item</button>
-                <button class="btn btn-success" onclick="saveFeeTemplate()">💾 Save Template</button>
-                <div id="feeAlert"></div>
-                <div id="feeTable" style="margin-top:1rem;"></div>
-            </div>
-        </div>
-
-        <div id="profile" class="tab-content">
-            <div class="section">
-                <h3>Student Profile Management — WITH PROMOTION</h3>
-                <div class="alert alert-success">
-                    <strong>NEW:</strong> Load any student to edit details or promote to next class.
-                </div>
-                <div class="form-grid">
-                    <div class="form-group"><label>Student ID *</label><input type="text" id="stuId" placeholder="SNA/2025/001"></div>
-                    <div class="form-group"><label>Full Name *</label><input type="text" id="stuName"></div>
-                    <div class="form-group">
-                        <label>Class *</label>
-                        <select id="stuClass">
-                            <option value="">Select Class</option>
-                            <option value="Creche">Creche</option>
-                            <option value="KG 1">KG 1</option>
-                            <option value="KG 2">KG 2</option>
-                            <option value="Nursery 1">Nursery 1</option>
-                            <option value="Nursery 2">Nursery 2</option>
-                            <option value="Nursery 3">Nursery 3</option>
-                            <option value="Primary 1">Primary 1</option>
-                            <option value="Primary 2">Primary 2</option>
-                            <option value="Primary 3">Primary 3</option>
-                            <option value="Primary 4">Primary 4</option>
-                            <option value="Primary 5">Primary 5</option>
-                            <option value="Primary 6">Primary 6</option>
-                            <option value="JSS 1">JSS 1</option>
-                            <option value="JSS 2">JSS 2</option>
-                            <option value="JSS 3">JSS 3</option>
-                            <option value="SSS 1">SSS 1</option>
-                            <option value="SSS 2">SSS 2</option>
-                            <option value="SSS 3">SSS 3</option>
-                            <option value="Graduated">Graduated</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Gender *</label>
-                        <select id="stuGender">
-                            <option
-                              value="">Select</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                        </select>
-                    </div>
-                    <div class="form-group"><label>Date of Birth</label><input type="date" id="stuDob"></div>
-                    <div class="form-group"><label>Father's Name</label><input type="text" id="stuFather"></div>
-                    <div class="form-group"><label>Father's Phone</label><input type="tel" id="stuFatherPhone"></div>
-                    <div class="form-group"><label>Mother's Name</label><input type="text" id="stuMother"></div>
-                    <div class="form-group"><label>Mother's Phone</label><input type="tel" id="stuMotherPhone"></div>
-                    <div class="form-group" style="grid-column: 1/-1;"><label>Address</label><textarea id="stuAddress" rows="2"></textarea></div
-                              </div>
-                <button class="btn btn-primary" onclick="saveProfile()">💾 Save Profile</button>
-                <button class="btn btn-info" onclick="loadProfile()">🔍 Load Profile</button>
-                <button class="btn btn-warning" onclick="promoteStudent()">⬆️ Promote to Next Class</button>
-                <button class="btn btn-danger" onclick="clearProfile()">🗑️ Clear Form</button>
-                <div id="stuAlert"></div>
-                <div id="stuList" class="student-list"></div>
-            </div>
-        </div>
-
-        <div id="idcard" class="tab-content">
-            <div class="section">
-                <h3>Student ID Card Generator — FRONT & BACK</h3>
-                <div class="alert alert-info">
-                    <strong>UPDATED:</strong> Now generates front and back of ID card with correct validity text.
-                </div>
-                <div class="form-grid">
-                    <div class="form-group"><label>Student ID *</label><input type="text" id="idStuId" placeholder="SNA/2025/001"></div>
-                </div>
-                <button class="btn btn-primary" onclick="generateIDCard()">🎫 Generate ID Card</button>
-                <button class="btn btn-success" onclick="downloadIDCard()">📥 Download ID Card</button>
-                <div id="idAlert"></div>
-                <div id="idDisplay"></div>
-            </div>
-        </div>
-
-        <div id="receipt" class="tab-content">
-            <div class="section">
-                <h3>Payment Receipt Generator</h3>
-                <div class="form-grid">
-                    <div class="form-group"><label>Receipt No *</label><input type="text" id="recNo" placeholder="SNA/REC/001"></div>
-                    <div class="form-group"><label>Student ID *</label><input type="text" id="recStuId"></div>
-                    <div class="form-group"><label>Amount Paid (₦) *</label><input type="number" id="recAmount"></div>
-                    <div class="form-group"><label>Payment For *</label><input type="text" id="recFor" placeholder="First Term Fees"></div>
-                    <div class="form-group"><label>Payment Date *</label><input type="date" id="recDate"></div>
-                    <div class="form-group">
-                        <label>Payment Method</label>
-                        <select id="recMethod">
-                            <option value="Cash">Cash</option>
-                            <option value="Bank Transfer">Bank Transfer</option>
-                            <option value="POS">POS</option>
-                        </select>
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="generateReceipt()">🧾 Generate Receipt</button>
-                <button class="btn btn-success" onclick="downloadReceipt()">📥 Download PDF</button>
-                <div id="recAlert"></div>
-                <div id="recDisplay" style="margin-top:1rem;"></div>
-            </div>
-        </div>
+    <div class="header">
+        <h1>SEALED NECTAR ACADEMY</h1>
+        <p>CBT Examination Portal - v6.9.5</p>
     </div>
 
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Edit Student Profile</h3>
-                <span class="close" onclick="closeModal()">&times;</span>
-            </div>
-            <div id="modalBody"></div>
+    <div class="container" id="loginBox">
+        <h2>Student Login</h2>
+        <div class="form-group">
+            <label>Admission Number</label>
+            <input type="text" id="admNo" placeholder="SNA/2024/001">
         </div>
+        <div class="form-group">
+            <label>Select Class</label>
+            <select id="studentClass"></select>
+        </div>
+        <div class="form-group">
+            <label>Select Subject</label>
+            <select id="subject"></select>
+        </div>
+        <button onclick="startExam()">Start Exam</button>
+        <div id="loginMsg"></div>
+    </div>
+
+    <div class="container hidden" id="examBox">
+        <div class="timer" id="timer">Time: 00:00</div>
+        <h2 id="examTitle"></h2>
+        <div id="questionsArea"></div>
+        <button onclick="submitExam()">Submit Exam</button>
+    </div>
+
+    <div class="container hidden" id="resultBox">
+        <h2>Exam Completed</h2>
+        <div id="resultMsg" class="alert alert-success"></div>
+        <p>Your answers have been submitted. You may now close this page.</p>
     </div>
 
     <script>
-        function openTab(tabName) {
-            var contents = document.getElementsByClassName('tab-content');
-            for (var i = 0; i < contents.length; i++) {
-                contents[i].classList.remove('active');
-            }
-            var btns = document.getElementsByClassName('tab-btn');
-            for (var i = 0; i < btns.length; i++) {
-                btns[i].classList.remove('active');
-            }
-            document.getElementById(tabName).classList.add('active');
-            event.currentTarget.classList.add('active');
-            if (tabName === 'profile') loadStudentList();
-        }
-
-        function showAlert(id, msg, type) {
-            document.getElementById(id).innerHTML = '<div class="alert alert-' + type + '">' + msg + '</div>';
-            setTimeout(function() { document.getElementById(id).innerHTML = ''; }, 3000);
-        }
-
-        function updateSubjects() {
-            var cls = document.getElementById('bsClass').value;
-            var subSelect = document.getElementById('bsSubject');
-            subSelect.innerHTML = '<option value="">Select Subject</option>';
-            if (!cls) {
-                loadBroadsheet();
-                return;
-            }
-            var subjects = [];
-            if (cls === 'Creche' || cls === 'KG 1' || cls === 'KG 2') {
-                subjects = ['CLL', 'N/Maths', 'PHE', 'PSED', 'KUW', 'Song & Rhyme', 'Story'];
-            } else if (cls === 'Nursery 1' || cls === 'Nursery 3') {
-                subjects = ['CLL', 'N/Maths', 'SED', 'SHD', 'CHL', 'Discovery', 'Pre-Science', 'Hand Writing', 'CCA', 'Arabiyah'];
-            } else if (cls === 'Nursery 2') {
-                subjects = ['N/Maths', 'CLL', 'Animal & Soil Science', 'Safety & Health', 'ICT', 'PSED', 'KUW', 'Hand Writing', 'Drawing'];
-            } else if (cls === 'SSS 1' || cls === 'SSS 2' || cls === 'SSS 3') {
-                subjects = ['Mathematics', 'English Language', 'Physics', 'Chemistry', 'Biology', 'Further Maths', 'Literature', 'Government', 'Economics', 'Commerce', 'Account', 'Data Processing', 'Marketing', 'Animal Husbandry', 'Technical Drawing', 'Agricultural Science', 'Civic Education', 'Computer Studies', 'CRS', 'IRS', 'Arabiyah', 'Yoruba', 'Business Studies', 'Home Economics', 'PHE'];
-            } else {
-                subjects = ['Mathematics', 'English Language', 'Basic Science', 'Social Studies', 'CRS', 'IRS', 'Arabiyah', 'Computer Studies', 'Agricultural Science', 'Civic Education', 'Basic Technology', 'Business Studies', 'Home Economics', 'PHE', 'CCA'];
-            }
-            subjects.forEach(function(s) {
-                subSelect.innerHTML += '<option value="' + s + '">' + s + '</option>';
-            });
-            loadBroadsheet();
-        }
-
-        function getKey() {
-            var c = document.getElementById('bsClass').value;
-            var t = document.getElementById('bsTerm').value;
-            var s = document.getElementById('bsSubject').value;
-            return (c && t && s)? c + '_' + t + '_' + s : null;
-        }
-
-        function loadBroadsheet() {
-            var key = getKey();
-            var div = document.getElementById('bsTable');
-            if (!key) {
-                div.innerHTML = '<div class="alert alert-info">Select Class, Term, and Subject</div>';
-                return;
-            }
-            var data = JSON.parse(localStorage.getItem('sna_bs') || '{}');
-            var students = data[key] || [];
-            if (students.length === 0) {
-                div.innerHTML = '<div class="alert alert-info">No students yet. Click Add Student</div>';
-                return;
-            }
-            var html = '<table class="table"><thead><tr><th>S/N</th><th>Name</th><th>ID</th><th>C.A (40)</th><th>Exam (60)</th><th>Total</th><th>Grade</th><th>Action</th></tr></thead><tbody>';
-            students.forEach(function(s, i) {
-                var ca = parseFloat(s.ca) || 0;
-                var exam = parseFloat(s.exam) || 0;
-                var total = ca + exam;
-                var grade = total >= 70? 'A' : total >= 60? 'B' : total >= 50? 'C' : total >= 45? 'D' : total > 0? 'F' : '-';
-                html += '<tr><td>' + (i+1) + '</td>';
-                html += '<td><input value="' + (s.name||'') + '" onchange="updateStudent(' + i + ',\'name\',this.value)"></td>';
-                html += '<td><input value="' + (s.id||'') + '" onchange="updateStudent(' + i + ',\'id\',this.value)"></td>';
-                html += '<td><input type="number" max="40" min="0" value="' + (s.ca||'') + '" onchange="updateStudent(' + i + ',\'ca\',this.value)"></td>';
-                html += '<td><input type="number" max="60" min="0" value="' + (s.exam||'') + '" onchange="updateStudent(' + i + ',\'exam\',this.value)"></td>';
-                html += '<td><strong>' + total + '</strong></td><td><strong>' + grade + '</strong></td>';
-                html += '<td><button class="btn btn-danger" onclick="removeStudent(' + i + ')">🗑️</button></td></tr>';
-            });
-            html += '</tbody></table>';
-            div.innerHTML = html;
-        }
-
-        function addStudent() {
-            var key = getKey();
-            if (!key) {
-                showAlert('bsAlert', 'Select Class, Term, and Subject first', 'danger');
-                return;
-            }
-            var data = JSON.parse(localStorage.getItem('sna_bs') || '{}');
-            if (!data[key]) data[key] = [];
-            data[key].push({name:'', id:'', ca:'', exam:''});
-            localStorage.setItem('sna_bs', JSON.stringify(data));
-            loadBroadsheet();
-        }
-
-        function updateStudent(i, field, val) {
-            var key = getKey();
-            var data = JSON.parse(localStorage.getItem('sna_bs') || '{}');
-            if (data[key] && data[key][i]) {
-                data[key][i][field] = val;
-                localStorage.setItem('sna_bs', JSON.stringify(data));
-                loadBroadsheet();
-            }
-        }
-
-        function removeStudent(i) {
-            if (!confirm('Remove this student?')) return;
-            var key = getKey();
-            var data = JSON.parse(localStorage.getItem('sna_bs') || '{}');
-            if (data[key]) {
-                data[key].splice(i, 1);
-                localStorage.setItem('sna_bs', JSON.stringify(data));
-                loadBroadsheet();
-            }
-        }
-
-        function saveBroadsheet() {
-            if (!getKey()) {
-                showAlert('bsAlert', 'Select Class, Term, and Subject first', 'danger');
-                return;
-            }
-            showAlert('bsAlert', 'Broadsheet saved successfully!', 'success');
-        }
-
-        function calculatePositions() {
-            loadBroadsheet();
-            showAlert('bsAlert', 'Positions calculated! Check the table.', 'success');
-        }
-
-        function generateReport() {
-            var id = document.getElementById('repId').value.trim();
-            var cls = document.getElementById('repClass').value;
-            var term = document.getElementById('repTerm').value;
-            var session = document.getElementById('repSession').value;
-            if (!id ||!cls ||!term) {
-                showAlert('repAlert', 'Fill Student ID, Class, and Term', 'danger');
-                return;
-            }
-            var profiles = JSON.parse(localStorage.getItem('sna_stu') || '{}');
-            var stu = profiles[id] || {name: 'Student Name Not Found', id: id, class: cls};
-                        var bsData = JSON.parse(localStorage.getItem('sna_bs') || '{}');
-
-            var allSubjects = [];
-            if (cls === 'Creche' || cls === 'KG 1' || cls === 'KG 2') {
-                allSubjects = ['CLL', 'N/Maths', 'PHE', 'PSED', 'KUW', 'Song & Rhyme', 'Story'];
-            } else if (cls === 'Nursery 1' || cls === 'Nursery 3') {
-                allSubjects = ['CLL', 'N/Maths', 'SED', 'SHD', 'CHL', 'Discovery', 'Pre-Science', 'Hand Writing', 'CCA', 'Arabiyah'];
-            } else if (cls === 'Nursery 2') {
-                allSubjects = ['N/Maths', 'CLL', 'Animal & Soil Science', 'Safety & Health', 'ICT', 'PSED', 'KUW', 'Hand Writing', 'Drawing'];
-            } else if (cls === 'SSS 1' || cls === 'SSS 2' || cls === 'SSS 3') {
-                allSubjects = ['Mathematics', 'English Language', 'Physics', 'Chemistry', 'Biology', 'Further Maths', 'Literature', 'Government', 'Economics', 'Commerce', 'Account', 'Data Processing', 'Marketing', 'Animal Husbandry', 'Technical Drawing', 'Agricultural Science', 'Civic Education', 'Computer Studies', 'CRS', 'IRS', 'Arabiyah', 'Yoruba', 'Business Studies', 'Home Economics', 'PHE'];
-            } else {
-                allSubjects = ['Mathematics', 'English Language', 'Basic Science', 'Social Studies', 'CRS', 'IRS', 'Arabiyah', 'Computer Studies', 'Agricultural Science', 'Civic Education', 'Basic Technology', 'Business Studies', 'Home Economics', 'PHE', 'CCA'];
-            }
-
-            var totalScore = 0, subjectCount = 0, totalAnnual = 0, annualCount = 0;
-            var rows = '';
-            var isThirdTerm = (term === 'Third Term');
-
-            allSubjects.forEach(function(sub) {
-                function findRec(termKey) {
-                    var key = cls + '_' + termKey + '_' + sub;
-                    var sheet = bsData[key] || [];
-                    return sheet.find(function(s) { return s.id === id; });
-                }
-
-                var rec1 = findRec('First Term');
-                var rec2 = findRec('Second Term');
-                var rec3 = findRec('Third Term');
-
-                var t1 = rec1? ((parseFloat(rec1.ca)||0) + (parseFloat(rec1.exam)||0)) : null;
-                var t2 = rec2? ((parseFloat(rec2.ca)||0) + (parseFloat(rec2.exam)||0)) : null;
-                var t3 = rec3? ((parseFloat(rec3.ca)||0) + (parseFloat(rec3.exam)||0)) : null;
-
-                var currentTotal = (term === 'First Term')? t1 : (term === 'Second Term')? t2 : t3;
-
-                if (currentTotal!== null) {
-                    totalScore += currentTotal;
-                    subjectCount++;
-                    var grade = currentTotal >= 70? 'A' : currentTotal >= 60? 'B' : currentTotal >= 50? 'C' : currentTotal >= 45? 'D' : 'F';
-
-                    if (isThirdTerm) {
-                        var annual = (t1!== null && t2!== null && t3!== null)? ((t1 + t2 + t3) / 3).toFixed(1) : '-';
-                        var annualGrade = annual!== '-'? (annual >= 70? 'A' : annual >= 60? 'B' : annual >= 50? 'C' : annual >= 45? 'D' : 'F') : '-';
-                        if (annual!== '-') {
-                            totalAnnual += parseFloat(annual);
-                            annualCount++;
-                        }
-                        rows += '<tr><td>' + sub + '</td><td>' + (t1!==null?t1:'-') + '</td><td>' + (t2!==null?t2:'-') + '</td><td>' + (t3!==null?t3:'-') + '</td><td class="cumulative-row">' + annual + '</td><td class="cumulative-row"><strong>' + annualGrade + '</strong></td></tr>';
-                    } else {
-                        rows += '<tr><td>' + sub + '</td><td>' + (currentTotal||'-') + '</td><td><strong>' + grade + '</strong></td></tr>';
-                    }
-                }
-            });
-
-            if (subjectCount === 0) {
-                document.getElementById('repDisplay').innerHTML = '<div class="alert alert-warning">No results found for ' + term + '</div>';
-                return;
-            }
-
-            var average = (totalScore / subjectCount).toFixed(2);
-            var overallGrade = average >= 70? 'A' : average >= 60? 'B' : average >= 50? 'C' : average >= 45? 'D' : 'F';
-            var annualAvg = annualCount > 0? (totalAnnual / annualCount).toFixed(2) : null;
-            var annualGrade = annualAvg? (annualAvg >= 70? 'A' : annualAvg >= 60? 'B' : annualAvg >= 50? 'C' : annualAvg >= 45? 'D' : 'F') : null;
-
-            var html = '<div style="border:3px solid #002366; padding:1.5rem; background:white; color:#333;"><div style="text-align:center; border-bottom:4px solid #FFA500; padding-bottom:1rem; margin-bottom:1rem;">';
-            html += '<h2 style="color:#002366; margin:0;">SEALED NECTAR ACADEMY</h2><p>Terminal Report Card</p></div>';
-            html += '<div style="display:flex; justify-content:space-between; margin:1rem 0;"><div><p><strong>Name:</strong> ' + stu.name + '</p><p><strong>Student ID:</strong> ' + id + '</p><p><strong>Class:</strong> ' + cls + '</p></div>';
-            html += '<div><p><strong>Session:</strong> ' + session + '</p><p><strong>Term:</strong> ' + term + '</p></div></div>';
-
-            if (isThirdTerm) {
-                html += '<table class="table"><thead><tr><th>Subject</th><th>1st Term</th><th>2nd Term</th><th>3rd Term</th><th>Annual Avg</th><th>Grade</th></tr></thead><tbody>' + rows + '</tbody></table>';
-                html += '<div style="display:flex; justify-content:space-between; margin:1rem 0;"><div><p><strong>Term Average:</strong> ' + average + '%</p><p><strong>Term Grade:</strong> ' + overallGrade + '</p></div>';
-                if (annualAvg) {
-                    html += '<div><p><strong>ANNUAL AVERAGE:</strong> ' + annualAvg + '%</p><p><strong>ANNUAL GRADE:</strong> ' + annualGrade + '</p><p><strong>ANNUAL POSITION:</strong> ___</p></div></div>';
-                }
-            } else {
-                html += '<table class="table"><thead><tr><th>Subject</th><th>Total (100)</th><th>Grade</th></tr></thead><tbody>' + rows + '</tbody></table>';
-                html += '<div style="display:flex; justify-content:space-between; margin:1rem 0;"><div><p><strong>Total Score:</strong> ' + totalScore + '</p><p><strong>Average:</strong> ' + average + '%</p></div>';
-                html += '<div><p><strong>Overall Grade:</strong> ' + overallGrade + '</p><p><strong>Position:</strong> ___</p></div></div>';
-            }
-
-            html += '<div style="margin-top:2rem;"><p>_____________________</p><p>Class Teacher</p></div></div>';
-            document.getElementById('repDisplay').innerHTML = html;
-            showAlert('repAlert', 'Report generated successfully!', 'success');
-        }
-
-        function downloadReportPDF() {
-            var element = document.getElementById('repDisplay');
-            if (!element.innerHTML.trim()) {
-                showAlert('repAlert', 'Generate a report card first', 'danger');
-                return;
-            }
-            showAlert('repAlert', 'Generating PDF... please wait', 'info');
-            html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(function(canvas) {
-                const { jsPDF } = window.jspdf;
-                var imgData = canvas.toDataURL('image/png');
-                var pdf = new jsPDF('p', 'mm', 'a4');
-                var imgWidth = 210;
-                var pageHeight = 297;
-                var imgHeight = canvas.height * imgWidth / canvas.width;
-                var heightLeft = imgHeight;
-                var position = 0;
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                }
-                var stuId = document.getElementById('repId').value.trim() || 'Student';
-                pdf.save('ReportCard_' + stuId + '.pdf');
-                showAlert('repAlert', 'PDF downloaded successfully!', 'success');
-            });
-        }
-
-        function loadAttendance() {
-            var cls = document.getElementById('attClass').value;
-            var date = document.getElementById('attDate').value;
-            if (!cls ||!date) {
-                showAlert('attAlert', 'Select Class and Date', 'danger');
-                return;
-            }
-            var profiles = JSON.parse(localStorage.getItem('sna_stu') || '{}');
-            var students = Object.values(profiles).filter(function(s) { return s.class === cls; });
-            if (students.length === 0) {
-                document.getElementById('attTable').innerHTML = '<div class="alert alert-info">No students found in this class</div>';
-                return;
-            }
-            var html = '<table class="table"><thead><tr><th>S/N</th><th>Student Name</th><th>Student ID</th><th>Status</th></tr></thead><tbody>';
-            students.forEach(function(s, i) {
-                html += '<tr><td>' + (i+1) + '</td><td>' + s.name + '</td><td>' + s.id + '</td>';
-                html += '<td><select onchange="saveAttendanceRecord(\'' + s.id + '\',\'' + date + '\',this.value)">';
-                html += '<option value="Present">Present</option><option value="Absent">Absent</option><option value="Late">Late</option><option value="Excused">Excused</option></select></td></tr>';
-            });
-            html += '</tbody></table>';
-            document.getElementById('attTable').innerHTML = html;
-        }
-
-        function saveAttendanceRecord(stuId, date, status) {
-            var key = 'sna_att_' + date;
-            var data = JSON.parse(localStorage.getItem(key) || '{}');
-            data[stuId] = status;
-            localStorage.setItem(key, JSON.stringify(data));
-        }
-
-        function saveAttendance() {
-            showAlert('attAlert', 'Attendance saved successfully!', 'success');
-        }
-
-        function loadFeeTemplate() {
-            var cls = document.getElementById('feeClass').value;
-            var term = document.getElementById('feeTerm').value;
-            if (!cls ||!term) {
-                document.getElementById('feeTable').innerHTML = '<div class="alert alert-info">Select Class and Term</div>';
-                return;
-            }
-            var key = cls + '_' + term;
-            var data = JSON.parse(localStorage.getItem('sna_fee') || '{}');
-            var items = data[key] || [];
-            
-            if (items.length === 0) {
-                items = [
-                    {name: 'Tuition Fee', amount: 0},
-                    {name: 'Development Levy', amount: 0},
-                    {name: 'PTA Levy', amount: 0}
-                ];
-            }
-            
-            var html = '<table class="table"><thead><tr><th>Fee Item</th><th>Amount (₦)</th><th>Action</th></tr></thead><tbody>';
-            items.forEach(function(item, i) {
-                html += '<tr><td><input value="' + item.name + '" onchange="updateFeeItem(' + i + ',\'name\',this.value)"></td>';
-                html += '<td><input type="number" value="' + item.amount + '" onchange="updateFeeItem(' + i + ',\'amount\',parseFloat(this.value)||0)"></td>';
-                html += '<td><button class="btn btn-danger" onclick="removeFeeItem(' + i + ')">🗑️ Delete</button></td></tr>';
-            });
-            html += '</tbody></table>';
-            document.getElementById('feeTable').innerHTML = html;
-        }
-
-        function addFeeItem() {
-            var cls = document.getElementById('feeClass').value;
-            var term = document.getElementById('feeTerm').value;
-            if (!cls ||!term) {
-                showAlert('feeAlert', 'Select Class and Term first', 'danger');
-                return;
-            }
-            var key = cls + '_' + term;
-            var data = JSON.parse(localStorage.getItem('sna_fee') || '{}');
-            if (!data[key]) data[key] = [];
-            data[key].push({name: 'New Fee Item', amount: 0});
-            localStorage.setItem('sna_fee', JSON.stringify(data));
-            loadFeeTemplate();
-        }
-      function updateFeeItem(i, field, val) {
-            var cls = document.getElementById('feeClass').value;
-            var term = document.getElementById('feeTerm').value;
-            var key = cls + '_' + term;
-            var data = JSON.parse(localStorage.getItem('sna_fee') || '{}');
-            if (data[key] && data[key][i]) {
-                data[key][i][field] = val;
-                localStorage.setItem('sna_fee', JSON.stringify(data));
-            }
-        }
-
-        function removeFeeItem(i) {
-            if (!confirm('Delete this fee item?')) return;
-            var cls = document.getElementById('feeClass').value;
-            var term = document.getElementById('feeTerm').value;
-            var key = cls + '_' + term;
-            var data = JSON.parse(localStorage.getItem('sna_fee') || '{}');
-            if (data[key]) {
-                data[key].splice(i, 1);
-                localStorage.setItem('sna_fee', JSON.stringify(data));
-                loadFeeTemplate();
-            }
-        }
-
-        function saveFeeTemplate() {
-            var cls = document.getElementById('feeClass').value;
-            var term = document.getElementById('feeTerm').value;
-            if (!cls ||!term) {
-                showAlert('feeAlert', 'Select Class and Term first', 'danger');
-                return;
-            }
-            showAlert('feeAlert', 'Fee template saved successfully!', 'success');
-        }
-
-        function saveProfile() {
-            var id = document.getElementById('stuId').value.trim();
-            var name = document.getElementById('stuName').value.trim();
-            var cls = document.getElementById('stuClass').value;
-            var gender = document.getElementById('stuGender').value;
-            
-            if (!id ||!name ||!cls ||!gender) {
-                showAlert('stuAlert', 'Fill all required fields (ID, Name, Class, Gender)', 'danger');
-                return;
-            }
-            
-            var profiles = JSON.parse(localStorage.getItem('sna_stu') || '{}');
-            profiles[id] = {
-                id: id,
-                name: name,
-                class: cls,
-                gender: gender,
-                dob: document.getElementById('stuDob').value,
-                father: document.getElementById('stuFather').value,
-                fatherPhone: document.getElementById('stuFatherPhone').value,
-                mother: document.getElementById('stuMother').value,
-                motherPhone: document.getElementById('stuMotherPhone').value,
-                address: document.getElementById('stuAddress').value
-            };
-            localStorage.setItem('sna_stu', JSON.stringify(profiles));
-            showAlert('stuAlert', 'Student profile saved successfully!', 'success');
-            loadStudentList();
-            clearProfile();
-        }
-
-        function loadProfile() {
-            var id = document.getElementById('stuId').value.trim();
-            if (!id) {
-                showAlert('stuAlert', 'Enter Student ID first', 'danger');
-                return;
-            }
-            var profiles = JSON.parse(localStorage.getItem('sna_stu') || '{}');
-            var stu = profiles[id];
-            if (!stu) {
-                showAlert('stuAlert', 'Student not found', 'danger');
-                return;
-            }
-            document.getElementById('stuName').value = stu.name || '';
-            document.getElementById('stuClass').value = stu.class || '';
-            document.getElementById('stuGender').value = stu.gender || '';
-            document.getElementById('stuDob').value = stu.dob || '';
-            document.getElementById('stuFather').value = stu.father || '';
-            document.getElementById('stuFatherPhone').value = stu.fatherPhone || '';
-            document.getElementById('stuMother').value = stu.mother || '';
-            document.getElementById('stuMotherPhone').value = stu.motherPhone || '';
-            document.getElementById('stuAddress').value = stu.address || '';
-            showAlert('stuAlert', 'Profile loaded. You can now edit and save.', 'success');
-        }
-
-        function clearProfile() {
-            document.getElementById('stuId').value = '';
-            document.getElementById('stuName').value = '';
-            document.getElementById('stuClass').value = '';
-            document.getElementById('stuGender').value = '';
-            document.getElementById('stuDob').value = '';
-            document.getElementById('stuFather').value = '';
-            document.getElementById('stuFatherPhone').value = '';
-            document.getElementById('stuMother').value = '';
-            document.getElementById('stuMotherPhone').value = '';
-            document.getElementById('stuAddress').value = '';
-        }
-
-        function loadStudentList() {
-            var profiles = JSON.parse(localStorage.getItem('sna_stu') || '{}');
-            var students = Object.values(profiles);
-            if (students.length === 0) {
-                document.getElementById('stuList').innerHTML = '<div class="alert alert-info">No students registered yet</div>';
-                return;
-            }
-            var html = '<h4>All Students (' + students.length + ')</h4>';
-            students.forEach(function(s) {
-                html += '<div class="student-item">';
-                html += '<div><strong>' + s.name + '</strong> — ' + s.id + ' — ' + s.class + '</div>';
-                html += '<div><button class="btn btn-edit" onclick="editStudent(\'' + s.id + '\')">✏️ Edit</button> ';
-                html += '<button class="btn btn-warning" onclick="promoteStudentDirect(\'' + s.id + '\')">⬆️ Promote</button> ';
-                html += '<button class="btn btn-danger" onclick="deleteStudent(\'' + s.id + '\')">🗑️ Delete</button></div></div>';
-            });
-            document.getElementById('stuList').innerHTML = html;
-        }
-
-        function editStudent(id) {
-            var profiles = JSON.parse(localStorage.getItem('sna_stu') || '{}');
-            var stu = profiles[id];
-            if (!stu) return;
-            
-            document.getElementById('stuId').value = stu.id;
-            document.getElementById('stuName').value = stu.name;
-            document.getElementById('stuClass').value = stu.class;
-            document.getElementById('stuGender').value = stu.gender;
-            document.getElementById('stuDob').value = stu.dob || '';
-            document.getElementById('stuFather').value = stu.father || '';
-            document.getElementById('stuFatherPhone').value = stu.fatherPhone || '';
-            document.getElementById('stuMother').value = stu.mother || '';
-            document.getElementById('stuMotherPhone').value = stu.motherPhone || '';
-            document.getElementById('stuAddress').value = stu.address || '';
-            
-            window.scrollTo(0, 0);
-            showAlert('stuAlert', 'Student loaded for editing. Make changes and click Save Profile.', 'info');
-        }
-
-        function deleteStudent(id) {
-            if (!confirm('Delete student ' + id + '? This cannot be undone.')) return;
-            var profiles = JSON.parse(localStorage.getItem('sna_stu') || '{}');
-            delete profiles[id];
-            localStorage.setItem('sna_stu', JSON.stringify(profiles));
-            showAlert('stuAlert', 'Student deleted successfully!', 'success');
-            loadStudentList();
-        }
-
-        function promoteStudent() {
-            var id = document.getElementById('stuId').value.trim();
-            if (!id) {
-                showAlert('stuAlert', 'Load a student first', 'danger');
-                return;
-            }
-            promoteStudentDirect(id);
-        }
-
-        function promoteStudentDirect(id) {
-            var profiles = JSON.parse(localStorage.getItem('sna_stu') || '{}');
-            var stu = profiles[id];
-            if (!stu) {
-                showAlert('stuAlert', 'Student not found', 'danger');
-                return;
-            }
-            
-            var classOrder = ['Creche','KG 1','KG 2','Nursery 1','Nursery 2','Nursery 3','Primary 1','Primary 2','Primary 3','Primary 4','Primary 5','Primary 6','JSS 1','JSS 2','JSS 3','SSS 1','SSS 2','SSS 3'];
-            var currentIdx = classOrder.indexOf(stu.class);
-            
-            if (currentIdx === -1) {
-                showAlert('stuAlert', 'Cannot promote from current class', 'danger');
-                return;
-            }
-            
-            if (currentIdx === classOrder.length - 1) {
-                stu.class = 'Graduated';
-                showAlert('stuAlert', stu.name + ' has been graduated!', 'success');
-            } else {
-                stu.class = classOrder[currentIdx + 1];
-                showAlert('stuAlert', stu.name + ' promoted to ' + stu.class + '!', 'success');
-            }
-            
-            profiles[id] = stu;
-            localStorage.setItem('sna_stu', JSON.stringify(profiles));
-            loadStudentList();
-            if (document.getElementById('stuId').value === id) {
-                document.getElementById('stuClass').value = stu.class;
-            }
-        }
-
-        function generateIDCard() {
-            var id = document.getElementById('idStuId').value.trim();
-            if (!id) {
-                showAlert('idAlert', 'Enter Student ID', 'danger');
-                return;
-            }
-            var profiles = JSON.parse(localStorage.getItem('sna_stu') || '{}');
-            var stu = profiles[id];
-            if (!stu) {
-                showAlert('idAlert', 'Student not found. Create profile first.', 'danger');
-                return;
-            }
-            
-            var html = '<div class="id-container">';
-            html += '<div class="id-card" id="idCardFront">';
-            html += '<div class="id-header"><h2>SEALED NECTAR ACADEMY</h2><p>Student ID Card</p></div>';
-            html += '<div class="id-body">';
-            html += '<div class="id-photo">👤</div>';
-            html += '<div class="id-info">';
-            html += '<p><strong>Name:</strong> ' + stu.name + '</p>';
-            html += '<p><strong>ID:</strong> ' + stu.id + '</p>';
-            html += '<p><strong>Class:</strong> ' + stu.class + '</p>';
-            html += '<p><strong>Gender:</strong> ' + stu.gender + '</p>';
-            html += '<p><strong>Session:</strong> 2025/2026</p>';
-            html += '<p style="margin-top:1rem; text-align:center; font-size:0.75rem; color:#666;">Valid while child\'s studentship with the school valids</p>';
-            html += '</div></div></div>';
-            
-            html += '<div class="id-card" id="idCardBack">';
-            html += '<div class="id-header"><h2>SEALED NECTAR ACADEMY</h2><p>ID Card Back</p></div>';
-            html += '<div class="id-body">';
-            html += '<div class="id-back">';
-            html += '<p><strong>Emergency Contact:</strong></p>';
-            html += '<p>Father: ' + (stu.fatherPhone || 'N/A') + '</p>';
-            html += '<p>Mother: ' + (stu.motherPhone || 'N/A') + '</p>';
-            html += '<p style="margin-top:1rem;"><strong>School Address:</strong></p>';
-            html += '<p>Sealed Nectar Academy</p>';
-            html += '<p>If found, please return to school</p>';
-            html += '<p style="margin-top:1rem; text-align:center; font-size:0.7rem;">This ID remains property of SNA</p>';
-            html += '</div></div></div></div>';
-            document.getElementById('idDisplay').innerHTML = html;
-            showAlert('idAlert', 'ID Card Front & Back generated!', 'success');
-        }
-
-        function downloadIDCard() {
-            var front = document.getElementById('idCardFront');
-            var back = document.getElementById('idCardBack');
-            if (!front ||!back) {
-                showAlert('idAlert', 'Generate ID Card first', 'danger');
-                return;
-            }
-            showAlert('idAlert', 'Generating ID Card PDF...', 'info');
-            
-            html2canvas(front, { scale: 3, backgroundColor: '#ffffff' }).then(function(canvas1) {
-                html2canvas(back, { scale: 3, backgroundColor: '#ffffff' }).then(function(canvas2) {
-                    const { jsPDF } = window.jspdf;
-                    var pdf = new jsPDF('l', 'mm', [85, 54]);
-                    pdf.addImage(canvas1.toDataURL('image/png'), 'PNG', 0, 0, 85, 54);
-                    pdf.addPage();
-                    pdf.addImage(canvas2.toDataURL('image/png'), 'PNG', 0, 0, 85, 54);
-                    var stuId = document.getElementById('idStuId').value.trim() || 'Student';
-                    pdf.save('IDCard_' + stuId + '.pdf');
-                    showAlert('idAlert', 'ID Card downloaded with front & back!', 'success');
-                });
-            });
-        }
-
-        function generateReceipt() {
-            var no = document.getElementById('recNo').value.trim();
-            var stuId = document.getElementById('recStuId').value.trim();
-            var amount = document.getElementById('recAmount').value;
-            var forWhat = document.getElementById('recFor').value.trim();
-            var date = document.getElementById('recDate').value;
-            var method = document.getElementById('recMethod').value;
-            
-            if (!no ||!stuId ||!amount ||!forWhat ||!date) {
-                showAlert('recAlert', 'Fill all required fields', 'danger');
-                return;
-            }
-            
-            var profiles = JSON.parse(localStorage.getItem('sna_stu') || '{}');
-            var stu = profiles[stuId] || {name: 'Unknown Student', id: stuId};
-            
-            var html = '<div style="border:2px solid #002366; padding:2rem; background:white; max-width:600px; margin:0 auto;">';
-            html += '<div style="text-align:center; border-bottom:3px solid #FFA500; padding-bottom:1rem; margin-bottom:1rem;">';
-            html += '<h2 style="color:#002366;">SEALED NECTAR ACADEMY</h2>';
-            html += '<p style="margin:0;">Payment Receipt</p></div>';
-            html += '<div style="display:flex; justify-content:space-between; margin:1rem 0;">';
-            html += '<div><p><strong>Receipt No:</strong> ' + no + '</p><p><strong>Date:</strong> ' + date + '</p></div>';
-            html += '<div><p><strong>Student:</strong> ' + stu.name + '</p><p><strong>ID:</strong> ' + stuId + '</p></div></div>';
-            html += '<table style="width:100%; border-collapse:collapse; margin:1rem 0;">';
-            html += '<tr style="background:#f8f9fa;"><th style="padding:0.75rem; border:1px solid #ddd; text-align:left;">Description</th><th style="padding:0.75rem; border:1px solid #ddd; text-align:right;">Amount (₦)</th></tr>';
-            html += '<tr><td style="padding:0.75rem; border:1px solid #ddd;">' + forWhat + '</td><td style="padding:0.75rem; border:1px solid #ddd; text-align:right;"><strong>' + parseFloat(amount).toLocaleString() + '</strong></td></tr>';
-            html += '</table>';
-            html += '<div style="margin-top:2rem;"><p><strong>Payment Method:</strong> ' + method + '</p>';
-            html += '<p style="margin-top:2rem;">Received by: _____________________</p>';
-            html += '<p style="font-size:0.85rem; color:#666; margin-top:1rem;">Thank you for your payment!</p></div></div>';
-            document.getElementById('recDisplay').innerHTML = html;
-            showAlert('recAlert', 'Receipt generated successfully!', 'success');
-        }
-
-        function downloadReceipt() {
-            var element = document.getElementById('recDisplay').firstElementChild;
-            if (!element) {
-                showAlert('recAlert', 'Generate receipt first', 'danger');
-                return;
-            }
-            html2canvas(element, { scale: 2, backgroundColor: '#ffffff' }).then(function(canvas) {
-                const { jsPDF } = window.jspdf;
-                var imgData = canvas.toDataURL('image/png');
-                var pdf = new jsPDF('p', 'mm', 'a4');
-                var imgWidth = 210;
-                var imgHeight = canvas.height * imgWidth / canvas.width;
-                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-                var recNo = document.getElementById('recNo').value.trim() || 'Receipt';
-                pdf.save(recNo + '.pdf');
-                showAlert('recAlert', 'Receipt downloaded!', 'success');
-            });
-        }
-function closeModal() {
-            document.getElementById('editModal').style.display = 'none';
-        }
-
-        window.onload = function() {
-            updateSubjects();
-            document.getElementById('attDate').value = new Date().toISOString().split('T')[0];
-            document.getElementById('recDate').value = new Date().toISOString().split('T')[0];
-            if (document.getElementById('profile').classList.contains('active')) {
-                loadStudentList();
-            }
+        const CLASSES = ["Creche", "K.G", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2", "Primary 3", "Primary 4", "Primary 5", "Primary 6", "JSS 1", "JSS 2", "JSS 3", "SSS 1", "SSS 2", "SSS 3"];
+        
+        const SUBJECTS = {
+            "Creche": ["Numeracy", "Literacy", "Social Habits", "Health Habits", "Songs/Rhymes"],
+            "K.G": ["Numeracy", "Literacy", "Social Habits", "Health Habits", "Songs/Rhymes", "Writing"],
+            "Nursery 1": ["Numeracy", "Literacy", "Social Habits", "Health Habits", "Science", "Writing", "Rhymes"],
+            "Nursery 2": ["Numeracy", "Literacy", "Social Habits", "Health Habits", "Basic Science", "Writing", "Verbal Reasoning", "Quantitative Reasoning"],
+            "Primary 1": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
+            "Primary 2": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
+            "Primary 3": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
+            "Primary 4": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
+            "Primary 5": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
+            "Primary 6": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
+            "JSS 1": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "Islamic Studies", "Business Studies", "Agricultural Science", "Arabiyah", "Home Economics", "ICT", "CCA", "PHE", "Yoruba"],
+            "JSS 2": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "Islamic Studies", "Business Studies", "Agricultural Science", "Arabiyah", "Home Economics", "ICT", "CCA", "PHE", "Yoruba"],
+            "JSS 3": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "Islamic Studies", "Business Studies", "Agricultural Science", "Arabiyah", "Home Economics", "ICT", "CCA", "PHE", "Yoruba"],
+            "SSS 1": ["Physics", "Biology", "Chemistry", "Mathematics", "English Language", "Civic Education", "Islamic Studies", "Economics", "Account", "Commerce", "Further Maths", "Lit-in-English", "Animal Husbandry", "Marketing", "Computer", "Data Processing", "Government", "Technical Drawing"],
+            "SSS 2": ["Physics", "Biology", "Chemistry", "Mathematics", "English Language", "Civic Education", "Islamic Studies", "Economics", "Account", "Commerce", "Further Maths", "Lit-in-English", "Animal Husbandry", "Marketing", "Computer", "Data Processing", "Government", "Technical Drawing"],
+            "SSS 3": ["Physics", "Biology", "Chemistry", "Mathematics", "English Language", "Civic Education", "Islamic Studies", "Economics", "Account", "Commerce", "Further Maths", "Lit-in-English", "Animal Husbandry", "Marketing", "Computer", "Data Processing", "Government", "Technical Drawing"]
         };
+
+        let currentStudent = null;
+        let currentQuestions = [];
+        let studentAnswers = {};
+        let timeLeft = 1800; // 30 mins
+        let timerInterval = null;
+
+        // Load dropdowns on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const classEl = document.getElementById('studentClass');
+            classEl.innerHTML = '<option value="">-- Select Class --</option>';
+            CLASSES.forEach(c => classEl.innerHTML += `<option value="${c}">${c}</option>`);
+            classEl.addEventListener('change', loadSubjects);
+        });
+
+        function loadSubjects() {
+            const cls = document.getElementById('studentClass').value;
+            const subEl = document.getElementById('subject');
+            subEl.innerHTML = '<option value="">-- Select Subject --</option>';
+            if(SUBJECTS[cls]) {
+                SUBJECTS[cls].forEach(s => subEl.innerHTML += `<option value="${s}">${s}</option>`);
+            }
+        }
+
+        function startExam() {
+            const admNo = document.getElementById('admNo').value.trim();
+            const cls = document.getElementById('studentClass').value;
+            const sub = document.getElementById('subject').value;
+            const msg = document.getElementById('loginMsg');
+            
+            if(!admNo ||!cls ||!sub) {
+                msg.innerHTML = '<div class="alert alert-danger">Fill all fields</div>';
+                return;
+            }
+
+            // Find student
+            const students = JSON.parse(localStorage.getItem('cbt_students')||'[]');
+            currentStudent = students.find(s => s.admNo === admNo && s.class === cls);
+            
+            if(!currentStudent) {
+                msg.innerHTML = '<div class="alert alert-danger">Student not found. Check Admission No and Class.</div>';
+                return;
+            }
+
+            // Load questions
+            const allQuestions = JSON.parse(localStorage.getItem('cbt_questions')||'{}');
+            currentQuestions = allQuestions[cls] && allQuestions[cls][sub]? allQuestions[cls][sub] : [];
+            
+            if(currentQuestions.length === 0) {
+                msg.innerHTML = '<div class="alert alert-danger">No questions set for this subject. Contact admin.</div>';
+                return;
+            }
+
+            // Start exam
+            document.getElementById('loginBox').classList.add('hidden');
+            document.getElementById('examBox').classList.remove('hidden');
+            document.getElementById('examTitle').textContent = `${sub} - ${cls}`;
+            
+            // Display questions
+            let html = '';
+            currentQuestions.forEach((q,i) => {
+                html += `
+                <div class="question-box">
+                    <p><strong>Q${i+1}:</strong> ${q.question}</p>
+                    <div class="options">
+                        <label><input type="radio" name="q${i}" value="A" onchange="saveAnswer(${i},'A')"> A. ${q.a}</label>
+                        <label><input type="radio" name="q${i}" value="B" onchange="saveAnswer(${i},'B')"> B. ${q.b}</label>
+                        <label><input type="radio" name="q${i}" value="C" onchange="saveAnswer(${i},'C')"> C. ${q.c}</label>
+                        <label><input type="radio" name="q${i}" value="D" onchange="saveAnswer(${i},'D')"> D. ${q.d}</label>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('questionsArea').innerHTML = html;
+            
+            // Start timer
+            startTimer();
+        }
+
+        function saveAnswer(qIndex, answer) {
+            studentAnswers[qIndex] = answer;
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const mins = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                document.getElementById('timer').textContent = `Time: ${mins}:${secs.toString().padStart(2,'0')}`;
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitExam();
+                }
+            }, 1000);
+        }
+
+        function submitExam() {
+            clearInterval(timerInterval);
+            
+            // Calculate score
+            let score = 0;
+            currentQuestions.forEach((q,i) => {
+                if(studentAnswers[i] === q.correct) score++;
+            });
+            
+            // Save score - THIS FIXES YOUR BROADSHEET ISSUE
+            const allScores = JSON.parse(localStorage.getItem('cbt_scores')||'{}');
+            const cls = currentStudent.class;
+            const sub = document.getElementById('subject').value;
+            
+            // Save by student ID so Broadsheet can find it
+            if(!allScores[currentStudent.id]) allScores[currentStudent.id] = {};
+            allScores[currentStudent.id][sub] = score;
+            
+            localStorage.setItem('cbt_scores', JSON.stringify(allScores));
+            
+            // Show result
+            document.getElementById('examBox').classList.add('hidden');
+            document.getElementById('resultBox').classList.remove('hidden');
+            document.getElementById('resultMsg').innerHTML = `You scored ${score} out of ${currentQuestions.length}`;
+        }
     </script>
 </body>
 </html>
