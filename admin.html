@@ -1,191 +1,294 @@
-        function printBroadsheet() {
-            const content = document.getElementById('broadsheetResult').innerHTML;
-            if(!content) { alert('Generate broadsheet first'); return; }
-            const printWin = window.open('', '_blank');
-            printWin.document.write(`<html><head><title>Broadsheet</title><style>table{width:100%;border-collapse:collapse}th,td{border:1px solid #000;padding:5px;text-align:center}th{background:#f0f0f0}</style></head><body>${content}</body></html>`);
-            printWin.document.close();
-            printWin.print();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEALED NECTAR ACADEMY - Admin Portal v6.9.6</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; }
+      .header { background: #1e3a8a; color: #fbbf24; padding: 20px; text-align: center; }
+      .header h1 { font-size: 24px; }
+      .header.version { font-size: 12px; opacity: 0.9; }
+      .nav-tabs { display: flex; background: #e5e7eb; padding: 10px; gap: 8px; flex-wrap: wrap; }
+      .nav-tab { padding: 10px 15px; background: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+      .nav-tab.active { background: #1e3a8a; color: white; }
+      .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
+      .tab-content { display: none; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+      .tab-content.active { display: block; }
+      .form-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+      .form-group { flex: 1; min-width: 200px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; }
+        button { background: #2563eb; color: white; padding: 10px 18px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; margin-right: 8px; margin-top: 5px; }
+        button:hover { background: #1d4ed8; }
+      .btn-danger { background: #dc2626; }
+      .btn-success { background: #16a34a; }
+      .btn-warning { background: #ea580c; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        th, td { border: 1px solid #d1d5db; padding: 8px; text-align: left; }
+        th { background: #f3f4f6; font-weight: 600; }
+      .alert { padding: 12px; border-radius: 6px; margin: 15px 0; }
+      .alert-success { background: #dcfce7; color: #166534; }
+      .alert-danger { background: #fee2e2; color: #991b1b; }
+      .stats-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 15px 0; }
+      .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>SEALED NECTAR ACADEMY</h1>
+        <div class="version">v6.9.6 - EXAM RESCUE | SECURE</div>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="openTab('cbt')">CBT</button>
+        <button class="nav-tab" onclick="openTab('broadsheet')">BROADSHEET</button>
+        <button class="nav-tab" onclick="openTab('questions')">QUESTIONS</button>
+        <button class="nav-tab" onclick="openTab('students')">STUDENTS</button>
+        <button class="nav-tab" onclick="openTab('reports')">REPORTS</button>
+        <button class="nav-tab" onclick="openTab('settings')">SETTINGS</button>
+    </div>
+
+    <div class="container">
+        <!-- CBT TAB -->
+        <div id="cbt" class="tab-content active">
+            <h2>CBT Control Panel</h2>
+            <div class="stats-box">
+                <strong>Exam Status:</strong> <span id="examStatus">Checking...</span> | 
+                <strong>Violations:</strong> <span id="violationCount">0</span>
+            </div>
+            <button class="btn-success" onclick="unlockExam()">UNLOCK EXAM</button>
+            <button class="btn-danger" onclick="lockExam()">LOCK EXAM</button>
+            <button class="btn-warning" onclick="resetViolations()">RESET VIOLATIONS</button>
+            <div id="cbtMsg"></div>
+        </div>
+
+        <!-- BROADSHEET TAB -->
+        <div id="broadsheet" class="tab-content">
+            <h2>Broadsheet Generator - Fixed</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Class</label>
+                    <select id="broadClass"></select>
+                </div>
+                <div class="form-group">
+                    <label>Term</label>
+                    <select id="broadTerm">
+                        <option>1st Term</option><option>2nd Term</option><option>3rd Term</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Session</label>
+                    <select id="broadSession"></select>
+                </div>
+            </div>
+            <button onclick="generateBroadsheet()">Generate Broadsheet</button>
+            <button onclick="printBroadsheet()">Print</button>
+            <div id="broadsheetResult"></div>
+        </div>
+
+        <!-- QUESTIONS TAB -->
+        <div id="questions" class="tab-content">
+            <h2>Manual Question Entry</h2>
+            <div class="form-row">
+                <div class="form-group"><label>Class</label><select id="qClass"></select></div>
+                <div class="form-group"><label>Subject</label><select id="qSubject"></select></div>
+            </div>
+            <div class="form-group">
+                <label>Question</label>
+                <textarea id="question" rows="2"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Option A</label><input id="optA"></div>
+                <div class="form-group"><label>Option B</label><input id="optB"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Option C</label><input id="optC"></div>
+                <div class="form-group"><label>Option D</label><input id="optD"></div>
+            </div>
+            <div class="form-group">
+                <label>Correct Answer</label>
+                <select id="correct"><option>A</option><option>B</option><option>C</option><option>D</option></select>
+            </div>
+            <button onclick="saveQuestion()">Save Question</button>
+            <div id="qMsg"></div>
+            <h3 style="margin-top:30px;">Bulk Upload Questions</h3>
+            <input type="file" id="excelFile" accept=".xlsx,.xls">
+            <button onclick="uploadExcel()">Upload Excel</button>
+            <div id="uploadMsg"></div>
+        </div>
+
+        <!-- STUDENTS TAB -->
+        <div id="students" class="tab-content">
+            <h2>Student Management</h2>
+            <div class="form-row">
+                <div class="form-group"><label>Full Name</label><input id="stuName"></div>
+                <div class="form-group"><label>Admission No</label><input id="stuAdmNo" placeholder="SNA/2024/001"></div>
+                <div class="form-group"><label>Class</label><select id="stuClass"></select></div>
+            </div>
+            <button onclick="saveStudent()">Add Student</button>
+            <div id="stuMsg"></div>
+            <table id="studentTable">
+                <thead><tr><th>S/N</th><th>Name</th><th>Adm No</th><th>Class</th><th>Action</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- REPORTS TAB -->
+        <div id="reports" class="tab-content">
+            <h2>Student Report Sheet</h2>
+            <div class="form-row">
+                <div class="form-group"><label>Admission No</label><input id="repAdmNo"></div>
+                <div class="form-group"><label>Term</label><select id="repTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select></div>
+                <div class="form-group"><label>Session</label><select id="repSession"></select></div>
+            </div>
+            <button onclick="generateReport()">Generate Report</button>
+            <div id="reportResult"></div>
+        </div>
+
+        <!-- SETTINGS TAB -->
+        <div id="settings" class="tab-content">
+            <h2>System Settings</h2>
+            <div class="form-group">
+                <label>Current Session</label>
+                <select id="currentSession"></select>
+            </div>
+            <button onclick="saveSettings()">Save Settings</button>
+            <div id="setMsg"></div>
+        </div>
+    </div>
+
+    <script>
+        const CLASSES = ["Creche", "K.G", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2", "Primary 3", "Primary 4", "Primary 5", "Primary 6", "JSS 1", "JSS 2", "JSS 3", "SSS 1", "SSS 2", "SSS 3"];
+        
+        const SUBJECTS = {
+            "Creche": ["Numeracy", "Literacy", "Social Habits", "Health Habits", "Songs/Rhymes"],
+            "K.G": ["Numeracy", "Literacy", "Social Habits", "Health Habits", "Songs/Rhymes", "Writing"],
+            "Nursery 1": ["Numeracy", "Literacy", "Social Habits", "Health Habits", "Science", "Writing", "Rhymes"],
+            "Nursery 2": ["Numeracy", "Literacy", "Social Habits", "Health Habits", "Basic Science", "Writing", "Verbal Reasoning", "Quantitative Reasoning"],
+            "Primary 1": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
+            "Primary 2": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
+            "Primary 3": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
+            "Primary 4": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
+            "Primary 5": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
+            "Primary 6": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "CRS/IRS", "Yoruba", "Computer Studies", "Agricultural Science", "Home Economics", "PHE", "CCA"],
+            "JSS 1": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "Islamic Studies", "Business Studies", "Agricultural Science", "Arabiyah", "Home Economics", "ICT", "CCA", "PHE", "Yoruba"],
+            "JSS 2": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "Islamic Studies", "Business Studies", "Agricultural Science", "Arabiyah", "Home Economics", "ICT", "CCA", "PHE", "Yoruba"],
+            "JSS 3": ["English Language", "Mathematics", "Basic Science", "Social Studies", "Civic Education", "Islamic Studies", "Business Studies", "Agricultural Science", "Arabiyah", "Home Economics", "ICT", "CCA", "PHE", "Yoruba"],
+            "SSS 1": ["Physics", "Biology", "Chemistry", "Mathematics", "English Language", "Civic Education", "Islamic Studies", "Economics", "Account", "Commerce", "Further Maths", "Lit-in-English", "Animal Husbandry", "Marketing", "Computer", "Data Processing", "Government", "Technical Drawing"],
+            "SSS 2": ["Physics", "Biology", "Chemistry", "Mathematics", "English Language", "Civic Education", "Islamic Studies", "Economics", "Account", "Commerce", "Further Maths", "Lit-in-English", "Animal Husbandry", "Marketing", "Computer", "Data Processing", "Government", "Technical Drawing"],
+            "SSS 3": ["Physics", "Biology", "Chemistry", "Mathematics", "English Language", "Civic Education", "Islamic Studies", "Economics", "Account", "Commerce", "Further Maths", "Lit-in-English", "Animal Husbandry", "Marketing", "Computer", "Data Processing", "Government", "Technical Drawing"]
+        };
+
+        const SESSIONS = ["2023/2024", "2024/2025", "2025/2026", "2026/2027"];
+        
+        // === CORE FUNCTIONS ===
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
         }
 
-        // === QUESTIONS ===
-        function saveQuestion() {
+        function populateAllDropdowns() {
+            // Classes
+            ['broadClass', 'qClass', 'stuClass'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.innerHTML = '<option value="">-- Select Class --</option>';
+                    CLASSES.forEach(c => el.innerHTML += `<option value="${c}">${c}</option>`);
+                }
+            });
+            // Sessions
+            ['broadSession', 'repSession', 'currentSession'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.innerHTML = '';
+                    SESSIONS.forEach(s => el.innerHTML += `<option value="${s}">${s}</option>`);
+                }
+            });
+            loadSubjects();
+            loadStudents();
+            updateExamStatus();
+        }
+
+        function loadSubjects() {
             const cls = document.getElementById('qClass').value;
-            const sub = document.getElementById('qSubject').value;
-            const q = document.getElementById('question').value.trim();
-            const a = document.getElementById('optA').value.trim();
-            const b = document.getElementById('optB').value.trim();
-            const c = document.getElementById('optC').value.trim();
-            const d = document.getElementById('optD').value.trim();
-            const correct = document.getElementById('correct').value;
-            
-            if(!cls||!sub||!q||!a||!b||!c||!d) {
-                document.getElementById('qMsg').innerHTML = '<div class="alert alert-danger">Fill all fields</div>';
-                return;
+            const subEl = document.getElementById('qSubject');
+            if(subEl) {
+                subEl.innerHTML = '<option value="">-- Select Subject --</option>';
+                if(SUBJECTS[cls]) {
+                    SUBJECTS[cls].forEach(s => subEl.innerHTML += `<option value="${s}">${s}</option>`);
+                }
             }
-            
-            const allQ = JSON.parse(localStorage.getItem('cbt_questions')||'{}');
-            if(!allQ[cls]) allQ[cls] = {};
-            if(!allQ[cls][sub]) allQ[cls][sub] = [];
-            allQ[cls][sub].push({question: q, a: a, b: b, c: c, d: d, correct: correct});
-            localStorage.setItem('cbt_questions', JSON.stringify(allQ));
-            
-            document.getElementById('qMsg').innerHTML = '<div class="alert alert-success">Question saved!</div>';
-            ['question','optA','optB','optC','optD'].forEach(id=>document.getElementById(id).value='');
         }
 
-        function uploadExcel() {
-            const file = document.getElementById('excelFile').files[0];
-            if(!file) { alert('Select Excel file'); return; }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                const json = XLSX.utils.sheet_to_json(sheet);
-                
-                const allQ = JSON.parse(localStorage.getItem('cbt_questions')||'{}');
-                let count = 0;
-                
-                json.forEach(row => {
-                    const cls = row.Class || row.class;
-                    const sub = row.Subject || row.subject;
-                    if(!cls ||!sub) return;
-                    if(!allQ[cls]) allQ[cls] = {};
-                    if(!allQ[cls][sub]) allQ[cls][sub] = [];
-                    
-                    allQ[cls][sub].push({
-                        question: row.Question || row.question,
-                        a: row.A || row.a,
-                        b: row.B || row.b,
-                        c: row.C || row.c,
-                        d: row.D || row.d,
-                        correct: row.Correct || row.correct || row.Answer
-                    });
-                    count++;
-                });
-                
-                localStorage.setItem('cbt_questions', JSON.stringify(allQ));
-                document.getElementById('uploadMsg').innerHTML = `<div class="alert alert-success">Uploaded ${count} questions successfully!</div>`;
-            };
-            reader.readAsArrayBuffer(file);
+        // === CBT CONTROL - FIXES ADMIN LOCKED ===
+        function unlockExam() {
+            localStorage.setItem('cbt_exam_locked', 'false');
+            localStorage.setItem('cbt_violations', '0');
+            updateExamStatus();
+            document.getElementById('cbtMsg').innerHTML = '<div class="alert alert-success">Exam Unlocked. Students can now start.</div>';
+        }
+        
+        function lockExam() {
+            localStorage.setItem('cbt_exam_locked', 'true');
+            updateExamStatus();
+            document.getElementById('cbtMsg').innerHTML = '<div class="alert alert-danger">Exam Locked.</div>';
+        }
+        
+        function resetViolations() {
+            localStorage.setItem('cbt_violations', '0');
+            updateExamStatus();
+        }
+        
+        function updateExamStatus() {
+            const locked = localStorage.getItem('cbt_exam_locked') === 'true';
+            const violations = localStorage.getItem('cbt_violations') || '0';
+            document.getElementById('examStatus').textContent = locked? 'LOCKED' : 'UNLOCKED';
+            document.getElementById('examStatus').style.color = locked? '#dc2626' : '#16a34a';
+            document.getElementById('violationCount').textContent = violations;
         }
 
-        // === STUDENTS ===
-        function saveStudent() {
-            const name = document.getElementById('stuName').value.trim();
-            const admNo = document.getElementById('stuAdmNo').value.trim();
-            const cls = document.getElementById('stuClass').value;
-            
-            if(!name||!admNo||!cls) {
-                document.getElementById('stuMsg').innerHTML = '<div class="alert alert-danger">Fill all fields</div>';
-                return;
-            }
-            
-            const students = JSON.parse(localStorage.getItem('cbt_students')||'[]');
-            if(students.find(s=>s.admNo===admNo)) {
-                document.getElementById('stuMsg').innerHTML = '<div class="alert alert-danger">Admission No already exists</div>';
-                return;
-            }
-            
-            students.push({
-                id: 'STU' + Date.now(),
-                name: name,
-                admNo: admNo,
-                class: cls
-            });
-            localStorage.setItem('cbt_students', JSON.stringify(students));
-            document.getElementById('stuMsg').innerHTML = '<div class="alert alert-success">Student added!</div>';
-            ['stuName','stuAdmNo'].forEach(id=>document.getElementById(id).value='');
-            loadStudents();
-        }
-
-        function loadStudents() {
-            const students = JSON.parse(localStorage.getItem('cbt_students')||'[]');
-            const tbody = document.querySelector('#studentTable tbody');
-            tbody.innerHTML = '';
-            students.forEach((st,i) => {
-                tbody.innerHTML += `<tr>
-                    <td>${i+1}</td>
-                    <td>${st.name}</td>
-                    <td>${st.admNo}</td>
-                    <td>${st.class}</td>
-                    <td><button class="btn-danger" onclick="deleteStudent('${st.id}')">Delete</button></td>
-                </tr>`;
-            });
-        }
-
-        function deleteStudent(id) {
-            if(!confirm('Delete this student?')) return;
-            let students = JSON.parse(localStorage.getItem('cbt_students')||'[]');
-            students = students.filter(s=>s.id!==id);
-            localStorage.setItem('cbt_students', JSON.stringify(students));
-            loadStudents();
-        }
-
-        // === REPORTS ===
-        function generateReport() {
-            const admNo = document.getElementById('repAdmNo').value.trim();
-            const term = document.getElementById('repTerm').value;
-            const session = document.getElementById('repSession').value;
-            const students = JSON.parse(localStorage.getItem('cbt_students')||'[]');
+        // === BROADSHEET - FIXED TO READ STUDENT SCORES ===
+        function generateBroadsheet() {
+            const cls = document.getElementById('broadClass').value;
+            const term = document.getElementById('broadTerm').value;
+            const session = document.getElementById('broadSession').value;
+            const students = JSON.parse(localStorage.getItem('cbt_students')||'[]').filter(s=>s.class===cls);
             const scores = JSON.parse(localStorage.getItem('cbt_scores')||'{}');
             
-            const student = students.find(s=>s.admNo===admNo);
-            if(!student) {
-                document.getElementById('reportResult').innerHTML = '<div class="alert alert-danger">Student not found</div>';
-                return;
-            }
+            if(!cls){alert('Select class');return;}
+            let html = `<h3>SEALED NECTAR ACADEMY</h3><p><strong>Broadsheet - ${cls} - ${term} ${session}</strong></p><table><tr><th>S/N</th><th>Name</th><th>Adm No</th>`;
+            const subjects = SUBJECTS[cls]||[];
+            subjects.forEach(sub=>html+=`<th>${sub}</th>`);
+            html += `<th>Total</th><th>Average</th></tr>`;
             
-            const subjects = SUBJECTS[student.class]||[];
-            let total=0, count=0;
-            let html = `<h3>SEALED NECTAR ACADEMY</h3><p><strong>Student Report Sheet</strong></p>
-                <p><strong>Name:</strong> ${student.name} | <strong>Adm No:</strong> ${student.admNo} | <strong>Class:</strong> ${student.class}</p>
-                <p><strong>Term:</strong> ${term} | <strong>Session:</strong> ${session}</p>
-                <table><tr><th>Subject</th><th>Score</th><th>Grade</th><th>Remark</th></tr>`;
-            
-            subjects.forEach(sub => {
-                let score = '-';
-                // Check by ID first, then by AdmNo - matches index.html format
-                if(scores[student.id] && scores[student.id][sub]!== undefined) score = scores[student.id][sub];
-                else if(scores[student.admNo] && scores[student.admNo][sub]!== undefined) score = scores[student.admNo][sub];
-                
-                let grade = '-', remark = '-';
-                if(score!== '-' &&!isNaN(score)) {
-                    score = Number(score);
-                    total += score; count++;
-                    if(score>=70) { grade='A'; remark='Excellent'; }
-                    else if(score>=60) { grade='B'; remark='Very Good'; }
-                    else if(score>=50) { grade='C'; remark='Good'; }
-                    else if(score>=45) { grade='D'; remark='Pass'; }
-                    else { grade='F'; remark='Fail'; }
-                }
-                html += `<tr><td>${sub}</td><td>${score}</td><td>${grade}</td><td>${remark}</td></tr>`;
+            students.forEach((st,i)=>{
+                let total=0, count=0;
+                html += `<tr><td>${i+1}</td><td>${st.name}</td><td>${st.admNo}</td>`;
+                subjects.forEach(sub=>{
+                    let score = '-';
+                    // Method 1: Check by student ID - new format
+                    if(scores[st.id] && scores[st.id][sub]!== undefined) score = scores[st.id][sub];
+                    // Method 2: Check by AdmNo - your index.html format SNA/2038/001
+                    else if(scores[st.admNo] && scores[st.admNo][sub]!== undefined) score = scores[st.admNo][sub];
+                    // Method 3: Check by Name - old format
+                    else if(scores[cls] && scores[cls][sub] && scores[cls][sub][st.name]!== undefined) score = scores[cls][sub][st.name];
+                    
+                    if(score!== '-' &&!isNaN(score)) { total+=Number(score); count++; }
+                    html += `<td>${score}</td>`;
+                });
+                const avg = count? (total/count).toFixed(1) : 0;
+                html += `<td>${total}</td><td>${avg}</td></tr>`;
             });
-            
-            const avg = count? (total/count).toFixed(1) : 0;
-            html += `<tr><th>Total</th><th>${total}</th><th colspan="2"></th></tr>`;
-            html += `<tr><th>Average</th><th>${avg}</th><th colspan="2"></th></tr>`;
             html += '</table>';
-            document.getElementById('reportResult').innerHTML = html;
+            document.getElementById('broadsheetResult').innerHTML = html;
         }
-
-        // === SETTINGS ===
-        function saveSettings() {
-            const session = document.getElementById('currentSession').value;
-            localStorage.setItem('cbt_session', session);
-            document.getElementById('setMsg').innerHTML = '<div class="alert alert-success">Settings saved!</div>';
-        }
-
-        // === INIT ===
-        document.addEventListener('DOMContentLoaded', function() {
-            populateAllDropdowns();
-            document.getElementById('qClass').addEventListener('change', loadSubjects);
-        });
-    </script>
-</body>
-</html>
-        function printBroadsheet() {
+// ===END OF PART 1===
+                    function printBroadsheet() {
             const content = document.getElementById('broadsheetResult').innerHTML;
             if(!content) { alert('Generate broadsheet first'); return; }
             const printWin = window.open('', '_blank');
