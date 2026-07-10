@@ -3,43 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEALED NECTAR ACADEMY - Admin Portal v6.9.6</title>
+    <title>SEALED NECTAR ACADEMY - Admin Portal v6.9.7</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f3f4f6; }
-      .header { background: #1e3a8a; color: #fbbf24; padding: 20px; text-align: center; }
-      .header h1 { font-size: 24px; }
-      .header.version { font-size: 12px; opacity: 0.9; }
-      .nav-tabs { display: flex; background: #e5e7eb; padding: 10px; gap: 8px; flex-wrap: wrap; }
-      .nav-tab { padding: 10px 15px; background: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
-      .nav-tab.active { background: #1e3a8a; color: white; }
-      .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
-      .tab-content { display: none; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-      .tab-content.active { display: block; }
-      .form-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-      .form-group { flex: 1; min-width: 200px; }
+     .header { background: #1e3a8a; color: #fbbf24; padding: 20px; text-align: center; }
+     .header h1 { font-size: 24px; }
+     .header.version { font-size: 12px; opacity: 0.9; }
+     .nav-tabs { display: flex; background: #e5e7eb; padding: 10px; gap: 8px; flex-wrap: wrap; }
+     .nav-tab { padding: 10px 15px; background: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+     .nav-tab.active { background: #1e3a8a; color: white; }
+     .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
+     .tab-content { display: none; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+     .tab-content.active { display: block; }
+     .form-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+     .form-group { flex: 1; min-width: 200px; }
         label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; }
         button { background: #2563eb; color: white; padding: 10px 18px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; margin-right: 8px; margin-top: 5px; }
         button:hover { background: #1d4ed8; }
-      .btn-danger { background: #dc2626; }
-      .btn-success { background: #16a34a; }
-      .btn-warning { background: #ea580c; }
+     .btn-danger { background: #dc2626; }
+     .btn-success { background: #16a34a; }
+     .btn-warning { background: #ea580c; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
         th, td { border: 1px solid #d1d5db; padding: 8px; text-align: left; }
         th { background: #f3f4f6; font-weight: 600; }
-      .alert { padding: 12px; border-radius: 6px; margin: 15px 0; }
-      .alert-success { background: #dcfce7; color: #166534; }
-      .alert-danger { background: #fee2e2; color: #991b1b; }
-      .stats-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 15px 0; }
-      .hidden { display: none; }
+     .alert { padding: 12px; border-radius: 6px; margin: 15px 0; }
+     .alert-success { background: #dcfce7; color: #166534; }
+     .alert-danger { background: #fee2e2; color: #991b1b; }
+     .stats-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 15px 0; }
+     .hidden { display: none; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>SEALED NECTAR ACADEMY</h1>
-        <div class="version">v6.9.6 - EXAM RESCUE | SECURE</div>
+        <div class="version">v6.9.7 - BLUETOOTH MODE | SECURE</div>
     </div>
 
     <div class="nav-tabs">
@@ -49,10 +49,10 @@
         <button class="nav-tab" onclick="openTab('students')">STUDENTS</button>
         <button class="nav-tab" onclick="openTab('reports')">REPORTS</button>
         <button class="nav-tab" onclick="openTab('settings')">SETTINGS</button>
+        <button class="nav-tab" onclick="openTab('bluetooth')">BLUETOOTH</button>
     </div>
 
     <div class="container">
-        <!-- CBT TAB -->
         <div id="cbt" class="tab-content active">
             <h2>CBT Control Panel</h2>
             <div class="stats-box">
@@ -65,41 +65,25 @@
             <div id="cbtMsg"></div>
         </div>
 
-        <!-- BROADSHEET TAB -->
         <div id="broadsheet" class="tab-content">
-            <h2>Broadsheet Generator - Fixed</h2>
+            <h2>Broadsheet Generator - FIXED</h2>
             <div class="form-row">
-                <div class="form-group">
-                    <label>Class</label>
-                    <select id="broadClass"></select>
-                </div>
-                <div class="form-group">
-                    <label>Term</label>
-                    <select id="broadTerm">
-                        <option>1st Term</option><option>2nd Term</option><option>3rd Term</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Session</label>
-                    <select id="broadSession"></select>
-                </div>
+                <div class="form-group"><label>Class</label><select id="broadClass"></select></div>
+                <div class="form-group"><label>Term</label><select id="broadTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select></div>
+                <div class="form-group"><label>Session</label><select id="broadSession"></select></div>
             </div>
             <button onclick="generateBroadsheet()">Generate Broadsheet</button>
             <button onclick="printBroadsheet()">Print</button>
             <div id="broadsheetResult"></div>
         </div>
 
-        <!-- QUESTIONS TAB -->
         <div id="questions" class="tab-content">
             <h2>Manual Question Entry</h2>
             <div class="form-row">
                 <div class="form-group"><label>Class</label><select id="qClass"></select></div>
                 <div class="form-group"><label>Subject</label><select id="qSubject"></select></div>
             </div>
-            <div class="form-group">
-                <label>Question</label>
-                <textarea id="question" rows="2"></textarea>
-            </div>
+            <div class="form-group"><label>Question</label><textarea id="question" rows="2"></textarea></div>
             <div class="form-row">
                 <div class="form-group"><label>Option A</label><input id="optA"></div>
                 <div class="form-group"><label>Option B</label><input id="optB"></div>
@@ -108,10 +92,7 @@
                 <div class="form-group"><label>Option C</label><input id="optC"></div>
                 <div class="form-group"><label>Option D</label><input id="optD"></div>
             </div>
-            <div class="form-group">
-                <label>Correct Answer</label>
-                <select id="correct"><option>A</option><option>B</option><option>C</option><option>D</option></select>
-            </div>
+            <div class="form-group"><label>Correct Answer</label><select id="correct"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
             <button onclick="saveQuestion()">Save Question</button>
             <div id="qMsg"></div>
             <h3 style="margin-top:30px;">Bulk Upload Questions</h3>
@@ -120,7 +101,6 @@
             <div id="uploadMsg"></div>
         </div>
 
-        <!-- STUDENTS TAB -->
         <div id="students" class="tab-content">
             <h2>Student Management</h2>
             <div class="form-row">
@@ -130,13 +110,9 @@
             </div>
             <button onclick="saveStudent()">Add Student</button>
             <div id="stuMsg"></div>
-            <table id="studentTable">
-                <thead><tr><th>S/N</th><th>Name</th><th>Adm No</th><th>Class</th><th>Action</th></tr></thead>
-                <tbody></tbody>
-            </table>
+            <table id="studentTable"><thead><tr><th>S/N</th><th>Name</th><th>Adm No</th><th>Class</th><th>Action</th></tr></thead><tbody></tbody></table>
         </div>
 
-        <!-- REPORTS TAB -->
         <div id="reports" class="tab-content">
             <h2>Student Report Sheet</h2>
             <div class="form-row">
@@ -148,21 +124,36 @@
             <div id="reportResult"></div>
         </div>
 
-        <!-- SETTINGS TAB -->
         <div id="settings" class="tab-content">
             <h2>System Settings</h2>
-            <div class="form-group">
-                <label>Current Session</label>
-                <select id="currentSession"></select>
-            </div>
+            <div class="form-group"><label>Current Session</label><select id="currentSession"></select></div>
             <button onclick="saveSettings()">Save Settings</button>
             <div id="setMsg"></div>
         </div>
-    </div>
 
-    <script>
+        <div id="bluetooth" class="tab-content">
+            <h2>Bluetooth Share Mode - FIXES v6.9.5</h2>
+            <div class="alert alert-success">
+                <strong>Problem Solved:</strong> This bundles ALL questions into one file. Bluetooth it once. No re-upload on student phones.
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Select Class to Package</label><select id="btClass"></select></div>
+                <div class="form-group"><label>Select Subject</label><select id="btSubject"></select></div>
+            </div>
+            <button class="btn-success" onclick="generateBluetoothFile()">1. Generate CBT File for Students</button>
+            <button onclick="downloadBluetoothFile()" id="btDownload" class="hidden">2. Download cbt.html</button>
+            <div id="btMsg"></div>
+            <div class="stats-box" style="margin-top:20px;">
+                <strong>How to use:</strong><br>
+                1. Upload questions in QUESTIONS tab first<br>
+                2. Select Class + Subject → Generate → Download `cbt.html`<br>
+                3. Bluetooth `cbt.html` to ALL student phones ONCE<br>
+                4. Students open it → Questions are already inside. No upload needed.
+            </div>
+        </div>
+    </div>
+        <script>
         const CLASSES = ["Creche", "K.G", "Nursery 1", "Nursery 2", "Primary 1", "Primary 2", "Primary 3", "Primary 4", "Primary 5", "Primary 6", "JSS 1", "JSS 2", "JSS 3", "SSS 1", "SSS 2", "SSS 3"];
-        
         const SUBJECTS = {
             "Creche": ["Numeracy", "Literacy", "Social Habits", "Health Habits", "Songs/Rhymes"],
             "K.G": ["Numeracy", "Literacy", "Social Habits", "Health Habits", "Songs/Rhymes", "Writing"],
@@ -181,10 +172,8 @@
             "SSS 2": ["Physics", "Biology", "Chemistry", "Mathematics", "English Language", "Civic Education", "Islamic Studies", "Economics", "Account", "Commerce", "Further Maths", "Lit-in-English", "Animal Husbandry", "Marketing", "Computer", "Data Processing", "Government", "Technical Drawing"],
             "SSS 3": ["Physics", "Biology", "Chemistry", "Mathematics", "English Language", "Civic Education", "Islamic Studies", "Economics", "Account", "Commerce", "Further Maths", "Lit-in-English", "Animal Husbandry", "Marketing", "Computer", "Data Processing", "Government", "Technical Drawing"]
         };
-
         const SESSIONS = ["2023/2024", "2024/2025", "2025/2026", "2026/2027"];
         
-        // === CORE FUNCTIONS ===
         function openTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -193,15 +182,13 @@
         }
 
         function populateAllDropdowns() {
-            // Classes
-            ['broadClass', 'qClass', 'stuClass'].forEach(id => {
+            ['broadClass', 'qClass', 'stuClass', 'btClass'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) {
                     el.innerHTML = '<option value="">-- Select Class --</option>';
                     CLASSES.forEach(c => el.innerHTML += `<option value="${c}">${c}</option>`);
                 }
             });
-            // Sessions
             ['broadSession', 'repSession', 'currentSession'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) {
@@ -212,6 +199,7 @@
             loadSubjects();
             loadStudents();
             updateExamStatus();
+            loadBluetoothDropdowns();
         }
 
         function loadSubjects() {
@@ -225,7 +213,6 @@
             }
         }
 
-        // === CBT CONTROL - FIXES ADMIN LOCKED ===
         function unlockExam() {
             localStorage.setItem('cbt_exam_locked', 'false');
             localStorage.setItem('cbt_violations', '0');
@@ -252,7 +239,6 @@
             document.getElementById('violationCount').textContent = violations;
         }
 
-        // === BROADSHEET - FIXED TO READ STUDENT SCORES ===
         function generateBroadsheet() {
             const cls = document.getElementById('broadClass').value;
             const term = document.getElementById('broadTerm').value;
@@ -271,13 +257,9 @@
                 html += `<tr><td>${i+1}</td><td>${st.name}</td><td>${st.admNo}</td>`;
                 subjects.forEach(sub=>{
                     let score = '-';
-                    // Method 1: Check by student ID - new format
                     if(scores[st.id] && scores[st.id][sub]!== undefined) score = scores[st.id][sub];
-                    // Method 2: Check by AdmNo - your index.html format SNA/2038/001
                     else if(scores[st.admNo] && scores[st.admNo][sub]!== undefined) score = scores[st.admNo][sub];
-                    // Method 3: Check by Name - old format
                     else if(scores[cls] && scores[cls][sub] && scores[cls][sub][st.name]!== undefined) score = scores[cls][sub][st.name];
-                    
                     if(score!== '-' &&!isNaN(score)) { total+=Number(score); count++; }
                     html += `<td>${score}</td>`;
                 });
@@ -287,8 +269,8 @@
             html += '</table>';
             document.getElementById('broadsheetResult').innerHTML = html;
         }
-// ===END OF PART 1===
-                    function printBroadsheet() {
+
+        function printBroadsheet() {
             const content = document.getElementById('broadsheetResult').innerHTML;
             if(!content) { alert('Generate broadsheet first'); return; }
             const printWin = window.open('', '_blank');
@@ -297,7 +279,6 @@
             printWin.print();
         }
 
-        // === QUESTIONS ===
         function saveQuestion() {
             const cls = document.getElementById('qClass').value;
             const sub = document.getElementById('qSubject').value;
@@ -360,9 +341,7 @@
             };
             reader.readAsArrayBuffer(file);
         }
-
-        // === STUDENTS ===
-        function saveStudent() {
+                    function saveStudent() {
             const name = document.getElementById('stuName').value.trim();
             const admNo = document.getElementById('stuAdmNo').value.trim();
             const cls = document.getElementById('stuClass').value;
@@ -373,20 +352,13 @@
             }
             
             const students = JSON.parse(localStorage.getItem('cbt_students')||'[]');
-            if(students.find(s=>s.admNo===admNo)) {
-                document.getElementById('stuMsg').innerHTML = '<div class="alert alert-danger">Admission No already exists</div>';
-                return;
-            }
-            
-            students.push({
-                id: 'STU' + Date.now(),
-                name: name,
-                admNo: admNo,
-                class: cls
-            });
+            const id = Date.now().toString();
+            students.push({id: id, name: name, admNo: admNo, class: cls});
             localStorage.setItem('cbt_students', JSON.stringify(students));
+            
             document.getElementById('stuMsg').innerHTML = '<div class="alert alert-success">Student added!</div>';
-            ['stuName','stuAdmNo'].forEach(id=>document.getElementById(id).value='');
+            document.getElementById('stuName').value = '';
+            document.getElementById('stuAdmNo').value = '';
             loadStudents();
         }
 
@@ -395,83 +367,169 @@
             const tbody = document.querySelector('#studentTable tbody');
             tbody.innerHTML = '';
             students.forEach((st,i) => {
-                tbody.innerHTML += `<tr>
-                    <td>${i+1}</td>
-                    <td>${st.name}</td>
-                    <td>${st.admNo}</td>
-                    <td>${st.class}</td>
-                    <td><button class="btn-danger" onclick="deleteStudent('${st.id}')">Delete</button></td>
-                </tr>`;
+                tbody.innerHTML += `<tr><td>${i+1}</td><td>${st.name}</td><td>${st.admNo}</td><td>${st.class}</td><td><button class="btn-danger" onclick="deleteStudent('${st.id}')">Delete</button></td></tr>`;
             });
         }
 
         function deleteStudent(id) {
             if(!confirm('Delete this student?')) return;
             let students = JSON.parse(localStorage.getItem('cbt_students')||'[]');
-            students = students.filter(s=>s.id!==id);
+            students = students.filter(s => s.id!== id);
             localStorage.setItem('cbt_students', JSON.stringify(students));
             loadStudents();
         }
 
-        // === REPORTS ===
         function generateReport() {
             const admNo = document.getElementById('repAdmNo').value.trim();
             const term = document.getElementById('repTerm').value;
             const session = document.getElementById('repSession').value;
-            const students = JSON.parse(localStorage.getItem('cbt_students')||'[]');
-            const scores = JSON.parse(localStorage.getItem('cbt_scores')||'{}');
             
-            const student = students.find(s=>s.admNo===admNo);
+            if(!admNo) { alert('Enter Admission No'); return; }
+            
+            const students = JSON.parse(localStorage.getItem('cbt_students')||'[]');
+            const student = students.find(s => s.admNo === admNo);
             if(!student) {
                 document.getElementById('reportResult').innerHTML = '<div class="alert alert-danger">Student not found</div>';
                 return;
             }
             
-            const subjects = SUBJECTS[student.class]||[];
-            let total=0, count=0;
-            let html = `<h3>SEALED NECTAR ACADEMY</h3><p><strong>Student Report Sheet</strong></p>
-                <p><strong>Name:</strong> ${student.name} | <strong>Adm No:</strong> ${student.admNo} | <strong>Class:</strong> ${student.class}</p>
-                <p><strong>Term:</strong> ${term} | <strong>Session:</strong> ${session}</p>
-                <table><tr><th>Subject</th><th>Score</th><th>Grade</th><th>Remark</th></tr>`;
+            const scores = JSON.parse(localStorage.getItem('cbt_scores')||'{}');
+            let stuScores = scores[student.id] || scores[student.admNo] || {};
             
+            let html = `<h3>SEALED NECTAR ACADEMY</h3><p><strong>Student Report Sheet</strong></p>`;
+            html += `<p><strong>Name:</strong> ${student.name} | <strong>Adm No:</strong> ${student.admNo} | <strong>Class:</strong> ${student.class}</p>`;
+            html += `<p><strong>Term:</strong> ${term} | <strong>Session:</strong> ${session}</p>`;
+            html += `<table><tr><th>Subject</th><th>Score</th></tr>`;
+            
+            let total = 0, count = 0;
+            const subjects = SUBJECTS[student.class]||[];
             subjects.forEach(sub => {
-                let score = '-';
-                // Check by ID first, then by AdmNo - matches your index.html SNA/2038/001 format
-                if(scores[student.id] && scores[student.id][sub]!== undefined) score = scores[student.id][sub];
-                else if(scores[student.admNo] && scores[student.admNo][sub]!== undefined) score = scores[student.admNo][sub];
-                
-                let grade = '-', remark = '-';
-                if(score!== '-' &&!isNaN(score)) {
-                    score = Number(score);
-                    total += score; count++;
-                    if(score>=70) { grade='A'; remark='Excellent'; }
-                    else if(score>=60) { grade='B'; remark='Very Good'; }
-                    else if(score>=50) { grade='C'; remark='Good'; }
-                    else if(score>=45) { grade='D'; remark='Pass'; }
-                    else { grade='F'; remark='Fail'; }
-                }
-                html += `<tr><td>${sub}</td><td>${score}</td><td>${grade}</td><td>${remark}</td></tr>`;
+                const score = stuScores[sub]!== undefined? stuScores[sub] : '-';
+                if(score!== '-' &&!isNaN(score)) { total += Number(score); count++; }
+                html += `<tr><td>${sub}</td><td>${score}</td></tr>`;
             });
             
             const avg = count? (total/count).toFixed(1) : 0;
-            html += `<tr><th>Total</th><th>${total}</th><th colspan="2"></th></tr>`;
-            html += `<tr><th>Average</th><th>${avg}</th><th colspan="2"></th></tr>`;
-            html += '</table>';
+            html += `<tr><th>Total</th><th>${total}</th></tr>`;
+            html += `<tr><th>Average</th><th>${avg}%</th></tr>`;
+            html += `</table>`;
             document.getElementById('reportResult').innerHTML = html;
         }
 
-        // === SETTINGS ===
         function saveSettings() {
             const session = document.getElementById('currentSession').value;
-            localStorage.setItem('cbt_session', session);
+            localStorage.setItem('cbt_current_session', session);
             document.getElementById('setMsg').innerHTML = '<div class="alert alert-success">Settings saved!</div>';
         }
 
-        // === INIT ===
-        document.addEventListener('DOMContentLoaded', function() {
+        // === BLUETOOTH MODE v6.9.7 ===
+        function loadBluetoothDropdowns() {
+            const clsEl = document.getElementById('btClass');
+            const subEl = document.getElementById('btSubject');
+            if(clsEl) {
+                clsEl.innerHTML = '<option value="">-- Select Class --</option>';
+                CLASSES.forEach(c => clsEl.innerHTML += `<option value="${c}">${c}</option>`);
+            }
+            if(subEl) {
+                subEl.innerHTML = '<option value="">-- Select Subject --</option>';
+            }
+            document.getElementById('btClass').addEventListener('change', function() {
+                const cls = this.value;
+                subEl.innerHTML = '<option value="">-- Select Subject --</option>';
+                if(SUBJECTS[cls]) {
+                    SUBJECTS[cls].forEach(s => subEl.innerHTML += `<option value="${s}">${s}</option>`);
+                }
+            });
+        }
+
+        let bluetoothFileContent = '';
+        function generateBluetoothFile() {
+            const cls = document.getElementById('btClass').value;
+            const sub = document.getElementById('btSubject').value;
+            if(!cls ||!sub) { alert('Select Class and Subject'); return; }
+            
+            const allQ = JSON.parse(localStorage.getItem('cbt_questions')||'{}');
+            const questions = allQ[cls] && allQ[cls][sub]? allQ[cls][sub] : [];
+            
+            if(questions.length === 0) {
+                document.getElementById('btMsg').innerHTML = '<div class="alert alert-danger">No questions found for '+cls+' - '+sub+'. Upload them first in QUESTIONS tab.</div>';
+                return;
+            }
+
+            bluetoothFileContent = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNA CBT - ${cls} ${sub}</title>
+<style>body{font-family:sans-serif;padding:15px;background:#f3f4f6}h1{background:#1e3a8a;color:#fbbf24;padding:15px;text-align:center;font-size:18px}.q{margin:20px 0;padding:15px;background:white;border-radius:8px}button{background:#2563eb;color:white;padding:12px 20px;border:none;border-radius:6px;font-size:16px;margin:5px;width:100%;text-align:left}input,select{width:100%;padding:10px;margin:5px 0;border:1px solid #d1d5db;border-radius:6px}.correct{background:#dcfce7}.wrong{background:#fee2e2}#startBtn{background:#16a34a;text-align:center}</style>
+</head><body>
+<h1>SEALED NECTAR ACADEMY<br>${cls} - ${sub}</h1>
+<div id="login"><h3>Student Login</h3><input id="adm" placeholder="Admission No e.g SNA/2038/001"><button id="startBtn" onclick="startExam()">Start Exam</button></div>
+<div id="exam" class="hidden"></div>
+<div id="result" class="hidden"></div>
+<script>
+const QUESTIONS = ${JSON.stringify(questions)};
+const CLASS_NAME = "${cls}";
+const SUBJECT_NAME = "${sub}";
+let currentQ = 0, score = 0, studentAdm = '';
+let answers = [];
+
+function startExam(){
+    studentAdm = document.getElementById('adm').value.trim();
+    if(!studentAdm){alert('Enter Admission No');return;}
+    document.getElementById('login').classList.add('hidden');
+    document.getElementById('exam').classList.remove('hidden');
+    showQuestion();
+}
+function showQuestion(){
+    if(currentQ >= QUESTIONS.length) { finishExam(); return; }
+    const q = QUESTIONS[currentQ];
+    let html = '<div class="q"><h3>Question '+(currentQ+1)+' of '+QUESTIONS.length+'</h3><p><b>'+q.question+'</b></p>';
+    ['a','b','c','d'].forEach(opt => {
+        if(q[opt]) html += '<button onclick="selectAnswer(\\''+opt+'\\')">'+opt.toUpperCase()+'. '+q[opt]+'</button><br>';
+    });
+    html += '</div>';
+    document.getElementById('exam').innerHTML = html;
+}
+function selectAnswer(opt){
+    answers[currentQ] = opt;
+    if(opt === QUESTIONS[currentQ].correct) score++;
+    currentQ++;
+    showQuestion();
+}
+function finishExam(){
+    document.getElementById('exam').classList.add('hidden');
+    document.getElementById('result').classList.remove('hidden');
+    const percent = ((score/QUESTIONS.length)*100).toFixed(1);
+    document.getElementById('result').innerHTML = '<h2>Exam Finished</h2><p><b>Student:</b> '+studentAdm+'</p><p><b>Class:</b> '+CLASS_NAME+'</p><p><b>Subject:</b> '+SUBJECT_NAME+'</p><p><b>Score:</b> '+score+' / '+QUESTIONS.length+' = '+percent+'%</p><p style="color:red;margin-top:20px"><b>IMPORTANT:</b> Screenshot this page and show it to your teacher to record your score.</p>';
+    
+    const scores = JSON.parse(localStorage.getItem('cbt_scores')||'{}');
+    if(!scores[studentAdm]) scores[studentAdm] = {};
+    scores[studentAdm][SUBJECT_NAME] = score;
+    localStorage.setItem('cbt_scores', JSON.stringify(scores));
+}
+<\/script></body></html>`;
+
+            document.getElementById('btDownload').classList.remove('hidden');
+            document.getElementById('btMsg').innerHTML = '<div class="alert alert-success">File ready! '+questions.length+' questions for '+cls+' '+sub+' embedded. Click Download below.</div>';
+        }
+
+        function downloadBluetoothFile() {
+            const cls = document.getElementById('btClass').value;
+            const sub = document.getElementById('btSubject').value;
+            const blob = new Blob([bluetoothFileContent], {type: 'text/html'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'cbt_'+cls.replace(/ /g,'')+'_'+sub.replace(/ /g,'')+'.html';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // === END BLUETOOTH MODE ===
+        
+        window.onload = function() {
             populateAllDropdowns();
             document.getElementById('qClass').addEventListener('change', loadSubjects);
-        });
+        };
     </script>
 </body>
 </html>
