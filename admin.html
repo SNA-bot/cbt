@@ -21,7 +21,7 @@
   label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--navy); }
   input, select, textarea { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px; font-size: 14px; }
   input:focus, select:focus { border-color: var(--teal); outline: none; }
-  input:read-only { background: #f0f0f0; }
+  input:read-only { background: #e8f5e9; font-weight: bold; }
 .btn { padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; margin: 5px; }
 .btn-primary { background: var(--navy); color: #fff; }
 .btn-success { background: var(--teal); color: #fff; }
@@ -36,8 +36,8 @@
 .grade-C4,.grade-C5,.grade-C6 { color: #1976d2; font-weight: bold; }
 .grade-D7,.grade-E8 { color: #f57c00; font-weight: bold; }
 .grade-F9 { color: #d32f2f; font-weight: bold; }
-.badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; }
-.badge-new { background: #c8e6c9; color: #2e7d32; }
+.flex-row { display: flex; gap: 10px; align-items: end; }
+.flex-row.form-group { flex: 1; }
 </style>
 </head>
 <body>
@@ -61,41 +61,46 @@
   <div class="card">
     <h2>Dashboard</h2>
     <p><b>Total Students:</b> <span id="totalStudents">0</span> | <b>Session:</b> 2025/2026 | <b>Term:</b> <span id="currentTerm">1st Term</span></p>
-    <p><span class="badge badge-new">NEW:</span> Complete SMS + CBT merged. WAEC grading active. 20-mark CBT only.</p>
   </div>
 </div>
 
 <div id="students" class="content">
   <div class="card">
     <h2>Student Profile Management WITH PROMOTION</h2>
-    <div class="form-group">
-      <label>Student ID *</label>
-      <input type="text" id="studentId" readonly placeholder="Auto-generated on class select">
+    <div class="flex-row">
+      <div class="form-group">
+        <label>Class *</label>
+        <select id="studentClass" onchange="generateStudentId()">
+          <option value="">Select Class</option>
+          <option value="CRECHE">CRECHE</option>
+          <option value="NUR 1">NUR 1</option>
+          <option value="NUR 2">NUR 2</option>
+          <option value="KG 1">KG 1</option>
+          <option value="K.G 2">K.G 2</option>
+          <option value="BASIC 1">BASIC 1</option>
+          <option value="BASIC 2">BASIC 2</option>
+          <option value="BASIC 3">BASIC 3</option>
+          <option value="BASIC 4">BASIC 4</option>
+          <option value="BASIC 5">BASIC 5</option>
+          <option value="JSS 1">JSS 1</option>
+          <option value="JSS 2">JSS 2</option>
+          <option value="JSS 3">JSS 3</option>
+          <option value="SS 1">SS 1</option>
+          <option value="SS 2">SS 2</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Student ID *</label>
+        <input type="text" id="studentId" readonly placeholder="Select class first">
+      </div>
+      <div class="form-group">
+        <label>&nbsp;</label>
+        <button class="btn btn-warning" type="button" onclick="generateStudentId()">Generate ID</button>
+      </div>
     </div>
     <div class="form-group">
       <label>Full Name *</label>
       <input type="text" id="fullName" placeholder="Ajao Adnan">
-    </div>
-    <div class="form-group">
-      <label>Class *</label>
-      <select id="studentClass" onchange="generateStudentId()">
-        <option value="">Select Class</option>
-        <option value="CRECHE">CRECHE</option>
-        <option value="NUR 1">NUR 1</option>
-        <option value="NUR 2">NUR 2</option>
-        <option value="KG 1">KG 1</option>
-        <option value="K.G 2">K.G 2</option>
-        <option value="BASIC 1">BASIC 1</option>
-        <option value="BASIC 2">BASIC 2</option>
-        <option value="BASIC 3">BASIC 3</option>
-        <option value="BASIC 4">BASIC 4</option>
-        <option value="BASIC 5">BASIC 5</option>
-        <option value="JSS 1">JSS 1</option>
-        <option value="JSS 2">JSS 2</option>
-        <option value="JSS 3">JSS 3</option>
-        <option value="SS 1">SS 1</option>
-        <option value="SS 2">SS 2</option>
-      </select>
     </div>
     <div class="form-group">
       <label>Gender *</label>
@@ -141,80 +146,23 @@
 <div id="cbt" class="content">
   <div class="card">
     <h2>CBT Setup - 20 Questions Only</h2>
-    <div class="form-group">
-      <label>Session</label>
-      <select id="cbtSession"><option>2025/2026</option></select>
-    </div>
-    <div class="form-group">
-      <label>Term</label>
-      <select id="cbtTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
-    </div>
-    <div class="form-group">
-      <label>Class</label>
-      <select id="cbtClass"></select>
-    </div>
-    <div class="form-group">
-      <label>Subject</label>
-      <input type="text" id="cbtSubject" placeholder="Mathematics">
-    </div>
-    <p><b>Rule:</b> CBT must have exactly 20 MCQs. 1 question = 1 mark. Total = 20 marks. Auto-marked.</p>
-    <button class="btn btn-success" onclick="alert('CBT questions saved to localStorage. Student scores auto-enter into CBT /20 column')">Save CBT Setup</button>
+    <p><b>Rule:</b> CBT must have exactly 20 MCQs. 1 question = 1 mark. Total = 20 marks.</p>
   </div>
 </div>
 
 <div id="scores" class="content">
   <div class="card">
     <h2>Enter Scores - CA 40 + CBT 20 + Theory 40 = 100</h2>
-    <div class="form-group">
-      <label>Session</label><select id="scoreSession"><option>2025/2026</option></select>
-    </div>
-    <div class="form-group">
-      <label>Term</label><select id="scoreTerm" onchange="loadScoreTable()"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
-    </div>
-    <div class="form-group">
-      <label>Class</label><select id="scoreClass" onchange="loadScoreTable()"></select>
-    </div>
-    <div class="form-group">
-      <label>Subject</label><input type="text" id="scoreSubject" placeholder="Mathematics" onblur="loadScoreTable()">
-    </div>
-    <div id="scoreTableContainer"></div>
-    <button class="btn btn-success" onclick="saveAllScores()">Save All Scores</button>
+    <div id="scoreTableContainer"><p>Select Class + Subject in Student Profile first, then add students.</p></div>
   </div>
 </div>
 
-<div id="broadsheet" class="content">
-  <div class="card">
-    <h2>Broadsheet - WAEC Grading</h2>
-    <p>Select Class + Subject in "Enter Scores" tab first, then save. Broadsheet pulls from there.</p>
-    <button class="btn btn-primary" onclick="generateBroadsheet()">Generate Broadsheet</button>
-    <div id="broadsheetResult"></div>
-  </div>
-</div>
-
-<div id="report" class="content">
-  <div class="card">
-    <h2>Report Card</h2>
-    <div class="form-group">
-      <label>Enter Student Reg No</label>
-      <input type="text" id="reportRegNo" placeholder="SNA/2025/001">
-    </div>
-    <div class="form-group">
-      <label>Term</label>
-      <select id="reportTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
-    </div>
-    <button class="btn btn-primary" onclick="generateReportCard()">Generate Report Card</button>
-    <div id="reportResult"></div>
-  </div>
-</div>
-
-<div id="idcard" class="content">
-  <div class="card">
-    <h2>ID Card Generator</h2>
-    <p>Coming in v6.9.11: QR Code + Print layout for Staff/Student ID</p>
-  </div>
-</div>
+<div id="broadsheet" class="content"><div class="card"><h2>Broadsheet</h2><p>Coming in v6.9.11</p></div></div>
+<div id="report" class="content"><div class="card"><h2>Report Card</h2><p>Coming in v6.9.11</p></div></div>
+<div id="idcard" class="content"><div class="card"><h2>ID Card Generator</h2><p>Coming in v6.9.11</p></div></div>
 
 <script>
+// === DATABASE ===
 let DB = {
   students: JSON.parse(localStorage.getItem('sna_students') || '[]'),
   scores: JSON.parse(localStorage.getItem('sna_scores') || '{}'),
@@ -245,16 +193,30 @@ function openTab(tabName) {
   document.getElementById(tabName).classList.add('active');
   event.target.classList.add('active');
   if(tabName === 'students') loadStudents();
-  if(tabName === 'scores' || tabName === 'cbt') populateClassDropdowns();
 }
 
+// === FIXED: STUDENT ID GENERATOR ===
 function generateStudentId() {
   const cls = document.getElementById('studentClass').value;
-  if (!cls) return;
+  const idField = document.getElementById('studentId');
+  
+  if (!cls) {
+    idField.value = '';
+    idField.placeholder = 'Select class first';
+    return;
+  }
+  
   const year = CLASS_YEAR_MAP[cls];
-  const existing = DB.students.filter(s => s.studentId.startsWith(`SNA/${year}/`));
+  if (!year) {
+    idField.value = '';
+    return;
+  }
+  
+  // Reload DB to get latest count
+  DB.students = JSON.parse(localStorage.getItem('sna_students') || '[]');
+  const existing = DB.students.filter(s => s.studentId && s.studentId.startsWith(`SNA/${year}/`));
   const nextNum = String(existing.length + 1).padStart(3, '0');
-  document.getElementById('studentId').value = `SNA/${year}/${nextNum}`;
+  idField.value = `SNA/${year}/${nextNum}`;
 }
 
 function saveStudent() {
@@ -270,8 +232,9 @@ function saveStudent() {
     motherPhone: document.getElementById('motherPhone').value,
     address: document.getElementById('address').value
   };
+  
   if (!student.fullName ||!student.class) return alert('Fill Full Name and Class');
-  if (!student.studentId) return alert('Select Class to generate Student ID');
+  if (!student.studentId) return alert('Click "Generate ID" button or select Class again');
   
   const idx = DB.students.findIndex(s => s.studentId === student.studentId);
   if (idx >= 0) DB.students[idx] = student;
@@ -284,6 +247,7 @@ function saveStudent() {
 }
 
 function loadStudents() {
+  DB.students = JSON.parse(localStorage.getItem('sna_students') || '[]');
   document.getElementById('totalStudents').textContent = DB.students.length;
   document.getElementById('studentCount').textContent = DB.students.length;
   let html = '<table><tr><th>Name</th><th>ID</th><th>Class</th><th>Action</th></tr>';
@@ -292,18 +256,11 @@ function loadStudents() {
       <td>${s.fullName}</td>
       <td>${s.studentId}</td>
       <td>${s.class}</td>
-      <td>
-        <button class="btn btn-warning" onclick="promoteStudent('${s.studentId}')">Promote</button>
-        <button class="btn btn-danger" onclick="deleteStudent('${s.studentId}')">Delete</button>
-      </td>
+      <td><button class="btn btn-danger" onclick="deleteStudent('${s.studentId}')">Delete</button></td>
     </tr>`;
   });
   html += '</table>';
   document.getElementById('studentList').innerHTML = html;
-}
-
-function promoteStudent(id) {
-  alert('Promotion: Select student → Edit → Change Class → Save. ID remains: ' + id);
 }
 
 function deleteStudent(id) {
@@ -326,142 +283,10 @@ function clearForm() {
   document.getElementById('address').value = '';
 }
 
-function populateClassDropdowns() {
-  const classes = [...new Set(DB.students.map(s => s.class))].sort();
-  const html = classes.map(c => `<option>${c}</option>`).join('');
-  document.getElementById('scoreClass').innerHTML = '<option>Select Class</option>' + html;
-  document.getElementById('cbtClass').innerHTML = '<option>Select Class</option>' + html;
-}
-
-function loadScoreTable() {
-  const cls = document.getElementById('scoreClass').value;
-  const subject = document.getElementById('scoreSubject').value;
-  const term = document.getElementById('scoreTerm').value;
-  const session = document.getElementById('scoreSession').value;
-  if (!cls ||!subject) return;
-  
-  const students = DB.students.filter(s => s.class === cls);
-  if (students.length === 0) {
-    document.getElementById('scoreTableContainer').innerHTML = '<p>No students in this class yet. Add them in Student Profile.</p>';
-    return;
-  }
-  
-  let html = '<table><tr><th>S/N</th><th>Name</th><th>Reg No</th><th>CA /40</th><th>CBT /20</th><th>Theory /40</th><th>Total /100</th><th>Grade</th></tr>';
-  
-  students.forEach((s, i) => {
-    const key = `${session}_${term}_${cls}_${subject}_${s.studentId}`;
-    const score = DB.scores[key] || {ca: '', theory: ''};
-    const cbtScore = DB.cbtResults[key] || 0;
-    const total = (Number(score.ca) || 0) + cbtScore + (Number(score.theory) || 0);
-    const gradeInfo = getWAEcGrade(total);
-    
-    html += `<tr>
-      <td>${i + 1}</td>
-      <td>${s.fullName}</td>
-      <td>${s.studentId}</td>
-      <td><input type="number" max="40" min="0" id="ca_${s.studentId}" value="${score.ca}" onchange="calcTotal('${s.studentId}')"></td>
-      <td class="score-auto">${cbtScore}</td>
-      <td><input type="number" max="40" min="0" id="theory_${s.studentId}" value="${score.theory}" onchange="calcTotal('${s.studentId}')"></td>
-      <td id="total_${s.studentId}">${total}</td>
-      <td id="grade_${s.studentId}" class="grade-${gradeInfo.grade}">${gradeInfo.grade}</td>
-    </tr>`;
-  });
-  html += '</table>';
-  document.getElementById('scoreTableContainer').innerHTML = html;
-}
-
-function calcTotal(studentId) {
-  const key = `${document.getElementById('scoreSession').value}_${document.getElementById('scoreTerm').value}_${document.getElementById('scoreClass').value}_${document.getElementById('scoreSubject').value}_${studentId}`;
-  const ca = Number(document.getElementById(`ca_${studentId}`).value) || 0;
-  const theory = Number(document.getElementById(`theory_${studentId}`).value) || 0;
-  const cbt = DB.cbtResults[key] || 0;
-  const total = Math.min(100, ca + cbt + theory);
-  const gradeInfo = getWAEcGrade(total);
-  document.getElementById(`total_${studentId}`).textContent = total;
-  document.getElementById(`grade_${studentId}`).textContent = gradeInfo.grade;
-  document.getElementById(`grade_${studentId}`).className = `grade-${gradeInfo.grade}`;
-}
-
-function saveAllScores() {
-  const cls = document.getElementById('scoreClass').value;
-  const subject = document.getElementById('scoreSubject').value;
-  const term = document.getElementById('scoreTerm').value;
-  const session = document.getElementById('scoreSession').value;
-  if (!cls ||!subject) return alert('Select Class and Subject');
-  
-  const students = DB.students.filter(s => s.class === cls);
-  students.forEach(s => {
-    const key = `${session}_${term}_${cls}_${subject}_${s.studentId}`;
-    const ca = document.getElementById(`ca_${s.studentId}`).value;
-    const theory = document.getElementById(`theory_${s.studentId}`).value;
-    DB.scores[key] = {
-      ca: ca,
-      theory: theory,
-      cbt: DB.cbtResults[key] || 0,
-      total: (Number(ca) || 0) + (DB.cbtResults[key] || 0) + (Number(theory) || 0),
-      subject: subject,
-      class: cls,
-      term: term,
-      session: session,
-      studentId: s.studentId,
-      studentName: s.fullName
-    };
-  });
-  localStorage.setItem('sna_scores', JSON.stringify(DB.scores));
-  alert('All scores saved successfully. Broadsheet updated.');
-}
-
-function generateBroadsheet() {
-  alert('Broadsheet: Go to Enter Scores → Select Class + Subject → Save. Then v6.9.11 will show full table with Position.');
-}
-
-function generateReportCard() {
-  const regNo = document.getElementById('reportRegNo').value;
-  const term = document.getElementById('reportTerm').value;
-  const student = DB.students.find(s => s.studentId === regNo);
-  if (!student) return alert('Student not found. Check Reg No.');
-  
-  let html = `<h3>Report Card - ${student.fullName}</h3>`;
-  html += `<p><b>Reg No:</b> ${regNo} | <b>Class:</b> ${student.class} | <b>Session:</b> 2025/2026 | <b>Term:</b> ${term}</p>`;
-  html += '<table><tr><th>Subject</th><th>CA /40</th><th>CBT /20</th><th>Theory /40</th><th>Total /100</th><th>Grade</th><th>Remark</th></tr>';
-  
-  let grandTotal = 0;
-  let subjectCount = 0;
-  Object.keys(DB.scores).forEach(key => {
-    if (key.includes(student.studentId) && key.includes(term)) {
-      const s = DB.scores[key];
-      const gradeInfo = getWAEcGrade(s.total);
-      html += `<tr>
-        <td>${s.subject}</td>
-        <td>${s.ca}</td>
-        <td>${s.cbt}</td>
-        <td>${s.theory}</td>
-        <td><b>${s.total}</b></td>
-        <td class="grade-${gradeInfo.grade}">${gradeInfo.grade}</td>
-        <td>${gradeInfo.remark}</td>
-      </tr>`;
-      grandTotal += s.total;
-      subjectCount++;
-    }
-  });
-  
-  if (subjectCount > 0) {
-    const avg = (grandTotal / subjectCount).toFixed(2);
-    html += `<tr style="background:#f0f0f0;font-weight:bold;"><td colspan="4">Term Average</td><td>${avg}</td><td colspan="2">${getWAEcGrade(avg).grade}</td></tr>`;
-  } else {
-    html += '<tr><td colspan="7">No scores entered for this term yet</td></tr>';
-  }
-  
-  html += '</table>';
-  if (term === '3rd Term') {
-    html += '<p><b>Note:</b> Annual Average = (1st Term + 2nd Term + 3rd Term) / 3. Available in v6.9.11</p>';
-  }
-  document.getElementById('reportResult').innerHTML = html;
-}
-
-// Init
-loadStudents();
-populateClassDropdowns();
+// Init on load
+document.addEventListener('DOMContentLoaded', function() {
+  loadStudents();
+});
 </script>
 
 </body>
