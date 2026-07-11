@@ -3,519 +3,407 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sealed Nectar Academy - Admin v6.9.8</title>
+<title>Sealed Nectar Academy - Admin v6.9.9 Teacher Edition</title>
 <style>
-    * { box-sizing: border-box; font-family: Arial, sans-serif; }
-  body { margin: 0; background: #f0f2f5; }
-  .header { background: #1a237e; color: #ffc107; padding: 15px; text-align: center; }
-  .header h1 { margin: 0; font-size: 18px; }
-  .header p { margin: 5px 0 0; font-size: 12px; color: #fff; }
-  .tabs { display: flex; background: #e8eaf6; overflow-x: auto; }
-  .tab { padding: 12px 15px; cursor: pointer; border: none; background: none; white-space: nowrap; }
-  .tab.active { background: #3949ab; color: white; font-weight: bold; }
-  .content { padding: 15px; display: none; }
-  .content.active { display: block; }
-  .card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-  .card h3 { margin-top: 0; color: #1a237e; }
-  label { display: block; margin: 10px 0 5px; font-weight: bold; font-size: 14px; }
-  select, input[type="text"], input[type="number"] { 
-    width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; 
-  }
-  button { 
-    background: #3949ab; color: white; border: none; padding: 12px 15px; 
-    border-radius: 4px; cursor: pointer; font-size: 16px; width: 100%; margin-top: 10px;
-  }
-  button.danger { background: #d32f2f; }
-  button.success { background: #388e3c; }
-  button.warning { background: #f57c00; }
-  .row { display: flex; gap: 10px; }
-  .row > div { flex: 1; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-  th { background: #e8eaf6; }
-  .error { background: #ffebee; color: #c62828; padding: 10px; border-radius: 4px; margin: 10px 0; }
-  .success { background: #e8f5e9; color: #2e7d32; padding: 10px; border-radius: 4px; margin: 10px 0; }
-  #questionList { max-height: 300px; overflow-y: auto; }
+*{box-sizing:border-box;font-family:Arial,sans-serif}body{margin:0;background:#f0f2f5}.header{background:#1a237e;color:#ffc107;padding:15px;text-align:center}.header h1{margin:0;font-size:18px}.header p{margin:5px 0 0;font-size:12px;color:#fff}.login-box{max-width:400px;margin:50px auto;background:white;padding:30px;border-radius:8px}.tabs{display:flex;background:#e8eaf6;overflow-x:auto}.tab{padding:12px 15px;cursor:pointer;border:none;background:none;white-space:nowrap}.tab.active{background:#3949ab;color:white;font-weight:bold}.content{padding:15px;display:none}.content.active{display:block}.card{background:white;padding:15px;border-radius:8px;margin-bottom:15px;box-shadow:0 1px 3px rgba(0,0,0,0.1)}.card h3{margin-top:0;color:#1a237e}label{display:block;margin:10px 0 5px;font-weight:bold;font-size:14px}select,input[type="text"],input[type="number"],input[type="password"],textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:4px;font-size:16px}textarea{min-height:80px;resize:vertical}button{background:#3949ab;color:white;border:none;padding:12px 15px;border-radius:4px;cursor:pointer;font-size:16px;width:100%;margin-top:10px}button.danger{background:#d32f2f}button.success{background:#388e3c}button.warning{background:#f57c00}.row{display:flex;gap:10px}.row>div{flex:1}table{width:100%;border-collapse:collapse;font-size:14px}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#e8eaf6}.error{background:#ffebee;color:#c62828;padding:10px;border-radius:4px;margin:10px 0}.success{background:#e8f5e9;color:#2e7d32;padding:10px;border-radius:4px;margin:10px 0}#questionList{max-height:300px;overflow-y:auto}.hidden{display:none}.user-info{float:right;color:#fff;font-size:12px}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 <div class="header">
-  <h1>SEALED NECTAR ACADEMY</h1>
-  <p>v6.9.8 - BLUETOOTH MODE | SECURE | CLASS SYNC FIX</p>
+  <h1>SEALED NECTAR ACADEMY <span class="user-info" id="userInfo"></span></h1>
+  <p>v6.9.9 - TEACHER EDITION | MCQ + THEORY | CSV UPLOAD</p>
 </div>
 
+<div id="loginScreen" class="login-box">
+  <h3>Staff Login</h3>
+  <label>Username</label>
+  <input type="text" id="loginUser" placeholder="admin or teacher username">
+  <label>Password</label>
+  <input type="password" id="loginPass" placeholder="Password">
+  <button onclick="doLogin()">Login</button>
+  <div id="loginMsg"></div>
+  <p style="font-size:12px;margin-top:20px;color:#666;">Default admin: username `admin` / password `sna2025`</p>
+</div>
+
+<div id="mainApp" class="hidden">
 <div class="tabs">
-  <button class="tab active" onclick="showTab('cbt')">CBT Control Panel</button>
-  <button class="tab" onclick="showTab('bluetooth')">BLUETOOTH</button>
-  <button class="tab" onclick="showTab('questions')">QUESTIONS</button>
-  <button class="tab" onclick="showTab('students')">STUDENTS</button>
+  <button class="tab active" onclick="showTab('questions')">QUESTIONS</button>
+  <button class="tab" onclick="showTab('bluetooth')">GENERATE CBT</button>
+  <button class="tab" onclick="showTab('marking')">MARK THEORY</button>
   <button class="tab" onclick="showTab('broadsheet')">BROADSHEET</button>
-  <button class="tab" onclick="showTab('reports')">REPORTS</button>
-  <button class="tab" onclick="showTab('settings')">SETTINGS</button>
-  <button class="tab" onclick="showTab('tools')">TOOLS</button>
+  <button class="tab" onclick="showTab('teachers')" id="teachersTab">TEACHERS</button>
+  <button class="tab danger" onclick="logout()">LOGOUT</button>
 </div>
 
-<!-- CBT TAB -->
-<div id="cbt" class="content active">
+<div id="questions" class="content active">
   <div class="card">
-    <h3>CBT Control Panel</h3>
-    <label>Session</label>
-    <select id="cbtSession"></select>
-    <label>Term</label>
-    <select id="cbtTerm">
-      <option>1st Term</option>
-      <option>2nd Term</option>
-      <option>3rd Term</option>
-    </select>
-    <button id="unlockBtn" class="success" onclick="unlockExam()">UNLOCK EXAM</button>
-    <button id="lockBtn" class="danger" onclick="lockExam()">LOCK EXAM</button>
-    <div id="cbtStatus"></div>
+    <h3>Upload Questions - CSV or Excel</h3>
+    <div id="uploadMsg"></div>
+    <p style="font-size:14px;">CSV format: <code>Type,Class,Subject,Question,A,B,C,D,Answer,Marks</code><br>
+    Type = MCQ or Theory. For Theory, leave A-D blank. Class: Use SS1 or SSS 1 — system will fix it.</p>
+    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
+    <button class="success" onclick="uploadFile()">Upload & Save Questions</button>
+    <button onclick="downloadTemplate()">Download CSV Template</button>
   </div>
-</div>
-
-<!-- BLUETOOTH TAB - UPDATED WITH VALIDATION -->
-<div id="bluetooth" class="content">
-  <div class="card">
-    <h3>Generate CBT File for Students</h3>
-    <div id="bluetoothMsg"></div>
-    <label>Select Class to Package</label>
-    <select id="btClass"></select>
-    <label>Select Subject</label>
-    <select id="btSubject"></select>
-    <button onclick="generateCBT()">1. Generate CBT File for Students</button>
-    <button id="downloadBtn" style="display:none;" class="success" onclick="downloadCBT()">2. Download cbt.html</button>
-  </div>
-</div>
-
-<!-- QUESTIONS TAB - UPDATED WITH CLASS SYNC -->
-<div id="questions" class="content">
-  <div class="card">
-    <h3>Manual Question Entry</h3>
-    <div class="row">
-      <div>
-        <label>Class</label>
-        <select id="qClass"></select>
-      </div>
-      <div>
-        <label>Subject</label>
-        <select id="qSubject"></select>
-      </div>
-    </div>
-    <label>Question</label>
-    <input type="text" id="qText">
-    <div class="row">
-      <div><label>Option A</label><input type="text" id="qA"></div>
-      <div><label>Option B</label><input type="text" id="qB"></div>
-    </div>
-    <div class="row">
-      <div><label>Option C</label><input type="text" id="qC"></div>
-      <div><label>Option D</label><input type="text" id="qD"></div>
-    </div>
-    <label>Correct Answer</label>
-    <select id="qCorrect">
-      <option>A</option><option>B</option><option>C</option><option>D</option>
-    </select>
-    <button onclick="saveQuestion()">Save Question</button>
-  </div>
-
-  <div class="card">
-    <h3>Bulk Upload Questions</h3>
-    <input type="file" id="excelFile" accept=".xlsx">
-    <button onclick="uploadExcel()">Upload Excel</button>
-  </div>
-
   <div class="card">
     <h3>Saved Questions</h3>
     <div class="row">
-      <div>
-        <label>Filter by Class</label>
-        <select id="filterClass" onchange="loadQuestions()"></select>
-      </div>
-      <div>
-        <label>Filter by Subject</label>
-        <select id="filterSubject" onchange="loadQuestions()"></select>
-      </div>
+      <div><label>Filter by Class</label><select id="filterClass" onchange="loadQuestions()"></select></div>
+      <div><label>Filter by Subject</label><select id="filterSubject" onchange="loadQuestions()"></select></div>
     </div>
     <div id="questionList"></div>
   </div>
 </div>
 
-<!-- TOOLS TAB - NEW - BULK FIX TOOL -->
-<div id="tools" class="content">
+<div id="bluetooth" class="content">
   <div class="card">
-    <h3>Bulk Fix Class Names</h3>
-    <p>Use this if your questions were saved with the wrong class name like SS1 instead of SSS 1.</p>
-    <div id="toolsMsg"></div>
-    <label>Change ALL questions from:</label>
-    <select id="oldClass"></select>
-    <label>To:</label>
-    <select id="newClass"></select>
-    <label>For Subject:</label>
-    <select id="fixSubject"></select>
-    <button class="warning" onclick="bulkFixClass()">Fix Class Names Now</button>
+    <h3>Generate CBT File for Students</h3>
+    <div id="bluetoothMsg"></div>
+    <label>Select Class</label><select id="btClass"></select>
+    <label>Select Subject</label><select id="btSubject"></select>
+    <label>Session</label><select id="cbtSession"></select>
+    <label>Term</label><select id="cbtTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
+    <button onclick="generateCBT()">1. Generate CBT File</button>
+    <button id="downloadBtn" style="display:none;" class="success" onclick="downloadCBT()">2. Download cbt.html</button>
   </div>
 </div>
 
-<!-- OTHER TABS SAME AS BEFORE -->
-<div id="students" class="content"><div class="card"><h3>Students</h3><p>Same as v6.9.7</p></div></div>
-<div id="broadsheet" class="content"><div class="card"><h3>Broadsheet</h3><p>Same as v6.9.7</p></div></div>
-<div id="reports" class="content"><div class="card"><h3>Reports</h3><p>Same as v6.9.7</p></div></div>
-<div id="settings" class="content"><div class="card"><h3>Settings</h3><p>Same as v6.9.7</p></div></div>
+<div id="marking" class="content">
+  <div class="card">
+    <h3>Mark Theory Answers</h3>
+    <div id="markingMsg"></div>
+    <label>Select Class</label><select id="markClass" onchange="loadSubmissions()"></select>
+    <label>Select Subject</label><select id="markSubject" onchange="loadSubmissions()"></select>
+    <div id="submissionList"></div>
+  </div>
+</div>
+
+<div id="broadsheet" class="content">
+  <div class="card">
+    <h3>Broadsheet - MCQ + Theory</h3>
+    <button onclick="generateBroadsheet()">Generate Broadsheet</button>
+    <div id="broadsheetData"></div>
+  </div>
+</div>
+
+<div id="teachers" class="content">
+  <div class="card">
+    <h3>Manage Teachers</h3>
+    <label>Username</label><input type="text" id="tUser">
+    <label>Password</label><input type="text" id="tPass">
+    <label>Assign Subjects (comma separated)</label><input type="text" id="tSubjects" placeholder="Biology,Chemistry">
+    <button onclick="addTeacher()">Add Teacher</button>
+    <div id="teacherList"></div>
+  </div>
+</div>
 
 <script>
-// v6.9.8 - CLASS SYNC FIX
-const CLASSES = ['JSS 1', 'JSS 2', 'JSS 3', 'SSS 1', 'SSS 2', 'SSS 3'];
-const SUBJECTS = ['Mathematics', 'English', 'Biology', 'Chemistry', 'Physics', 'Economics', 'Government', 'Literature', 'CRS', 'Agriculture'];
-const SESSIONS = ['2024/2025', '2025/2026', '2026/2027'];
+const CLASSES=['JSS 1','JSS 2','JSS 3','SSS 1','SSS 2','SSS 3'];
+const SUBJECTS=['Mathematics','English','Biology','Chemistry','Physics','Economics','Government','Literature','CRS','Agriculture'];
+const SESSIONS=['2024/2025','2025/2026','2026/2027'];
+const Q_KEY='sna_questions_v699';
+const T_KEY='sna_teachers_v699';
+const R_KEY='sna_results_v699';
+const U_KEY='sna_current_user_v699';
+let currentUser=null;
 
-// Init dropdowns
-function initDropdowns() {
-  const classDropdowns = ['btClass', 'qClass', 'filterClass', 'oldClass', 'newClass'];
-  const subjectDropdowns = ['btSubject', 'qSubject', 'filterSubject', 'fixSubject'];
-  
-  classDropdowns.forEach(id => {
-    const el = document.getElementById(id);
-    if(el) {
-      el.innerHTML = '<option value="">-- Select Class --</option>' + 
-        CLASSES.map(c => `<option>${c}</option>`).join('');
-    }
-  });
-  
-  subjectDropdowns.forEach(id => {
-    const el = document.getElementById(id);
-    if(el) {
-      el.innerHTML = '<option value="">-- Select Subject --</option>' + 
-        SUBJECTS.map(s => `<option>${s}</option>`).join('');
-    }
-  });
-  
-  document.getElementById('cbtSession').innerHTML = 
-    SESSIONS.map(s => `<option>${s}</option>`).join('');
+function normalizeClass(cls){
+  if(!cls)return'';cls=cls.toString().toUpperCase().replace(/\s+/g,'');
+  if(cls==='SS1')return'SSS 1';if(cls==='SS2')return'SSS 2';if(cls==='SS3')return'SSS 3';
+  if(cls==='JSS1')return'JSS 1';if(cls==='JSS2')return'JSS 2';if(cls==='JSS3')return'JSS 3';
+  return cls.replace('SSS','SSS ').replace('JSS','JSS ');
 }
 
-function showTab(tabName) {
-  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+function init(){
+  let teachers=JSON.parse(localStorage.getItem(T_KEY)||'[]');
+  if(!teachers.find(t=>t.user==='admin')){
+    teachers.push({user:'admin',pass:'sna2025',role:'admin',subjects:SUBJECTS});
+    localStorage.setItem(T_KEY,JSON.stringify(teachers));
+  }
+  const oldQ=localStorage.getItem('sna_questions_v697')||localStorage.getItem('sna_questions_v698');
+  if(oldQ&&!localStorage.getItem(Q_KEY)){
+    let migrated=JSON.parse(oldQ);
+    migrated.forEach(q=>q.class=normalizeClass(q.class));
+    localStorage.setItem(Q_KEY,JSON.stringify(migrated));
+  }
+  currentUser=JSON.parse(localStorage.getItem(U_KEY)||'null');
+  if(currentUser){showMainApp()}else{document.getElementById('loginScreen').style.display='block'}
+}
+
+function doLogin(){
+  const user=document.getElementById('loginUser').value.trim();
+  const pass=document.getElementById('loginPass').value.trim();
+  const teachers=JSON.parse(localStorage.getItem(T_KEY)||'[]');
+  const found=teachers.find(t=>t.user===user&&t.pass===pass);
+  if(found){currentUser=found;localStorage.setItem(U_KEY,JSON.stringify(found));showMainApp()}
+  else{document.getElementById('loginMsg').innerHTML='<div class="error">Invalid username or password</div>'}
+}
+
+function logout(){localStorage.removeItem(U_KEY);location.reload()}
+
+function showMainApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('mainApp').classList.remove('hidden');
+  document.getElementById('userInfo').innerText=`Logged in: ${currentUser.user} (${currentUser.role})`;
+  if(currentUser.role!=='admin'){document.getElementById('teachersTab').style.display='none'}
+  initDropdowns();loadQuestions();loadTeachers();
+}
+
+function initDropdowns(){
+  const classDropdowns=['btClass','filterClass','markClass'];
+  const subjectDropdowns=['btSubject','filterSubject','markSubject'];
+  const allowedSubjects=currentUser.role==='admin'?SUBJECTS:currentUser.subjects;
+  classDropdowns.forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<option value="">-- Select Class --</option>'+CLASSES.map(c=>`<option>${c}</option>`).join('')});
+  subjectDropdowns.forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<option value="">-- Select Subject --</option>'+allowedSubjects.map(s=>`<option>${s}</option>`).join('')});
+  document.getElementById('cbtSession').innerHTML=SESSIONS.map(s=>`<option>${s}</option>`).join('');
+}
+
+function showTab(tabName){
+  document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById(tabName).classList.add('active');
   event.target.classList.add('active');
-  if(tabName === 'questions') loadQuestions();
 }
 
-// NEW: Bulk fix tool for your current problem
-function bulkFixClass() {
-  const oldClass = document.getElementById('oldClass').value;
-  const newClass = document.getElementById('newClass').value;
-  const subject = document.getElementById('fixSubject').value;
-  const msg = document.getElementById('toolsMsg');
-  
-  if(!oldClass || !newClass || !subject) {
-    msg.innerHTML = '<div class="error">Select old class, new class, and subject</div>';
-    return;
+function uploadFile(){
+  const file=document.getElementById('fileInput').files[0];
+  const msg=document.getElementById('uploadMsg');
+  if(!file){msg.innerHTML='<div class="error">Select a CSV or Excel file first</div>';return}
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      let data;
+      if(file.name.endsWith('.csv')){data=csvToJson(e.target.result)}
+      else{const workbook=XLSX.read(e.target.result,{type:'binary'});const sheet=workbook.Sheets[workbook.SheetNames[0]];data=XLSX.utils.sheet_to_json(sheet)}
+      let db=JSON.parse(localStorage.getItem(Q_KEY)||'[]');let count=0;
+      data.forEach(row=>{
+        if(row.Question&&row.Class&&row.Subject){
+          db.push({id:Date.now()+Math.random(),type:row.Type||'MCQ',class:normalizeClass(row.Class),subject:row.Subject,question:row.Question,A:row.A||'',B:row.B||'',C:row.C||'',D:row.D||'',correct:row.Answer||row.Correct||'',marks:parseInt(row.Marks)||1});
+          count++;
+        }
+      });
+      localStorage.setItem(Q_KEY,JSON.stringify(db));
+      msg.innerHTML=`<div class="success">✓ Uploaded ${count} questions. Class names auto-fixed.</div>`;
+      loadQuestions();
+    }catch(err){msg.innerHTML=`<div class="error">Error reading file: ${err.message}</div>`}
+  };
+  if(file.name.endsWith('.csv')){reader.readAsText(file)}else{reader.readAsBinaryString(file)}
+}
+
+function csvToJson(csv){
+  const lines=csv.split('\n');const headers=lines[0].split(',').map(h=>h.trim());const result=[];
+  for(let i=1;i<lines.length;i++){
+    if(!lines[i])continue;const obj={};const currentline=lines[i].split(',');
+    headers.forEach((h,j)=>obj[h]=currentline[j]?currentline[j].trim():'');result.push(obj)
   }
-  if(oldClass === newClass) {
-    msg.innerHTML = '<div class="error">Old and new class cannot be the same</div>';
-    return;
-  }
-  
-  let db = JSON.parse(localStorage.getItem('sna_questions_v697') || '[]');
-  let count = 0;
-  db.forEach(q => {
-    if(q.class === oldClass && q.subject === subject) {
-      q.class = newClass;
-      count++;
-    }
-  });
-  localStorage.setItem('sna_questions_v697', JSON.stringify(db));
-  msg.innerHTML = `<div class="success">Fixed ${count} questions. Changed from ${oldClass} to ${newClass}. Now go to BLUETOOTH tab and re-generate.</div>`;
+  return result;
 }
 
-// UPDATED: Generate with validation
-let generatedHTML = '';
-function generateCBT() {
-  const cls = document.getElementById('btClass').value;
-  const subj = document.getElementById('btSubject').value;
-  const msg = document.getElementById('bluetoothMsg');
-  
-  if(!cls || !subj) {
-    msg.innerHTML = '<div class="error">Select class and subject first</div>';
-    return;
-  }
-  
-  const allQ = JSON.parse(localStorage.getItem('sna_questions_v697') || '[]');
-  const questions = allQ.filter(q => q.class === cls && q.subject === subj);
-  
-  // NEW: Validation - stops zero-score exams
-  if(questions.length === 0) {
-    msg.innerHTML = `<div class="error"><b>ERROR: 0 Questions Found!</b><br>
-    No questions found for ${cls} - ${subj}.<br>
-    Check QUESTIONS tab. You may have saved them as SS1 instead of SSS 1.<br>
-    Use the TOOLS tab to fix class names.</div>`;
-    document.getElementById('downloadBtn').style.display = 'none';
-    return;
-  }
-  
-  msg.innerHTML = `<div class="success">Found ${questions.length} questions. File ready to download.</div>`;
-  document.getElementById('downloadBtn').style.display = 'block';
-  
-  // Generate student file - simplified for batch 1
-  generatedHTML = `<!DOCTYPE html><html><head><title>${cls} ${subj} CBT</title></head><body><h1>SEALED NECTAR ACADEMY</h1><h2>${cls} - ${subj}</h2><p>Questions: ${questions.length}</p><script>const QUESTIONS = ${JSON.stringify(questions)};<\/script></body></html>`;
+function downloadTemplate(){
+  const csv='Type,Class,Subject,Question,A,B,C,D,Answer,Marks\nMCQ,SSS 1,Biology,What is a cell?,Tissue,Organ,Basic unit of life,Organism,C,1\nTheory,SSS 1,Biology,Explain photosynthesis,,,,,,10';
+  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='question_template.csv';a.click();
 }
 
-function downloadCBT() {
-  const cls = document.getElementById('btClass').value;
-  const subj = document.getElementById('btSubject').value;
-  const blob = new Blob([generatedHTML], {type: 'text/html'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `cbt_${cls.replace(' ', '')}_${subj}.html`;
-  a.click();
-}
-
-// Other functions same as v6.9.7 - truncated for batch 1
-function saveQuestion(){ alert('Save logic here - same as before'); }
-function uploadExcel(){ alert('Excel upload - same as before'); }
-function loadQuestions(){ 
-  const cls = document.getElementById('filterClass').value;
-  const subj = document.getElementById('filterSubject').value;
-  const db = JSON.parse(localStorage.getItem('sna_questions_v697') || '[]');
-  const filtered = db.filter(q => (!cls || q.class === cls) && (!subj || q.subject === subj));
-  document.getElementById('questionList').innerHTML = `<p>Found ${filtered.length} questions</p>` + 
-    filtered.map((q,i) => `<div>${i+1}. [${q.class}] ${q.question}</div>`).join('');
-}
-function unlockExam(){ alert('Unlock logic - same as before'); }
-function lockExam(){ alert('Lock logic - same as before'); }
-
-// Init on load
-window.onload = initDropdowns;
-</script>
-</body>
-</html>
-<script>
-// v6.9.8 COMPLETE - CLASS SYNC + ZERO SCORE FIX
-const CLASSES = ['JSS 1', 'JSS 2', 'JSS 3', 'SSS 1', 'SSS 2', 'SSS 3'];
-const SUBJECTS = ['Mathematics', 'English', 'Biology', 'Chemistry', 'Physics', 'Economics', 'Government', 'Literature', 'CRS', 'Agriculture'];
-const SESSIONS = ['2024/2025', '2025/2026', '2026/2027'];
-const Q_KEY = 'sna_questions_v698';
-const S_KEY = 'sna_students_v698';
-const R_KEY = 'sna_results_v698';
-
-function initDropdowns() {
-  const classDropdowns = ['btClass', 'qClass', 'filterClass', 'oldClass', 'newClass'];
-  const subjectDropdowns = ['btSubject', 'qSubject', 'filterSubject', 'fixSubject'];
-  classDropdowns.forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.innerHTML = '<option value="">-- Select Class --</option>' + CLASSES.map(c => `<option>${c}</option>`).join('');
-  });
-  subjectDropdowns.forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.innerHTML = '<option value="">-- Select Subject --</option>' + SUBJECTS.map(s => `<option>${s}</option>`).join('');
-  });
-  document.getElementById('cbtSession').innerHTML = SESSIONS.map(s => `<option>${s}</option>`).join('');
-}
-
-function showTab(tabName) {
-  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(tabName).classList.add('active');
-  event.target.classList.add('active');
-  if(tabName === 'questions') loadQuestions();
-}
-
-// v6.9.8 NEW: Bulk Fix Tool - FIXED TO USE Q_KEY
-function bulkFixClass() {
-  const oldClass = document.getElementById('oldClass').value;
-  const newClass = document.getElementById('newClass').value;
-  const subject = document.getElementById('fixSubject').value;
-  const msg = document.getElementById('toolsMsg');
-  
-  if(!oldClass || !newClass || !subject) {
-    msg.innerHTML = '<div class="error">Select old class, new class, and subject</div>';
-    return;
-  }
-  if(oldClass === newClass) {
-    msg.innerHTML = '<div class="error">Old and new class cannot be the same</div>';
-    return;
-  }
-  
-  // Check both v697 and v698 for migration
-  let db = JSON.parse(localStorage.getItem(Q_KEY) || localStorage.getItem('sna_questions_v697') || '[]');
-  let count = 0;
-  db.forEach(q => {
-    if(q.class === oldClass && q.subject === subject) {
-      q.class = newClass;
-      count++;
-    }
-  });
-  localStorage.setItem(Q_KEY, JSON.stringify(db));
-  msg.innerHTML = `<div class="success">✓ Fixed ${count} questions from ${oldClass} to ${newClass}.<br>Now go to BLUETOOTH tab and re-generate.</div>`;
-  loadQuestions();
-}
-
-function saveQuestion() {
-  const cls = document.getElementById('qClass').value;
-  const subj = document.getElementById('qSubject').value;
-  const text = document.getElementById('qText').value.trim();
-  const a = document.getElementById('qA').value.trim();
-  const b = document.getElementById('qB').value.trim();
-  const c = document.getElementById('qC').value.trim();
-  const d = document.getElementById('qD').value.trim();
-  const correct = document.getElementById('qCorrect').value;
-  
-  if(!cls || !subj || !text || !a || !b || !c || !d) {
-    alert('Fill all fields'); return;
-  }
-  
-  let db = JSON.parse(localStorage.getItem(Q_KEY) || '[]');
-  db.push({id: Date.now(), class: cls, subject: subj, question: text, A: a, B: b, C: c, D: d, correct: correct});
-  localStorage.setItem(Q_KEY, JSON.stringify(db));
-  alert('Question saved');
-  ['qText','qA','qB','qC','qD'].forEach(id => document.getElementById(id).value = '');
-  loadQuestions();
-}
-
-function loadQuestions() {
-  const cls = document.getElementById('filterClass').value;
-  const subj = document.getElementById('filterSubject').value;
-  const db = JSON.parse(localStorage.getItem(Q_KEY) || '[]');
-  const filtered = db.filter(q => (!cls || q.class === cls) && (!subj || q.subject === subj));
-  document.getElementById('questionList').innerHTML = `<p><b>Found ${filtered.length} questions</b></p>` + 
-    filtered.map((q,i) => `
-      <div style="border:1px solid #ddd; padding:10px; margin:5px 0; border-radius:4px;">
-        <b>${i+1}. [${q.class} - ${q.subject}]</b> ${q.question}<br>
-        A: ${q.A} | B: ${q.B} | C: ${q.C} | D: ${q.D} | <b>Ans: ${q.correct}</b>
-        <button style="width:auto; padding:5px 10px; margin-left:10px;" onclick="delQuestion(${q.id})">Delete</button>
+function loadQuestions(){
+  const cls=document.getElementById('filterClass').value;
+  const subj=document.getElementById('filterSubject').value;
+  let db=JSON.parse(localStorage.getItem(Q_KEY)||'[]');
+  if(currentUser.role!=='admin'){db=db.filter(q=>currentUser.subjects.includes(q.subject))}
+  const filtered=db.filter(q=>(!cls||q.class===cls)&&(!subj||q.subject===subj));
+  document.getElementById('questionList').innerHTML=`<p><b>Found ${filtered.length} questions</b></p>`+
+    filtered.map((q,i)=>`
+      <div style="border:1px solid #ddd;padding:10px;margin:5px 0;border-radius:4px;">
+        <b>${i+1}. [${q.class} - ${q.subject}] [${q.type}] ${q.marks}mk</b><br>${q.question}<br>
+        ${q.type==='MCQ'?`A: ${q.A} | B: ${q.B} | C: ${q.C} | D: ${q.D} | <b>Ans: ${q.correct}</b>`:'<i>Theory Question</i>'}
+        <button style="width:auto;padding:5px 10px;margin-left:10px;" onclick="delQuestion('${q.id}')">Delete</button>
       </div>
     `).join('');
 }
 
-function delQuestion(id) {
-  let db = JSON.parse(localStorage.getItem(Q_KEY) || '[]');
-  db = db.filter(q => q.id !== id);
-  localStorage.setItem(Q_KEY, JSON.stringify(db));
+function delQuestion(id){
+  let db=JSON.parse(localStorage.getItem(Q_KEY)||'[]');
+  db=db.filter(q=>q.id!=id);
+  localStorage.setItem(Q_KEY,JSON.stringify(db));
   loadQuestions();
 }
 
-function uploadExcel() {
-  alert('Excel Upload: Use CSV with columns: Class,Subject,Question,A,B,C,D,Correct\nClass MUST be: JSS 1, JSS 2, JSS 3, SSS 1, SSS 2, SSS 3\nCorrect MUST be: A, B, C, or D');
-}
-
-// v6.9.8 CRITICAL FIX: Bluetooth generator with validation + full student CBT
-let generatedHTML = '';
-function generateCBT() {
-  const cls = document.getElementById('btClass').value;
-  const subj = document.getElementById('btSubject').value;
-  const session = document.getElementById('cbtSession').value;
-  const term = document.getElementById('cbtTerm').value;
-  const msg = document.getElementById('bluetoothMsg');
-  
-  if(!cls || !subj) {
-    msg.innerHTML = '<div class="error">Select class and subject first</div>';
-    return;
+let generatedHTML='';
+function generateCBT(){
+  const cls=document.getElementById('btClass').value;
+  const subj=document.getElementById('btSubject').value;
+  const session=document.getElementById('cbtSession').value;
+  const term=document.getElementById('cbtTerm').value;
+  const msg=document.getElementById('bluetoothMsg');
+  if(!cls||!subj){msg.innerHTML='<div class="error">Select class and subject first</div>';return}
+  const allQ=JSON.parse(localStorage.getItem(Q_KEY)||'[]');
+  const questions=allQ.filter(q=>q.class===cls&&q.subject===subj);
+  if(questions.length===0){
+    msg.innerHTML=`<div class="error"><b>ERROR: 0 Questions Found for ${cls} - ${subj}!</b><br>Upload questions first using CSV.</div>`;
+    document.getElementById('downloadBtn').style.display='none';return;
   }
-  
-  const allQ = JSON.parse(localStorage.getItem(Q_KEY) || '[]');
-  const questions = allQ.filter(q => q.class === cls && q.subject === subj);
-  
-  if(questions.length === 0) {
-    msg.innerHTML = `<div class="error"><b>STOP: 0 Questions Found for ${cls} - ${subj}!</b><br>
-    This would cause 0% for all students.<br>
-    Go to QUESTIONS tab. Did you save them as 'SS1' instead of 'SSS 1'?<br>
-    Use TOOLS tab → Bulk Fix Class Names to fix it.</div>`;
-    document.getElementById('downloadBtn').style.display = 'none';
-    return;
-  }
-  
-  msg.innerHTML = `<div class="success">✓ Found ${questions.length} questions. ✓ Answer key embedded. File ready.</div>`;
-  document.getElementById('downloadBtn').style.display = 'block';
-  
-  // Full student CBT file with working marking
-  generatedHTML = `<!DOCTYPE html>
+  const mcqs=questions.filter(q=>q.type==='MCQ');
+  const theories=questions.filter(q=>q.type==='Theory');
+  msg.innerHTML=`<div class="success">✓ Found ${mcqs.length} MCQs + ${theories.length} Theory. File ready.</div>`;
+  document.getElementById('downloadBtn').style.display='block';
+  generatedHTML=`<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${cls} ${subj} CBT</title>
 <style>
-body{font-family:Arial;margin:0;background:#f5f5f5;} .header{background:#1a237e;color:#ffc107;padding:15px;text-align:center;}
-.container{max-width:600px;margin:20px auto;background:white;padding:20px;border-radius:8px;}
+body{font-family:Arial;margin:0;background:#f5f5f5;}.header{background:#1a237e;color:#ffc107;padding:15px;text-align:center;}
+.container{max-width:700px;margin:20px auto;background:white;padding:20px;border-radius:8px;}
 button{background:#3949ab;color:white;border:none;padding:15px;width:100%;font-size:18px;border-radius:4px;margin:10px 0;}
 .question{margin:20px 0;padding:15px;border:1px solid #ddd;border-radius:4px;}
 .option{display:block;margin:10px 0;padding:10px;border:1px solid #ccc;border-radius:4px;}
-.option input{margin-right:10px;} .result{font-size:24px;text-align:center;padding:20px;}
+textarea{width:100%;min-height:100px;padding:10px;font-size:16px;}
+.result{font-size:20px;text-align:center;padding:20px;}
 </style></head><body>
 <div class="header"><h2>SEALED NECTAR ACADEMY</h2><p>${cls} - ${subj} | ${term} | ${session}</p></div>
 <div class="container" id="loginBox">
   <h3>Student Login</h3>
-  <label>Admission No:</label>
-  <input type="text" id="admNo" style="width:100%;padding:10px;font-size:16px;">
+  <label>Admission No:</label><input type="text" id="admNo" style="width:100%;padding:10px;font-size:16px;">
+  <label>Full Name:</label><input type="text" id="stdName" style="width:100%;padding:10px;font-size:16px;">
   <button onclick="startExam()">Start Exam</button>
 </div>
 <div class="container" id="examBox" style="display:none;"></div>
 <div class="container" id="resultBox" style="display:none;"></div>
 <script>
-const QUESTIONS = ${JSON.stringify(questions)};
-const EXAM_META = {cls:'${cls}',subj:'${subj}',term:'${term}',session:'${session}'};
-let answers = {}; let student = '';
+const QUESTIONS=${JSON.stringify(questions)};
+const EXAM_META={cls:'${cls}',subj:'${subj}',term:'${term}',session:'${session}'};
+let answers={};let student='';let stdName='';
 function startExam(){
-  student = document.getElementById('admNo').value.trim();
-  if(!student){alert('Enter Admission No');return;}
+  student=document.getElementById('admNo').value.trim();
+  stdName=document.getElementById('stdName').value.trim();
+  if(!student||!stdName){alert('Enter Admission No and Name');return}
   document.getElementById('loginBox').style.display='none';
   document.getElementById('examBox').style.display='block';
   renderQ();
 }
 function renderQ(){
-  let html = '<h3>Answer All Questions</h3>';
-  QUESTIONS.forEach((q,i)=>{
-    html += '<div class="question"><b>Q'+(i+1)+'.</b> '+q.question;
+  let html='<h3>Section A: Multiple Choice</h3>';
+  QUESTIONS.filter(q=>q.type==='MCQ').forEach((q,i)=>{
+    html+='<div class="question"><b>Q'+(i+1)+'.</b> '+q.question+' ('+q.marks+'mk)';
     ['A','B','C','D'].forEach(opt=>{
-      html += '<label class="option"><input type="radio" name="q'+i+'" value="'+opt+'" onchange="answers['+i+']=this.value"> '+opt+': '+q[opt]+'</label>';
+      html+='<label class="option"><input type="radio" name="q'+q.id+'" value="'+opt+'" onchange="answers['+q.id+']=this.value"> '+opt+': '+q[opt]+'</label>';
     });
-    html += '</div>';
+    html+='</div>';
   });
-  html += '<button onclick="submitExam()">Submit Exam</button>';
-  document.getElementById('examBox').innerHTML = html;
+  html+='<h3>Section B: Theory</h3>';
+  QUESTIONS.filter(q=>q.type==='Theory').forEach((q,i)=>{
+    html+='<div class="question"><b>Q'+(i+1)+'.</b> '+q.question+' ('+q.marks+' marks)<br><textarea onchange="answers['+q.id+']=this.value" placeholder="Type your answer here..."></textarea></div>';
+  });
+  html+='<button onclick="submitExam()">Submit Exam</button>';
+  document.getElementById('examBox').innerHTML=html;
 }
 function submitExam(){
-  if(Object.keys(answers).length < QUESTIONS.length){
-    if(!confirm('You have not answered all questions. Submit anyway?')) return;
-  }
-  let score = 0;
-  QUESTIONS.forEach((q,i)=>{ if(answers[i] === q.correct) score++; });
-  let percent = ((score/QUESTIONS.length)*100).toFixed(1);
+  let mcqScore=0,mcqTotal=0;
+  QUESTIONS.forEach(q=>{
+    if(q.type==='MCQ'){
+      mcqTotal+=q.marks;
+      if(answers[q.id]===q.correct)mcqScore+=q.marks;
+    }
+  });
   document.getElementById('examBox').style.display='none';
   document.getElementById('resultBox').style.display='block';
-  document.getElementById('resultBox').innerHTML = 
-    '<div class="result"><h3>Exam Submitted!</h3><p><b>Student:</b> '+student+'</p><p><b>Subject:</b> '+EXAM_META.subj+'</p>'+
-    '<p><b>Score: '+score+' / '+QUESTIONS.length+' = '+percent+'%</b></p>'+
-    '<p>Your result has been saved. Close this page.</p></div>';
-  let results = JSON.parse(localStorage.getItem('sna_cbt_results')||'[]');
-  results.push({student:student,class:EXAM_META.cls,subject:EXAM_META.subj,term:EXAM_META.term,session:EXAM_META.session,score:score,total:QUESTIONS.length,percent:percent,date:new Date().toISOString()});
-  localStorage.setItem('sna_cbt_results',JSON.stringify(results));
+  document.getElementById('resultBox').innerHTML=
+    '<div class="result"><h3>Exam Submitted!</h3><p><b>Student:</b> '+stdName+' ('+student+')</p>'+
+    '<p><b>MCQ Score: '+mcqScore+' / '+mcqTotal+'</b></p>'+
+    '<p><i>Theory questions will be marked by your teacher.</i></p>'+
+    '<p>Close this page now.</p></div>';
+  let results=JSON.parse(localStorage.getItem('sna_results_v699')||'[]');
+  results.push({
+    student:student,name:stdName,class:EXAM_META.cls,subject:EXAM_META.subj,
+    term:EXAM_META.term,session:EXAM_META.session,
+    mcqScore:mcqScore,mcqTotal:mcqTotal,
+    answers:answers,questions:QUESTIONS,
+    theoryMarked:false,date:new Date().toISOString()
+  });
+  localStorage.setItem('sna_results_v699',JSON.stringify(results));
 }
 <\/script></body></html>`;
 }
 
-function downloadCBT() {
-  const cls = document.getElementById('btClass').value;
-  const subj = document.getElementById('btSubject').value;
-  const blob = new Blob([generatedHTML], {type: 'text/html'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `cbt_${cls.replace(' ', '')}_${subj}.html`;
-  a.click();
+function downloadCBT(){
+  const cls=document.getElementById('btClass').value;
+  const subj=document.getElementById('btSubject').value;
+  const blob=new Blob([generatedHTML],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`cbt_${cls.replace(' ','')}_${subj}.html`;a.click();
 }
 
-function unlockExam(){ alert('CBT Unlock - coming in v6.9.9'); }
-function lockExam(){ alert('CBT Lock - coming in v6.9.9'); }
+function loadSubmissions(){
+  const cls=document.getElementById('markClass').value;
+  const subj=document.getElementById('markSubject').value;
+  if(!cls||!subj)return;
+  const results=JSON.parse(localStorage.getItem(R_KEY)||'[]');
+  const subs=results.filter(r=>r.class===cls&&r.subject===subj&&!r.theoryMarked);
+  document.getElementById('submissionList').innerHTML=subs.map((s,i)=>`
+    <div class="card">
+      <b>${s.name} (${s.student})</b> - MCQ: ${s.mcqScore}/${s.mcqTotal}
+      ${s.questions.filter(q=>q.type==='Theory').map(q=>`
+        <div style="margin:10px 0;padding:10px;background:#f5f5;">
+          <b>Q: ${q.question} (${q.marks} marks)</b><br>
+          <b>Answer:</b> ${s.answers[q.id]||'<i>No answer</i>'}<br>
+          <label>Marks Awarded:</label>
+          <input type="number" id="mark_${s.student}_${q.id}" max="${q.marks}" min="0" style="width:100px;">
+        </div>
+      `).join('')}
+      <button onclick="saveTheoryMarks('${s.student}')">Save Marks for ${s.name}</button>
+    </div>
+  `).join('')||'<p>No unmarked submissions</p>';
+}
 
-window.onload = function() {
-  // Migrate v697 to v698 if needed
-  const oldQ = localStorage.getItem('sna_questions_v697');
-  if(oldQ && !localStorage.getItem(Q_KEY)) {
-    localStorage.setItem(Q_KEY, oldQ);
-  }
-  initDropdowns();
-  loadQuestions();
-};
+function saveTheoryMarks(studentId){
+  let results=JSON.parse(localStorage.getItem(R_KEY)||'[]');
+  let res=results.find(r=>r.student===studentId);
+  let theoryScore=0;
+  res.questions.filter(q=>q.type==='Theory').forEach(q=>{
+    const mark=parseInt(document.getElementById(`mark_${studentId}_${q.id}`).value)||0;
+    res.answers[q.id+'_score']=mark;
+    theoryScore+=mark;
+  });
+  res.theoryScore=theoryScore;
+  res.theoryMarked=true;
+  res.totalScore=res.mcqScore+theoryScore;
+  localStorage.setItem(R_KEY,JSON.stringify(results));
+  alert('Marks saved!');
+  loadSubmissions();
+}
+
+function generateBroadsheet(){
+  const results=JSON.parse(localStorage.getItem(R_KEY)||'[]');
+  let html='<table><tr><th>Student</th><th>Class</th><th>Subject</th><th>MCQ</th><th>Theory</th><th>Total</th><th>Status</th></tr>';
+  results.forEach(r=>{
+    const theory=r.theoryMarked?r.theoryScore:'Pending';
+    const total=r.theoryMarked?r.totalScore:r.mcqScore;
+    html+=`<tr><td>${r.name}</td><td>${r.class}</td><td>${r.subject}</td><td>${r.mcqScore}/${r.mcqTotal}</td><td>${theory}</td><td><b>${total}</b></td><td>${r.theoryMarked?'Complete':'MCQ Only'}</td></tr>`;
+  });
+  html+='</table>';
+  document.getElementById('broadsheetData').innerHTML=html;
+}
+
+function addTeacher(){
+  const user=document.getElementById('tUser').value.trim();
+  const pass=document.getElementById('tPass').value.trim();
+  const subjects=document.getElementById('tSubjects').value.split(',').map(s=>s.trim());
+  if(!user||!pass){alert('Enter username and password');return}
+  let teachers=JSON.parse(localStorage.getItem(T_KEY)||'[]');
+  teachers.push({user:user,pass:pass,role:'teacher',subjects:subjects});
+  localStorage.setItem(T_KEY,JSON.stringify(teachers));
+  loadTeachers();
+  document.getElementById('tUser').value='';
+  document.getElementById('tPass').value='';
+  document.getElementById('tSubjects').value='';
+}
+
+function loadTeachers(){
+  const teachers=JSON.parse(localStorage.getItem(T_KEY)||'[]');
+  document.getElementById('teacherList').innerHTML='<h4>Existing Teachers</h4>'+
+    teachers.filter(t=>t.role==='teacher').map(t=>`<div>${t.user} - Subjects: ${t.subjects.join(', ')}</div>`).join('');
+}
+
+window.onload=init;
 </script>
 </body>
 </html>
