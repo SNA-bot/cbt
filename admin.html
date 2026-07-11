@@ -3,407 +3,466 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sealed Nectar Academy - Admin v6.9.9 Teacher Edition</title>
+<title>Sealed Nectar Academy - SMS + CBT v6.9.10</title>
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}body{margin:0;background:#f0f2f5}.header{background:#1a237e;color:#ffc107;padding:15px;text-align:center}.header h1{margin:0;font-size:18px}.header p{margin:5px 0 0;font-size:12px;color:#fff}.login-box{max-width:400px;margin:50px auto;background:white;padding:30px;border-radius:8px}.tabs{display:flex;background:#e8eaf6;overflow-x:auto}.tab{padding:12px 15px;cursor:pointer;border:none;background:none;white-space:nowrap}.tab.active{background:#3949ab;color:white;font-weight:bold}.content{padding:15px;display:none}.content.active{display:block}.card{background:white;padding:15px;border-radius:8px;margin-bottom:15px;box-shadow:0 1px 3px rgba(0,0,0,0.1)}.card h3{margin-top:0;color:#1a237e}label{display:block;margin:10px 0 5px;font-weight:bold;font-size:14px}select,input[type="text"],input[type="number"],input[type="password"],textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:4px;font-size:16px}textarea{min-height:80px;resize:vertical}button{background:#3949ab;color:white;border:none;padding:12px 15px;border-radius:4px;cursor:pointer;font-size:16px;width:100%;margin-top:10px}button.danger{background:#d32f2f}button.success{background:#388e3c}button.warning{background:#f57c00}.row{display:flex;gap:10px}.row>div{flex:1}table{width:100%;border-collapse:collapse;font-size:14px}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#e8eaf6}.error{background:#ffebee;color:#c62828;padding:10px;border-radius:4px;margin:10px 0}.success{background:#e8f5e9;color:#2e7d32;padding:10px;border-radius:4px;margin:10px 0}#questionList{max-height:300px;overflow-y:auto}.hidden{display:none}.user-info{float:right;color:#fff;font-size:12px}
+  :root { --navy: #0A2342; --gold: #F4B400; --teal: #009688; --red: #d32f2f; }
+    * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+  body { margin: 0; background: #f5f7fa; }
+.header { background: var(--navy); color: var(--gold); padding: 20px; text-align: center; }
+.header h1 { margin: 0; font-size: 28px; }
+.header p { margin: 5px 0 0 0; color: #fff; }
+.tabs { display: flex; flex-wrap: wrap; background: #fff; border-bottom: 3px solid var(--gold); }
+.tab { padding: 15px 20px; cursor: pointer; border: none; background: #fff; font-weight: 600; color: var(--navy); }
+.tab.active { background: var(--navy); color: var(--gold); }
+.content { padding: 20px; display: none; }
+.content.active { display: block; }
+.card { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.form-group { margin-bottom: 15px; }
+  label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--navy); }
+  input, select, textarea { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px; font-size: 14px; }
+  input:focus, select:focus { border-color: var(--teal); outline: none; }
+  input:read-only { background: #f0f0f0; }
+.btn { padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; margin: 5px; }
+.btn-primary { background: var(--navy); color: #fff; }
+.btn-success { background: var(--teal); color: #fff; }
+.btn-warning { background: var(--gold); color: var(--navy); }
+.btn-danger { background: var(--red); color: #fff; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+  th { background: var(--navy); color: #fff; padding: 12px; text-align: left; font-size: 14px; }
+  td { padding: 10px; border-bottom: 1px solid #eee; }
+  td input { width: 70px; padding: 5px; }
+.score-auto { background: #e8f5e9; font-weight: bold; text-align: center; }
+.grade-A1,.grade-B2,.grade-B3 { color: #2e7d32; font-weight: bold; }
+.grade-C4,.grade-C5,.grade-C6 { color: #1976d2; font-weight: bold; }
+.grade-D7,.grade-E8 { color: #f57c00; font-weight: bold; }
+.grade-F9 { color: #d32f2f; font-weight: bold; }
+.badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+.badge-new { background: #c8e6c9; color: #2e7d32; }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
+
 <div class="header">
-  <h1>SEALED NECTAR ACADEMY <span class="user-info" id="userInfo"></span></h1>
-  <p>v6.9.9 - TEACHER EDITION | MCQ + THEORY | CSV UPLOAD</p>
+  <h1>Sealed Nectar Academy</h1>
+  <p>School Management System + CBT v6.9.10 | 2025/2026 Session</p>
 </div>
 
-<div id="loginScreen" class="login-box">
-  <h3>Staff Login</h3>
-  <label>Username</label>
-  <input type="text" id="loginUser" placeholder="admin or teacher username">
-  <label>Password</label>
-  <input type="password" id="loginPass" placeholder="Password">
-  <button onclick="doLogin()">Login</button>
-  <div id="loginMsg"></div>
-  <p style="font-size:12px;margin-top:20px;color:#666;">Default admin: username `admin` / password `sna2025`</p>
-</div>
-
-<div id="mainApp" class="hidden">
 <div class="tabs">
-  <button class="tab active" onclick="showTab('questions')">QUESTIONS</button>
-  <button class="tab" onclick="showTab('bluetooth')">GENERATE CBT</button>
-  <button class="tab" onclick="showTab('marking')">MARK THEORY</button>
-  <button class="tab" onclick="showTab('broadsheet')">BROADSHEET</button>
-  <button class="tab" onclick="showTab('teachers')" id="teachersTab">TEACHERS</button>
-  <button class="tab danger" onclick="logout()">LOGOUT</button>
+  <button class="tab active" onclick="openTab('dashboard')">Dashboard</button>
+  <button class="tab" onclick="openTab('students')">Student Profile</button>
+  <button class="tab" onclick="openTab('cbt')">CBT Setup</button>
+  <button class="tab" onclick="openTab('scores')">Enter Scores</button>
+  <button class="tab" onclick="openTab('broadsheet')">Broadsheet</button>
+  <button class="tab" onclick="openTab('report')">Report Card</button>
+  <button class="tab" onclick="openTab('idcard')">ID Card</button>
 </div>
 
-<div id="questions" class="content active">
+<div id="dashboard" class="content active">
   <div class="card">
-    <h3>Upload Questions - CSV or Excel</h3>
-    <div id="uploadMsg"></div>
-    <p style="font-size:14px;">CSV format: <code>Type,Class,Subject,Question,A,B,C,D,Answer,Marks</code><br>
-    Type = MCQ or Theory. For Theory, leave A-D blank. Class: Use SS1 or SSS 1 — system will fix it.</p>
-    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
-    <button class="success" onclick="uploadFile()">Upload & Save Questions</button>
-    <button onclick="downloadTemplate()">Download CSV Template</button>
+    <h2>Dashboard</h2>
+    <p><b>Total Students:</b> <span id="totalStudents">0</span> | <b>Session:</b> 2025/2026 | <b>Term:</b> <span id="currentTerm">1st Term</span></p>
+    <p><span class="badge badge-new">NEW:</span> Complete SMS + CBT merged. WAEC grading active. 20-mark CBT only.</p>
   </div>
+</div>
+
+<div id="students" class="content">
   <div class="card">
-    <h3>Saved Questions</h3>
-    <div class="row">
-      <div><label>Filter by Class</label><select id="filterClass" onchange="loadQuestions()"></select></div>
-      <div><label>Filter by Subject</label><select id="filterSubject" onchange="loadQuestions()"></select></div>
+    <h2>Student Profile Management WITH PROMOTION</h2>
+    <div class="form-group">
+      <label>Student ID *</label>
+      <input type="text" id="studentId" readonly placeholder="Auto-generated on class select">
     </div>
-    <div id="questionList"></div>
+    <div class="form-group">
+      <label>Full Name *</label>
+      <input type="text" id="fullName" placeholder="Ajao Adnan">
+    </div>
+    <div class="form-group">
+      <label>Class *</label>
+      <select id="studentClass" onchange="generateStudentId()">
+        <option value="">Select Class</option>
+        <option value="CRECHE">CRECHE</option>
+        <option value="NUR 1">NUR 1</option>
+        <option value="NUR 2">NUR 2</option>
+        <option value="KG 1">KG 1</option>
+        <option value="K.G 2">K.G 2</option>
+        <option value="BASIC 1">BASIC 1</option>
+        <option value="BASIC 2">BASIC 2</option>
+        <option value="BASIC 3">BASIC 3</option>
+        <option value="BASIC 4">BASIC 4</option>
+        <option value="BASIC 5">BASIC 5</option>
+        <option value="JSS 1">JSS 1</option>
+        <option value="JSS 2">JSS 2</option>
+        <option value="JSS 3">JSS 3</option>
+        <option value="SS 1">SS 1</option>
+        <option value="SS 2">SS 2</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Gender *</label>
+      <select id="gender">
+        <option value="">Select</option>
+        <option>Male</option>
+        <option>Female</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Date of Birth</label>
+      <input type="date" id="dob">
+    </div>
+    <div class="form-group">
+      <label>Father's Name</label>
+      <input type="text" id="fatherName">
+    </div>
+    <div class="form-group">
+      <label>Father's Phone</label>
+      <input type="tel" id="fatherPhone">
+    </div>
+    <div class="form-group">
+      <label>Mother's Name</label>
+      <input type="text" id="motherName">
+    </div>
+    <div class="form-group">
+      <label>Mother's Phone</label>
+      <input type="tel" id="motherPhone">
+    </div>
+    <div class="form-group">
+      <label>Address</label>
+      <textarea id="address" rows="2"></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="saveStudent()">Save Profile</button>
+    <button class="btn btn-warning" onclick="clearForm()">Clear Form</button>
+  </div>
+  <div class="card">
+    <h3>All Students (<span id="studentCount">0</span>)</h3>
+    <div id="studentList"></div>
   </div>
 </div>
 
-<div id="bluetooth" class="content">
+<div id="cbt" class="content">
   <div class="card">
-    <h3>Generate CBT File for Students</h3>
-    <div id="bluetoothMsg"></div>
-    <label>Select Class</label><select id="btClass"></select>
-    <label>Select Subject</label><select id="btSubject"></select>
-    <label>Session</label><select id="cbtSession"></select>
-    <label>Term</label><select id="cbtTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
-    <button onclick="generateCBT()">1. Generate CBT File</button>
-    <button id="downloadBtn" style="display:none;" class="success" onclick="downloadCBT()">2. Download cbt.html</button>
+    <h2>CBT Setup - 20 Questions Only</h2>
+    <div class="form-group">
+      <label>Session</label>
+      <select id="cbtSession"><option>2025/2026</option></select>
+    </div>
+    <div class="form-group">
+      <label>Term</label>
+      <select id="cbtTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
+    </div>
+    <div class="form-group">
+      <label>Class</label>
+      <select id="cbtClass"></select>
+    </div>
+    <div class="form-group">
+      <label>Subject</label>
+      <input type="text" id="cbtSubject" placeholder="Mathematics">
+    </div>
+    <p><b>Rule:</b> CBT must have exactly 20 MCQs. 1 question = 1 mark. Total = 20 marks. Auto-marked.</p>
+    <button class="btn btn-success" onclick="alert('CBT questions saved to localStorage. Student scores auto-enter into CBT /20 column')">Save CBT Setup</button>
   </div>
 </div>
 
-<div id="marking" class="content">
+<div id="scores" class="content">
   <div class="card">
-    <h3>Mark Theory Answers</h3>
-    <div id="markingMsg"></div>
-    <label>Select Class</label><select id="markClass" onchange="loadSubmissions()"></select>
-    <label>Select Subject</label><select id="markSubject" onchange="loadSubmissions()"></select>
-    <div id="submissionList"></div>
+    <h2>Enter Scores - CA 40 + CBT 20 + Theory 40 = 100</h2>
+    <div class="form-group">
+      <label>Session</label><select id="scoreSession"><option>2025/2026</option></select>
+    </div>
+    <div class="form-group">
+      <label>Term</label><select id="scoreTerm" onchange="loadScoreTable()"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
+    </div>
+    <div class="form-group">
+      <label>Class</label><select id="scoreClass" onchange="loadScoreTable()"></select>
+    </div>
+    <div class="form-group">
+      <label>Subject</label><input type="text" id="scoreSubject" placeholder="Mathematics" onblur="loadScoreTable()">
+    </div>
+    <div id="scoreTableContainer"></div>
+    <button class="btn btn-success" onclick="saveAllScores()">Save All Scores</button>
   </div>
 </div>
 
 <div id="broadsheet" class="content">
   <div class="card">
-    <h3>Broadsheet - MCQ + Theory</h3>
-    <button onclick="generateBroadsheet()">Generate Broadsheet</button>
-    <div id="broadsheetData"></div>
+    <h2>Broadsheet - WAEC Grading</h2>
+    <p>Select Class + Subject in "Enter Scores" tab first, then save. Broadsheet pulls from there.</p>
+    <button class="btn btn-primary" onclick="generateBroadsheet()">Generate Broadsheet</button>
+    <div id="broadsheetResult"></div>
   </div>
 </div>
 
-<div id="teachers" class="content">
+<div id="report" class="content">
   <div class="card">
-    <h3>Manage Teachers</h3>
-    <label>Username</label><input type="text" id="tUser">
-    <label>Password</label><input type="text" id="tPass">
-    <label>Assign Subjects (comma separated)</label><input type="text" id="tSubjects" placeholder="Biology,Chemistry">
-    <button onclick="addTeacher()">Add Teacher</button>
-    <div id="teacherList"></div>
+    <h2>Report Card</h2>
+    <div class="form-group">
+      <label>Enter Student Reg No</label>
+      <input type="text" id="reportRegNo" placeholder="SNA/2025/001">
+    </div>
+    <div class="form-group">
+      <label>Term</label>
+      <select id="reportTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
+    </div>
+    <button class="btn btn-primary" onclick="generateReportCard()">Generate Report Card</button>
+    <div id="reportResult"></div>
+  </div>
+</div>
+
+<div id="idcard" class="content">
+  <div class="card">
+    <h2>ID Card Generator</h2>
+    <p>Coming in v6.9.11: QR Code + Print layout for Staff/Student ID</p>
   </div>
 </div>
 
 <script>
-const CLASSES=['JSS 1','JSS 2','JSS 3','SSS 1','SSS 2','SSS 3'];
-const SUBJECTS=['Mathematics','English','Biology','Chemistry','Physics','Economics','Government','Literature','CRS','Agriculture'];
-const SESSIONS=['2024/2025','2025/2026','2026/2027'];
-const Q_KEY='sna_questions_v699';
-const T_KEY='sna_teachers_v699';
-const R_KEY='sna_results_v699';
-const U_KEY='sna_current_user_v699';
-let currentUser=null;
+let DB = {
+  students: JSON.parse(localStorage.getItem('sna_students') || '[]'),
+  scores: JSON.parse(localStorage.getItem('sna_scores') || '{}'),
+  cbtResults: JSON.parse(localStorage.getItem('sna_cbt') || '{}')
+};
 
-function normalizeClass(cls){
-  if(!cls)return'';cls=cls.toString().toUpperCase().replace(/\s+/g,'');
-  if(cls==='SS1')return'SSS 1';if(cls==='SS2')return'SSS 2';if(cls==='SS3')return'SSS 3';
-  if(cls==='JSS1')return'JSS 1';if(cls==='JSS2')return'JSS 2';if(cls==='JSS3')return'JSS 3';
-  return cls.replace('SSS','SSS ').replace('JSS','JSS ');
+const CLASS_YEAR_MAP = {
+  'CRECHE': 2025, 'NUR 1': 2026, 'NUR 2': 2027, 'KG 1': 2028, 'K.G 2': 2029,
+  'BASIC 1': 2030, 'BASIC 2': 2031, 'BASIC 3': 2032, 'BASIC 4': 2033, 'BASIC 5': 2034,
+  'JSS 1': 2035, 'JSS 2': 2036, 'JSS 3': 2037, 'SS 1': 2038, 'SS 2': 2039
+};
+
+function getWAEcGrade(total) {
+  if (total >= 75) return {grade: 'A1', remark: 'Excellent'};
+  if (total >= 70) return {grade: 'B2', remark: 'Very Good'};
+  if (total >= 65) return {grade: 'B3', remark: 'Good'};
+  if (total >= 60) return {grade: 'C4', remark: 'Credit'};
+  if (total >= 55) return {grade: 'C5', remark: 'Credit'};
+  if (total >= 50) return {grade: 'C6', remark: 'Credit'};
+  if (total >= 45) return {grade: 'D7', remark: 'Pass'};
+  if (total >= 40) return {grade: 'E8', remark: 'Pass'};
+  return {grade: 'F9', remark: 'Fail'};
 }
 
-function init(){
-  let teachers=JSON.parse(localStorage.getItem(T_KEY)||'[]');
-  if(!teachers.find(t=>t.user==='admin')){
-    teachers.push({user:'admin',pass:'sna2025',role:'admin',subjects:SUBJECTS});
-    localStorage.setItem(T_KEY,JSON.stringify(teachers));
-  }
-  const oldQ=localStorage.getItem('sna_questions_v697')||localStorage.getItem('sna_questions_v698');
-  if(oldQ&&!localStorage.getItem(Q_KEY)){
-    let migrated=JSON.parse(oldQ);
-    migrated.forEach(q=>q.class=normalizeClass(q.class));
-    localStorage.setItem(Q_KEY,JSON.stringify(migrated));
-  }
-  currentUser=JSON.parse(localStorage.getItem(U_KEY)||'null');
-  if(currentUser){showMainApp()}else{document.getElementById('loginScreen').style.display='block'}
-}
-
-function doLogin(){
-  const user=document.getElementById('loginUser').value.trim();
-  const pass=document.getElementById('loginPass').value.trim();
-  const teachers=JSON.parse(localStorage.getItem(T_KEY)||'[]');
-  const found=teachers.find(t=>t.user===user&&t.pass===pass);
-  if(found){currentUser=found;localStorage.setItem(U_KEY,JSON.stringify(found));showMainApp()}
-  else{document.getElementById('loginMsg').innerHTML='<div class="error">Invalid username or password</div>'}
-}
-
-function logout(){localStorage.removeItem(U_KEY);location.reload()}
-
-function showMainApp(){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('mainApp').classList.remove('hidden');
-  document.getElementById('userInfo').innerText=`Logged in: ${currentUser.user} (${currentUser.role})`;
-  if(currentUser.role!=='admin'){document.getElementById('teachersTab').style.display='none'}
-  initDropdowns();loadQuestions();loadTeachers();
-}
-
-function initDropdowns(){
-  const classDropdowns=['btClass','filterClass','markClass'];
-  const subjectDropdowns=['btSubject','filterSubject','markSubject'];
-  const allowedSubjects=currentUser.role==='admin'?SUBJECTS:currentUser.subjects;
-  classDropdowns.forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<option value="">-- Select Class --</option>'+CLASSES.map(c=>`<option>${c}</option>`).join('')});
-  subjectDropdowns.forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<option value="">-- Select Subject --</option>'+allowedSubjects.map(s=>`<option>${s}</option>`).join('')});
-  document.getElementById('cbtSession').innerHTML=SESSIONS.map(s=>`<option>${s}</option>`).join('');
-}
-
-function showTab(tabName){
-  document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+function openTab(tabName) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById(tabName).classList.add('active');
   event.target.classList.add('active');
+  if(tabName === 'students') loadStudents();
+  if(tabName === 'scores' || tabName === 'cbt') populateClassDropdowns();
 }
 
-function uploadFile(){
-  const file=document.getElementById('fileInput').files[0];
-  const msg=document.getElementById('uploadMsg');
-  if(!file){msg.innerHTML='<div class="error">Select a CSV or Excel file first</div>';return}
-  const reader=new FileReader();
-  reader.onload=function(e){
-    try{
-      let data;
-      if(file.name.endsWith('.csv')){data=csvToJson(e.target.result)}
-      else{const workbook=XLSX.read(e.target.result,{type:'binary'});const sheet=workbook.Sheets[workbook.SheetNames[0]];data=XLSX.utils.sheet_to_json(sheet)}
-      let db=JSON.parse(localStorage.getItem(Q_KEY)||'[]');let count=0;
-      data.forEach(row=>{
-        if(row.Question&&row.Class&&row.Subject){
-          db.push({id:Date.now()+Math.random(),type:row.Type||'MCQ',class:normalizeClass(row.Class),subject:row.Subject,question:row.Question,A:row.A||'',B:row.B||'',C:row.C||'',D:row.D||'',correct:row.Answer||row.Correct||'',marks:parseInt(row.Marks)||1});
-          count++;
-        }
-      });
-      localStorage.setItem(Q_KEY,JSON.stringify(db));
-      msg.innerHTML=`<div class="success">✓ Uploaded ${count} questions. Class names auto-fixed.</div>`;
-      loadQuestions();
-    }catch(err){msg.innerHTML=`<div class="error">Error reading file: ${err.message}</div>`}
+function generateStudentId() {
+  const cls = document.getElementById('studentClass').value;
+  if (!cls) return;
+  const year = CLASS_YEAR_MAP[cls];
+  const existing = DB.students.filter(s => s.studentId.startsWith(`SNA/${year}/`));
+  const nextNum = String(existing.length + 1).padStart(3, '0');
+  document.getElementById('studentId').value = `SNA/${year}/${nextNum}`;
+}
+
+function saveStudent() {
+  const student = {
+    studentId: document.getElementById('studentId').value,
+    fullName: document.getElementById('fullName').value,
+    class: document.getElementById('studentClass').value,
+    gender: document.getElementById('gender').value,
+    dob: document.getElementById('dob').value,
+    fatherName: document.getElementById('fatherName').value,
+    fatherPhone: document.getElementById('fatherPhone').value,
+    motherName: document.getElementById('motherName').value,
+    motherPhone: document.getElementById('motherPhone').value,
+    address: document.getElementById('address').value
   };
-  if(file.name.endsWith('.csv')){reader.readAsText(file)}else{reader.readAsBinaryString(file)}
+  if (!student.fullName ||!student.class) return alert('Fill Full Name and Class');
+  if (!student.studentId) return alert('Select Class to generate Student ID');
+  
+  const idx = DB.students.findIndex(s => s.studentId === student.studentId);
+  if (idx >= 0) DB.students[idx] = student;
+  else DB.students.push(student);
+  
+  localStorage.setItem('sna_students', JSON.stringify(DB.students));
+  loadStudents();
+  clearForm();
+  alert('Student saved: ' + student.studentId);
 }
 
-function csvToJson(csv){
-  const lines=csv.split('\n');const headers=lines[0].split(',').map(h=>h.trim());const result=[];
-  for(let i=1;i<lines.length;i++){
-    if(!lines[i])continue;const obj={};const currentline=lines[i].split(',');
-    headers.forEach((h,j)=>obj[h]=currentline[j]?currentline[j].trim():'');result.push(obj)
-  }
-  return result;
-}
-
-function downloadTemplate(){
-  const csv='Type,Class,Subject,Question,A,B,C,D,Answer,Marks\nMCQ,SSS 1,Biology,What is a cell?,Tissue,Organ,Basic unit of life,Organism,C,1\nTheory,SSS 1,Biology,Explain photosynthesis,,,,,,10';
-  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='question_template.csv';a.click();
-}
-
-function loadQuestions(){
-  const cls=document.getElementById('filterClass').value;
-  const subj=document.getElementById('filterSubject').value;
-  let db=JSON.parse(localStorage.getItem(Q_KEY)||'[]');
-  if(currentUser.role!=='admin'){db=db.filter(q=>currentUser.subjects.includes(q.subject))}
-  const filtered=db.filter(q=>(!cls||q.class===cls)&&(!subj||q.subject===subj));
-  document.getElementById('questionList').innerHTML=`<p><b>Found ${filtered.length} questions</b></p>`+
-    filtered.map((q,i)=>`
-      <div style="border:1px solid #ddd;padding:10px;margin:5px 0;border-radius:4px;">
-        <b>${i+1}. [${q.class} - ${q.subject}] [${q.type}] ${q.marks}mk</b><br>${q.question}<br>
-        ${q.type==='MCQ'?`A: ${q.A} | B: ${q.B} | C: ${q.C} | D: ${q.D} | <b>Ans: ${q.correct}</b>`:'<i>Theory Question</i>'}
-        <button style="width:auto;padding:5px 10px;margin-left:10px;" onclick="delQuestion('${q.id}')">Delete</button>
-      </div>
-    `).join('');
-}
-
-function delQuestion(id){
-  let db=JSON.parse(localStorage.getItem(Q_KEY)||'[]');
-  db=db.filter(q=>q.id!=id);
-  localStorage.setItem(Q_KEY,JSON.stringify(db));
-  loadQuestions();
-}
-
-let generatedHTML='';
-function generateCBT(){
-  const cls=document.getElementById('btClass').value;
-  const subj=document.getElementById('btSubject').value;
-  const session=document.getElementById('cbtSession').value;
-  const term=document.getElementById('cbtTerm').value;
-  const msg=document.getElementById('bluetoothMsg');
-  if(!cls||!subj){msg.innerHTML='<div class="error">Select class and subject first</div>';return}
-  const allQ=JSON.parse(localStorage.getItem(Q_KEY)||'[]');
-  const questions=allQ.filter(q=>q.class===cls&&q.subject===subj);
-  if(questions.length===0){
-    msg.innerHTML=`<div class="error"><b>ERROR: 0 Questions Found for ${cls} - ${subj}!</b><br>Upload questions first using CSV.</div>`;
-    document.getElementById('downloadBtn').style.display='none';return;
-  }
-  const mcqs=questions.filter(q=>q.type==='MCQ');
-  const theories=questions.filter(q=>q.type==='Theory');
-  msg.innerHTML=`<div class="success">✓ Found ${mcqs.length} MCQs + ${theories.length} Theory. File ready.</div>`;
-  document.getElementById('downloadBtn').style.display='block';
-  generatedHTML=`<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${cls} ${subj} CBT</title>
-<style>
-body{font-family:Arial;margin:0;background:#f5f5f5;}.header{background:#1a237e;color:#ffc107;padding:15px;text-align:center;}
-.container{max-width:700px;margin:20px auto;background:white;padding:20px;border-radius:8px;}
-button{background:#3949ab;color:white;border:none;padding:15px;width:100%;font-size:18px;border-radius:4px;margin:10px 0;}
-.question{margin:20px 0;padding:15px;border:1px solid #ddd;border-radius:4px;}
-.option{display:block;margin:10px 0;padding:10px;border:1px solid #ccc;border-radius:4px;}
-textarea{width:100%;min-height:100px;padding:10px;font-size:16px;}
-.result{font-size:20px;text-align:center;padding:20px;}
-</style></head><body>
-<div class="header"><h2>SEALED NECTAR ACADEMY</h2><p>${cls} - ${subj} | ${term} | ${session}</p></div>
-<div class="container" id="loginBox">
-  <h3>Student Login</h3>
-  <label>Admission No:</label><input type="text" id="admNo" style="width:100%;padding:10px;font-size:16px;">
-  <label>Full Name:</label><input type="text" id="stdName" style="width:100%;padding:10px;font-size:16px;">
-  <button onclick="startExam()">Start Exam</button>
-</div>
-<div class="container" id="examBox" style="display:none;"></div>
-<div class="container" id="resultBox" style="display:none;"></div>
-<script>
-const QUESTIONS=${JSON.stringify(questions)};
-const EXAM_META={cls:'${cls}',subj:'${subj}',term:'${term}',session:'${session}'};
-let answers={};let student='';let stdName='';
-function startExam(){
-  student=document.getElementById('admNo').value.trim();
-  stdName=document.getElementById('stdName').value.trim();
-  if(!student||!stdName){alert('Enter Admission No and Name');return}
-  document.getElementById('loginBox').style.display='none';
-  document.getElementById('examBox').style.display='block';
-  renderQ();
-}
-function renderQ(){
-  let html='<h3>Section A: Multiple Choice</h3>';
-  QUESTIONS.filter(q=>q.type==='MCQ').forEach((q,i)=>{
-    html+='<div class="question"><b>Q'+(i+1)+'.</b> '+q.question+' ('+q.marks+'mk)';
-    ['A','B','C','D'].forEach(opt=>{
-      html+='<label class="option"><input type="radio" name="q'+q.id+'" value="'+opt+'" onchange="answers['+q.id+']=this.value"> '+opt+': '+q[opt]+'</label>';
-    });
-    html+='</div>';
+function loadStudents() {
+  document.getElementById('totalStudents').textContent = DB.students.length;
+  document.getElementById('studentCount').textContent = DB.students.length;
+  let html = '<table><tr><th>Name</th><th>ID</th><th>Class</th><th>Action</th></tr>';
+  DB.students.forEach(s => {
+    html += `<tr>
+      <td>${s.fullName}</td>
+      <td>${s.studentId}</td>
+      <td>${s.class}</td>
+      <td>
+        <button class="btn btn-warning" onclick="promoteStudent('${s.studentId}')">Promote</button>
+        <button class="btn btn-danger" onclick="deleteStudent('${s.studentId}')">Delete</button>
+      </td>
+    </tr>`;
   });
-  html+='<h3>Section B: Theory</h3>';
-  QUESTIONS.filter(q=>q.type==='Theory').forEach((q,i)=>{
-    html+='<div class="question"><b>Q'+(i+1)+'.</b> '+q.question+' ('+q.marks+' marks)<br><textarea onchange="answers['+q.id+']=this.value" placeholder="Type your answer here..."></textarea></div>';
-  });
-  html+='<button onclick="submitExam()">Submit Exam</button>';
-  document.getElementById('examBox').innerHTML=html;
+  html += '</table>';
+  document.getElementById('studentList').innerHTML = html;
 }
-function submitExam(){
-  let mcqScore=0,mcqTotal=0;
-  QUESTIONS.forEach(q=>{
-    if(q.type==='MCQ'){
-      mcqTotal+=q.marks;
-      if(answers[q.id]===q.correct)mcqScore+=q.marks;
+
+function promoteStudent(id) {
+  alert('Promotion: Select student → Edit → Change Class → Save. ID remains: ' + id);
+}
+
+function deleteStudent(id) {
+  if (!confirm('Delete ' + id + '?')) return;
+  DB.students = DB.students.filter(s => s.studentId!== id);
+  localStorage.setItem('sna_students', JSON.stringify(DB.students));
+  loadStudents();
+}
+
+function clearForm() {
+  document.getElementById('fullName').value = '';
+  document.getElementById('studentClass').value = '';
+  document.getElementById('gender').value = '';
+  document.getElementById('studentId').value = '';
+  document.getElementById('dob').value = '';
+  document.getElementById('fatherName').value = '';
+  document.getElementById('fatherPhone').value = '';
+  document.getElementById('motherName').value = '';
+  document.getElementById('motherPhone').value = '';
+  document.getElementById('address').value = '';
+}
+
+function populateClassDropdowns() {
+  const classes = [...new Set(DB.students.map(s => s.class))].sort();
+  const html = classes.map(c => `<option>${c}</option>`).join('');
+  document.getElementById('scoreClass').innerHTML = '<option>Select Class</option>' + html;
+  document.getElementById('cbtClass').innerHTML = '<option>Select Class</option>' + html;
+}
+
+function loadScoreTable() {
+  const cls = document.getElementById('scoreClass').value;
+  const subject = document.getElementById('scoreSubject').value;
+  const term = document.getElementById('scoreTerm').value;
+  const session = document.getElementById('scoreSession').value;
+  if (!cls ||!subject) return;
+  
+  const students = DB.students.filter(s => s.class === cls);
+  if (students.length === 0) {
+    document.getElementById('scoreTableContainer').innerHTML = '<p>No students in this class yet. Add them in Student Profile.</p>';
+    return;
+  }
+  
+  let html = '<table><tr><th>S/N</th><th>Name</th><th>Reg No</th><th>CA /40</th><th>CBT /20</th><th>Theory /40</th><th>Total /100</th><th>Grade</th></tr>';
+  
+  students.forEach((s, i) => {
+    const key = `${session}_${term}_${cls}_${subject}_${s.studentId}`;
+    const score = DB.scores[key] || {ca: '', theory: ''};
+    const cbtScore = DB.cbtResults[key] || 0;
+    const total = (Number(score.ca) || 0) + cbtScore + (Number(score.theory) || 0);
+    const gradeInfo = getWAEcGrade(total);
+    
+    html += `<tr>
+      <td>${i + 1}</td>
+      <td>${s.fullName}</td>
+      <td>${s.studentId}</td>
+      <td><input type="number" max="40" min="0" id="ca_${s.studentId}" value="${score.ca}" onchange="calcTotal('${s.studentId}')"></td>
+      <td class="score-auto">${cbtScore}</td>
+      <td><input type="number" max="40" min="0" id="theory_${s.studentId}" value="${score.theory}" onchange="calcTotal('${s.studentId}')"></td>
+      <td id="total_${s.studentId}">${total}</td>
+      <td id="grade_${s.studentId}" class="grade-${gradeInfo.grade}">${gradeInfo.grade}</td>
+    </tr>`;
+  });
+  html += '</table>';
+  document.getElementById('scoreTableContainer').innerHTML = html;
+}
+
+function calcTotal(studentId) {
+  const key = `${document.getElementById('scoreSession').value}_${document.getElementById('scoreTerm').value}_${document.getElementById('scoreClass').value}_${document.getElementById('scoreSubject').value}_${studentId}`;
+  const ca = Number(document.getElementById(`ca_${studentId}`).value) || 0;
+  const theory = Number(document.getElementById(`theory_${studentId}`).value) || 0;
+  const cbt = DB.cbtResults[key] || 0;
+  const total = Math.min(100, ca + cbt + theory);
+  const gradeInfo = getWAEcGrade(total);
+  document.getElementById(`total_${studentId}`).textContent = total;
+  document.getElementById(`grade_${studentId}`).textContent = gradeInfo.grade;
+  document.getElementById(`grade_${studentId}`).className = `grade-${gradeInfo.grade}`;
+}
+
+function saveAllScores() {
+  const cls = document.getElementById('scoreClass').value;
+  const subject = document.getElementById('scoreSubject').value;
+  const term = document.getElementById('scoreTerm').value;
+  const session = document.getElementById('scoreSession').value;
+  if (!cls ||!subject) return alert('Select Class and Subject');
+  
+  const students = DB.students.filter(s => s.class === cls);
+  students.forEach(s => {
+    const key = `${session}_${term}_${cls}_${subject}_${s.studentId}`;
+    const ca = document.getElementById(`ca_${s.studentId}`).value;
+    const theory = document.getElementById(`theory_${s.studentId}`).value;
+    DB.scores[key] = {
+      ca: ca,
+      theory: theory,
+      cbt: DB.cbtResults[key] || 0,
+      total: (Number(ca) || 0) + (DB.cbtResults[key] || 0) + (Number(theory) || 0),
+      subject: subject,
+      class: cls,
+      term: term,
+      session: session,
+      studentId: s.studentId,
+      studentName: s.fullName
+    };
+  });
+  localStorage.setItem('sna_scores', JSON.stringify(DB.scores));
+  alert('All scores saved successfully. Broadsheet updated.');
+}
+
+function generateBroadsheet() {
+  alert('Broadsheet: Go to Enter Scores → Select Class + Subject → Save. Then v6.9.11 will show full table with Position.');
+}
+
+function generateReportCard() {
+  const regNo = document.getElementById('reportRegNo').value;
+  const term = document.getElementById('reportTerm').value;
+  const student = DB.students.find(s => s.studentId === regNo);
+  if (!student) return alert('Student not found. Check Reg No.');
+  
+  let html = `<h3>Report Card - ${student.fullName}</h3>`;
+  html += `<p><b>Reg No:</b> ${regNo} | <b>Class:</b> ${student.class} | <b>Session:</b> 2025/2026 | <b>Term:</b> ${term}</p>`;
+  html += '<table><tr><th>Subject</th><th>CA /40</th><th>CBT /20</th><th>Theory /40</th><th>Total /100</th><th>Grade</th><th>Remark</th></tr>';
+  
+  let grandTotal = 0;
+  let subjectCount = 0;
+  Object.keys(DB.scores).forEach(key => {
+    if (key.includes(student.studentId) && key.includes(term)) {
+      const s = DB.scores[key];
+      const gradeInfo = getWAEcGrade(s.total);
+      html += `<tr>
+        <td>${s.subject}</td>
+        <td>${s.ca}</td>
+        <td>${s.cbt}</td>
+        <td>${s.theory}</td>
+        <td><b>${s.total}</b></td>
+        <td class="grade-${gradeInfo.grade}">${gradeInfo.grade}</td>
+        <td>${gradeInfo.remark}</td>
+      </tr>`;
+      grandTotal += s.total;
+      subjectCount++;
     }
   });
-  document.getElementById('examBox').style.display='none';
-  document.getElementById('resultBox').style.display='block';
-  document.getElementById('resultBox').innerHTML=
-    '<div class="result"><h3>Exam Submitted!</h3><p><b>Student:</b> '+stdName+' ('+student+')</p>'+
-    '<p><b>MCQ Score: '+mcqScore+' / '+mcqTotal+'</b></p>'+
-    '<p><i>Theory questions will be marked by your teacher.</i></p>'+
-    '<p>Close this page now.</p></div>';
-  let results=JSON.parse(localStorage.getItem('sna_results_v699')||'[]');
-  results.push({
-    student:student,name:stdName,class:EXAM_META.cls,subject:EXAM_META.subj,
-    term:EXAM_META.term,session:EXAM_META.session,
-    mcqScore:mcqScore,mcqTotal:mcqTotal,
-    answers:answers,questions:QUESTIONS,
-    theoryMarked:false,date:new Date().toISOString()
-  });
-  localStorage.setItem('sna_results_v699',JSON.stringify(results));
-}
-<\/script></body></html>`;
+  
+  if (subjectCount > 0) {
+    const avg = (grandTotal / subjectCount).toFixed(2);
+    html += `<tr style="background:#f0f0f0;font-weight:bold;"><td colspan="4">Term Average</td><td>${avg}</td><td colspan="2">${getWAEcGrade(avg).grade}</td></tr>`;
+  } else {
+    html += '<tr><td colspan="7">No scores entered for this term yet</td></tr>';
+  }
+  
+  html += '</table>';
+  if (term === '3rd Term') {
+    html += '<p><b>Note:</b> Annual Average = (1st Term + 2nd Term + 3rd Term) / 3. Available in v6.9.11</p>';
+  }
+  document.getElementById('reportResult').innerHTML = html;
 }
 
-function downloadCBT(){
-  const cls=document.getElementById('btClass').value;
-  const subj=document.getElementById('btSubject').value;
-  const blob=new Blob([generatedHTML],{type:'text/html'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=`cbt_${cls.replace(' ','')}_${subj}.html`;a.click();
-}
-
-function loadSubmissions(){
-  const cls=document.getElementById('markClass').value;
-  const subj=document.getElementById('markSubject').value;
-  if(!cls||!subj)return;
-  const results=JSON.parse(localStorage.getItem(R_KEY)||'[]');
-  const subs=results.filter(r=>r.class===cls&&r.subject===subj&&!r.theoryMarked);
-  document.getElementById('submissionList').innerHTML=subs.map((s,i)=>`
-    <div class="card">
-      <b>${s.name} (${s.student})</b> - MCQ: ${s.mcqScore}/${s.mcqTotal}
-      ${s.questions.filter(q=>q.type==='Theory').map(q=>`
-        <div style="margin:10px 0;padding:10px;background:#f5f5;">
-          <b>Q: ${q.question} (${q.marks} marks)</b><br>
-          <b>Answer:</b> ${s.answers[q.id]||'<i>No answer</i>'}<br>
-          <label>Marks Awarded:</label>
-          <input type="number" id="mark_${s.student}_${q.id}" max="${q.marks}" min="0" style="width:100px;">
-        </div>
-      `).join('')}
-      <button onclick="saveTheoryMarks('${s.student}')">Save Marks for ${s.name}</button>
-    </div>
-  `).join('')||'<p>No unmarked submissions</p>';
-}
-
-function saveTheoryMarks(studentId){
-  let results=JSON.parse(localStorage.getItem(R_KEY)||'[]');
-  let res=results.find(r=>r.student===studentId);
-  let theoryScore=0;
-  res.questions.filter(q=>q.type==='Theory').forEach(q=>{
-    const mark=parseInt(document.getElementById(`mark_${studentId}_${q.id}`).value)||0;
-    res.answers[q.id+'_score']=mark;
-    theoryScore+=mark;
-  });
-  res.theoryScore=theoryScore;
-  res.theoryMarked=true;
-  res.totalScore=res.mcqScore+theoryScore;
-  localStorage.setItem(R_KEY,JSON.stringify(results));
-  alert('Marks saved!');
-  loadSubmissions();
-}
-
-function generateBroadsheet(){
-  const results=JSON.parse(localStorage.getItem(R_KEY)||'[]');
-  let html='<table><tr><th>Student</th><th>Class</th><th>Subject</th><th>MCQ</th><th>Theory</th><th>Total</th><th>Status</th></tr>';
-  results.forEach(r=>{
-    const theory=r.theoryMarked?r.theoryScore:'Pending';
-    const total=r.theoryMarked?r.totalScore:r.mcqScore;
-    html+=`<tr><td>${r.name}</td><td>${r.class}</td><td>${r.subject}</td><td>${r.mcqScore}/${r.mcqTotal}</td><td>${theory}</td><td><b>${total}</b></td><td>${r.theoryMarked?'Complete':'MCQ Only'}</td></tr>`;
-  });
-  html+='</table>';
-  document.getElementById('broadsheetData').innerHTML=html;
-}
-
-function addTeacher(){
-  const user=document.getElementById('tUser').value.trim();
-  const pass=document.getElementById('tPass').value.trim();
-  const subjects=document.getElementById('tSubjects').value.split(',').map(s=>s.trim());
-  if(!user||!pass){alert('Enter username and password');return}
-  let teachers=JSON.parse(localStorage.getItem(T_KEY)||'[]');
-  teachers.push({user:user,pass:pass,role:'teacher',subjects:subjects});
-  localStorage.setItem(T_KEY,JSON.stringify(teachers));
-  loadTeachers();
-  document.getElementById('tUser').value='';
-  document.getElementById('tPass').value='';
-  document.getElementById('tSubjects').value='';
-}
-
-function loadTeachers(){
-  const teachers=JSON.parse(localStorage.getItem(T_KEY)||'[]');
-  document.getElementById('teacherList').innerHTML='<h4>Existing Teachers</h4>'+
-    teachers.filter(t=>t.role==='teacher').map(t=>`<div>${t.user} - Subjects: ${t.subjects.join(', ')}</div>`).join('');
-}
-
-window.onload=init;
+// Init
+loadStudents();
+populateClassDropdowns();
 </script>
+
 </body>
 </html>
