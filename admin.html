@@ -3,71 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sealed Nectar Academy - SMS + CBT v6.9.11</title>
+<title>Sealed Nectar Academy - SMS + CBT v6.9.12</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <style>
   :root { --navy: #0A2342; --gold: #F4B400; --teal: #009688; --red: #d32f2f; }
     * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
   body { margin: 0; background: #f5f7fa; }
-.header { background: var(--navy); color: var(--gold); padding: 20px; text-align: center; }
-.header h1 { margin: 0; font-size: 28px; }
-.header p { margin: 5px 0 0 0; color: #fff; }
-.tabs { display: flex; flex-wrap: wrap; background: #fff; border-bottom: 3px solid var(--gold); }
-.tab { padding: 15px 20px; cursor: pointer; border: none; background: #fff; font-weight: 600; color: var(--navy); }
-.tab.active { background: var(--navy); color: var(--gold); }
-.content { padding: 20px; display: none; }
-.content.active { display: block; }
-.card { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-.form-group { margin-bottom: 15px; }
+ .header { background: var(--navy); color: var(--gold); padding: 20px; text-align: center; }
+ .header h1 { margin: 0; font-size: 28px; }
+ .header p { margin: 5px 0 0 0; color: #fff; }
+ .tabs { display: flex; flex-wrap: wrap; background: #fff; border-bottom: 3px solid var(--gold); }
+ .tab { padding: 15px 20px; cursor: pointer; border: none; background: #fff; font-weight: 600; color: var(--navy); }
+ .tab.active { background: var(--navy); color: var(--gold); }
+ .content { padding: 20px; display: none; }
+ .content.active { display: block; }
+ .card { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+ .form-group { margin-bottom: 15px; }
   label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--navy); }
   input, select, textarea { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px; font-size: 14px; }
   input:focus, select:focus { border-color: var(--teal); outline: none; }
   input:read-only { background: #e8f5e9; font-weight: bold; }
-.btn { padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; margin: 5px; }
-.btn-primary { background: var(--navy); color: #fff; }
-.btn-success { background: var(--teal); color: #fff; }
-.btn-warning { background: var(--gold); color: var(--navy); }
-.btn-danger { background: var(--red); color: #fff; }
+ .btn { padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; margin: 5px; }
+ .btn-primary { background: var(--navy); color: #fff; }
+ .btn-success { background: var(--teal); color: #fff; }
+ .btn-warning { background: var(--gold); color: var(--navy); }
+ .btn-danger { background: var(--red); color: #fff; }
   table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
   th { background: var(--navy); color: #fff; padding: 8px; text-align: center; }
   td { padding: 6px; border: 1px solid #ddd; text-align: center; }
   td input { width: 55px; padding: 4px; text-align: center; }
-.score-auto { background: #e8f5e9; font-weight: bold; }
-.grade-A1,.grade-B2,.grade-B3 { color: #2e7d32; font-weight: bold; }
-.grade-C4,.grade-C5,.grade-C6 { color: #1976d2; font-weight: bold; }
-.grade-D7,.grade-E8 { color: #f57c00; font-weight: bold; }
-.grade-F9 { color: #d32f2f; font-weight: bold; }
-.flex-row { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; }
-.flex-row.form-group { flex: 1; min-width: 200px; }
-.position-1 { background: #ffd700; font-weight: bold; }
-.position-2 { background: #c0c0c0; font-weight: bold; }
-.position-3 { background: #cd7f32; font-weight: bold; color: #fff; }
-.print-only { display: none; }
+ .score-auto { background: #e8f5e9; font-weight: bold; }
+ .grade-A1,.grade-B2,.grade-B3 { color: #2e7d32; font-weight: bold; }
+ .grade-C4,.grade-C5,.grade-C6 { color: #1976d2; font-weight: bold; }
+ .grade-D7,.grade-E8 { color: #f57c00; font-weight: bold; }
+ .grade-F9 { color: #d32f2f; font-weight: bold; }
+ .flex-row { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; }
+ .flex-row.form-group { flex: 1; min-width: 200px; }
+ .position-1 { background: #ffd700; font-weight: bold; }
+ .position-2 { background: #c0c0c0; font-weight: bold; }
+ .position-3 { background: #cd7f32; font-weight: bold; color: #fff; }
+ .print-only { display: none; }
+ .question-row { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 4px; }
   @media print {
-.no-print,.tabs,.header { display: none; }
-.print-only { display: block; }
+ .no-print,.tabs,.header { display: none; }
+ .print-only { display: block; }
     body { background: #fff; margin: 0; }
-.card { box-shadow: none; border: none; padding: 0; }
-.content { display: block; padding: 0; }
+ .card { box-shadow: none; border: none; padding: 0; }
+ .content { display: block; padding: 0; }
   }
-.id-card { width: 340px; border: 3px solid var(--navy); border-radius: 10px; padding: 15px; text-align: center; background: linear-gradient(135deg, #fff 0%, #f0f8ff 100%); margin: 10px auto; }
-.id-card h3 { margin: 5px 0; color: var(--navy); font-size: 18px; }
-.id-card h4 { margin: 5px 0; color: var(--gold); font-size: 14px; }
-.id-card p { margin: 3px 0; font-size: 12px; }
-.report-header { text-align: center; border-bottom: 3px double var(--navy); padding-bottom: 10px; margin-bottom: 15px; }
-.report-header h2 { margin: 5px 0; color: var(--navy); }
-.report-header h3 { margin: 5px 0; color: var(--gold); }
+ .id-card { width: 340px; border: 3px solid var(--navy); border-radius: 10px; padding: 15px; text-align: center; background: linear-gradient(135deg, #fff 0%, #f0f8ff 100%); margin: 10px auto; }
+ .id-card h3 { margin: 5px 0; color: var(--navy); font-size: 18px; }
+ .id-card h4 { margin: 5px 0; color: var(--gold); font-size: 14px; }
+ .id-card p { margin: 3px 0; font-size: 12px; }
+ .report-header { text-align: center; border-bottom: 3px double var(--navy); padding-bottom: 10px; margin-bottom: 15px; }
+ .report-header h2 { margin: 5px 0; color: var(--navy); }
+ .report-header h3 { margin: 5px 0; color: var(--gold); }
 </style>
 </head>
 <body>
 <div class="header no-print">
   <h1>Sealed Nectar Academy</h1>
-  <p>School Management System + CBT v6.9.11 | 2025/2026 Session</p>
+  <p>School Management System + CBT v6.9.12 | 2025/2026 Session</p>
 </div>
 <div class="tabs no-print">
   <button class="tab active" onclick="openTab(event,'dashboard')">Dashboard</button>
   <button class="tab" onclick="openTab(event,'students')">Student Profile</button>
-  <button class="tab" onclick="openTab(event,'cbt')">CBT Setup</button>
+  <button class="tab" onclick="openTab(event,'cbt')">CBT Questions</button>
   <button class="tab" onclick="openTab(event,'scores')">Enter Scores</button>
   <button class="tab" onclick="openTab(event,'broadsheet')">Broadsheet</button>
   <button class="tab" onclick="openTab(event,'report')">Report Card</button>
@@ -174,7 +176,7 @@
 </div>
 <div id="cbt" class="content">
   <div class="card">
-    <h2>CBT Setup - 20 Questions = 20 Marks</h2>
+    <h2>CBT Question Bank - Set Exam Questions</h2>
     <div class="flex-row no-print">
       <div class="form-group">
         <label>Session</label><select id="cbtSession"><option>2025/2026</option></select>
@@ -183,14 +185,24 @@
         <label>Term</label><select id="cbtTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
       </div>
       <div class="form-group">
-        <label>Class</label><select id="cbtClass" onchange="loadCBTEntry()"></select>
+        <label>Class</label><select id="cbtClass" onchange="loadCBTQuestions()"></select>
       </div>
       <div class="form-group">
-        <label>Subject</label><input type="text" id="cbtSubject" placeholder="Mathematics" onblur="loadCBTEntry()">
+        <label>Subject</label><input type="text" id="cbtSubject" placeholder="Mathematics" onblur="loadCBTQuestions()">
       </div>
     </div>
-    <div id="cbtScoreEntry"></div>
-    <button class="btn btn-success no-print" onclick="saveCBTScores()">Save CBT Scores for Class</button>
+    <div class="flex-row no-print">
+        <div class="form-group">
+            <label>Upload Questions CSV</label>
+            <input type="file" id="csvUpload" accept=".csv" onchange="importCSV(event)">
+            <small>Format: Question,OptionA,OptionB,OptionC,OptionD,Answer</small>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-success" onclick="addQuestionRow()">+ Add Question Manually</button>
+            <button class="btn btn-primary" onclick="saveCBTQuestions()">Save All Questions</button>
+        </div>
+    </div>
+    <div id="cbtQuestionEntry"></div>
   </div>
 </div>
 <div id="scores" class="content">
@@ -270,6 +282,7 @@ let DB = {
   students: JSON.parse(localStorage.getItem('sna_students') || '[]'),
   scores: JSON.parse(localStorage.getItem('sna_scores') || '{}'),
   cbtResults: JSON.parse(localStorage.getItem('sna_cbt') || '{}'),
+  cbtQuestions: JSON.parse(localStorage.getItem('sna_cbt_questions') || '{}'),
   settings: JSON.parse(localStorage.getItem('sna_settings') || '{"currentTerm":"1st Term"}')
 };
 const CLASS_YEAR_MAP = {
@@ -386,42 +399,124 @@ function populateClassDropdowns() {
   });
   const idEl = document.getElementById('idStudentSelect');
   if (idEl) idEl.innerHTML = '<option value="">Select Student</option>' + DB.students.map(s => `<option value="${s.studentId}">${s.fullName} - ${s.studentId}</option>`).join('');
-  }
-  function loadCBTEntry() {
+}
+  function loadCBTQuestions() {
   const cls = document.getElementById('cbtClass').value;
   const subject = document.getElementById('cbtSubject').value;
   const term = document.getElementById('cbtTerm').value;
   const session = document.getElementById('cbtSession').value;
   if (!cls ||!subject) {
-    document.getElementById('cbtScoreEntry').innerHTML = '';
+    document.getElementById('cbtQuestionEntry').innerHTML = '<p>Select Class and Subject to add questions.</p>';
     return;
   }
-  const students = DB.students.filter(s => s.class === cls);
-  let html = '<table><tr><th>S/N</th><th>Name</th><th>Reg No</th><th>CBT Score /20</th></tr>';
-  students.forEach((s, i) => {
-    const key = `${session}_${term}_${cls}_${subject}_${s.studentId}`;
-    const score = DB.cbtResults[key] || '';
-    html += `<tr><td>${i+1}</td><td>${s.fullName}</td><td>${s.studentId}</td>
-      <td><input type="number" max="20" min="0" id="cbt_${s.studentId}" value="${score}"></td></tr>`;
-  });
-  html += '</table>';
-  document.getElementById('cbtScoreEntry').innerHTML = html;
+  const key = `${session}_${term}_${cls}_${subject}`;
+  const questions = DB.cbtQuestions[key] || [];
+  renderQuestionForm(questions);
 }
-function saveCBTScores() {
+
+function renderQuestionForm(questions) {
+  let html = '';
+  questions.forEach((q, i) => {
+    html += `<div class="question-row">
+      <label><b>Question ${i+1}</b></label>
+      <textarea id="q_${i}" rows="2" placeholder="Enter question">${q.question||''}</textarea>
+      <div class="flex-row">
+        <input type="text" id="qa_${i}" placeholder="Option A" value="${q.a||''}">
+        <input type="text" id="qb_${i}" placeholder="Option B" value="${q.b||''}">
+        <input type="text" id="qc_${i}" placeholder="Option C" value="${q.c||''}">
+        <input type="text" id="qd_${i}" placeholder="Option D" value="${q.d||''}">
+      </div>
+      <div class="flex-row">
+        <select id="ans_${i}">
+          <option value="">Correct Answer</option>
+          <option value="A" ${q.answer==='A'?'selected':''}>A</option>
+          <option value="B" ${q.answer==='B'?'selected':''}>B</option>
+          <option value="C" ${q.answer==='C'?'selected':''}>C</option>
+          <option value="D" ${q.answer==='D'?'selected':''}>D</option>
+        </select>
+        <button class="btn btn-danger" onclick="deleteQuestionRow(${i})">Delete</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('cbtQuestionEntry').innerHTML = html || '<p>No questions yet. Click "+ Add Question Manually" or upload CSV.</p>';
+}
+
+function addQuestionRow() {
+  const cls = document.getElementById('cbtClass').value;
+  const subject = document.getElementById('cbtSubject').value;
+  const term = document.getElementById('cbtTerm').value;
+  const session = document.getElementById('cbtSession').value;
+  if (!cls ||!subject) return alert('Select Class and Subject first');
+  const key = `${session}_${term}_${cls}_${subject}`;
+  if (!DB.cbtQuestions[key]) DB.cbtQuestions[key] = [];
+  DB.cbtQuestions[key].push({question:'', a:'', b:'', c:'', d:'', answer:''});
+  renderQuestionForm(DB.cbtQuestions[key]);
+}
+
+function deleteQuestionRow(index) {
+  const cls = document.getElementById('cbtClass').value;
+  const subject = document.getElementById('cbtSubject').value;
+  const term = document.getElementById('cbtTerm').value;
+  const session = document.getElementById('cbtSession').value;
+  const key = `${session}_${term}_${cls}_${subject}`;
+  DB.cbtQuestions[key].splice(index, 1);
+  renderQuestionForm(DB.cbtQuestions[key]);
+}
+
+function saveCBTQuestions() {
   const cls = document.getElementById('cbtClass').value;
   const subject = document.getElementById('cbtSubject').value;
   const term = document.getElementById('cbtTerm').value;
   const session = document.getElementById('cbtSession').value;
   if (!cls ||!subject) return alert('Select Class and Subject');
-  const students = DB.students.filter(s => s.class === cls);
-  students.forEach(s => {
-    const key = `${session}_${term}_${cls}_${subject}_${s.studentId}`;
-    const score = document.getElementById(`cbt_${s.studentId}`)? Number(document.getElementById(`cbt_${s.studentId}`).value) : 0;
-    DB.cbtResults[key] = Math.min(20, Math.max(0, score));
+  const key = `${session}_${term}_${cls}_${subject}`;
+  const questions = [];
+  document.querySelectorAll('.question-row').forEach((row, i) => {
+    questions.push({
+      question: document.getElementById(`q_${i}`).value,
+      a: document.getElementById(`qa_${i}`).value,
+      b: document.getElementById(`qb_${i}`).value,
+      c: document.getElementById(`qc_${i}`).value,
+      d: document.getElementById(`qd_${i}`).value,
+      answer: document.getElementById(`ans_${i}`).value
+    });
   });
-  localStorage.setItem('sna_cbt', JSON.stringify(DB.cbtResults));
-  alert('CBT scores saved for ' + cls + ' - ' + subject);
+  DB.cbtQuestions[key] = questions.filter(q => q.question.trim()!== '');
+  localStorage.setItem('sna_cbt_questions', JSON.stringify(DB.cbtQuestions));
+  alert(`Saved ${DB.cbtQuestions[key].length} questions for ${cls} - ${subject}`);
 }
+
+function importCSV(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const cls = document.getElementById('cbtClass').value;
+  const subject = document.getElementById('cbtSubject').value;
+  const term = document.getElementById('cbtTerm').value;
+  const session = document.getElementById('cbtSession').value;
+  if (!cls ||!subject) return alert('Select Class and Subject before uploading CSV');
+  
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: function(results) {
+      const key = `${session}_${term}_${cls}_${subject}`;
+      const questions = results.data.map(row => ({
+        question: row.Question || row.question || '',
+        a: row.OptionA || row.A || '',
+        b: row.OptionB || row.B || '',
+        c: row.OptionC || row.C || '',
+        d: row.OptionD || row.D || '',
+        answer: row.Answer || row.answer || ''
+      })).filter(q => q.question.trim()!== '');
+      
+      DB.cbtQuestions[key] = questions;
+      localStorage.setItem('sna_cbt_questions', JSON.stringify(DB.cbtQuestions));
+      renderQuestionForm(questions);
+      alert(`Imported ${questions.length} questions from CSV`);
+    }
+  });
+}
+
 function loadScoreTable() {
   const cls = document.getElementById('scoreClass').value;
   const subject = document.getElementById('scoreSubject').value;
@@ -457,6 +552,7 @@ function loadScoreTable() {
   html += '</table>';
   document.getElementById('scoreTableContainer').innerHTML = html;
 }
+
 function calcTotal(studentId) {
   const key = `${document.getElementById('scoreSession').value}_${document.getElementById('scoreTerm').value}_${document.getElementById('scoreClass').value}_${document.getElementById('scoreSubject').value}_${studentId}`;
   const ca = Number(document.getElementById(`ca_${studentId}`).value) || 0;
@@ -468,6 +564,7 @@ function calcTotal(studentId) {
   document.getElementById(`grade_${studentId}`).textContent = gradeInfo.grade;
   document.getElementById(`grade_${studentId}`).className = `grade-${gradeInfo.grade}`;
 }
+
 function saveAllScores() {
   const cls = document.getElementById('scoreClass').value;
   const subject = document.getElementById('scoreSubject').value;
@@ -490,6 +587,7 @@ function saveAllScores() {
   localStorage.setItem('sna_scores', JSON.stringify(DB.scores));
   alert('All scores saved for ' + cls + ' - ' + subject);
 }
+
 function generateBroadsheet() {
   const cls = document.getElementById('broadClass').value;
   const term = document.getElementById('broadTerm').value;
@@ -520,7 +618,7 @@ function generateBroadsheet() {
       const key = `${session}_${term}_${cls}_${sub}_${s.studentId}`;
       const score = DB.scores[key];
       if (score) {
-        row += `<td>${score.ca||0}</td><td>${score.cbt||0}</td><td>${score.theory||0}</td><td><b>${score.total}</b></td>`;
+        row += `<td>${score.ca||0}</td><td>${score.cbt||0}</td><td>${score.theory||0}</td><b>${score.total}</b></td>`;
         rowTotal += score.total;
       } else {
         row += '<td>-</td><td>-</td><td>-</td><td>-</td>';
@@ -543,7 +641,7 @@ function generateBroadsheet() {
       if (idx === 2) posEl.className = 'position-3';
     }
   });
-}
+  }
   function generateReportCard() {
   const regNo = document.getElementById('reportRegNo').value.trim();
   const term = document.getElementById('reportTerm').value;
@@ -557,14 +655,14 @@ function generateBroadsheet() {
     return;
   }
   let totalScore = 0;
-  let html = `<div class="report-header print-only"><h2>SEALED NECTAR ACADEMY</h2><h3>STUDENT REPORT CARD - ${term} - ${session}</h3></div><table style="width:100%; margin-bottom:15px; font-size:14px;"><tr><td><b>Name:</b> ${student.fullName}</td><b>Reg No:</b> ${student.studentId}</td></tr><td><b>Class:</b> ${student.class}</td><td><b>Gender:</b> ${student.gender}</td></tr></table><table><tr><th>Subject</th><th>CA /40</th><th>CBT /20</th><th>Theory /40</th><th>Total /100</th><th>Grade</th><th>Remark</th></tr>`;
+  let html = `<div class="report-header print-only"><h2>SEALED NECTAR ACADEMY</h2><h3>STUDENT REPORT CARD - ${term} - ${session}</h3></div><table style="width:100%; margin-bottom:15px; font-size:14px;"><tr><td><b>Name:</b> ${student.fullName}</td><td><b>Reg No:</b> ${student.studentId}</td></tr><tr><td><b>Class:</b> ${student.class}</td><td><b>Gender:</b> ${student.gender}</td></tr></table><table><tr><th>Subject</th><th>CA /40</th><th>CBT /20</th><th>Theory /40</th><th>Total /100</th><th>Grade</th><th>Remark</th></tr>`;
   subjects.forEach(sub => {
     const key = `${session}_${term}_${student.class}_${sub}_${regNo}`;
     const score = DB.scores[key];
     if (score) {
       const gradeInfo = getWAEcGrade(score.total);
       totalScore += score.total;
-      html += `<tr><td>${sub}</td><td>${score.ca||0}</td><td>${score.cbt||0}</td><td>${score.theory||0}</td><b>${score.total}</b></td><td class="grade-${gradeInfo.grade}">${gradeInfo.grade}</td><td>${gradeInfo.remark}</td></tr>`;
+      html += `<tr><td>${sub}</td><td>${score.ca||0}</td><td>${score.cbt||0}</td><td>${score.theory||0}</td><td><b>${score.total}</b></td><td class="grade-${gradeInfo.grade}">${gradeInfo.grade}</td><td>${gradeInfo.remark}</td></tr>`;
     }
   });
   const avg = subjects.length > 0? (totalScore / subjects.length).toFixed(2) : 0;
@@ -600,6 +698,7 @@ function generateIDCard() {
 document.addEventListener('DOMContentLoaded', function() {
   updateDashboard();
   loadStudents();
+  populateClassDropdowns();
 });
 </script>
 </body>
