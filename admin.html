@@ -43,13 +43,13 @@
 .position-2 { background: #c0c0c0; font-weight: bold; }
 .position-3 { background: #cd7f32; font-weight: bold; color: #fff; }
 .print-only { display: none; }
-@media print {
+  @media print {
 .no-print,.tabs,.header { display: none; }
 .print-only { display: block; }
-  body { background: #fff; margin: 0; }
+    body { background: #fff; margin: 0; }
 .card { box-shadow: none; border: none; padding: 0; }
 .content { display: block; padding: 0; }
-}
+  }
 .id-card { width: 340px; border: 3px solid var(--navy); border-radius: 10px; padding: 15px; text-align: center; background: linear-gradient(135deg, #fff 0%, #f0f8ff 100%); margin: 10px auto; }
 .id-card h3 { margin: 5px 0; color: var(--navy); font-size: 18px; }
 .id-card h4 { margin: 5px 0; color: var(--gold); font-size: 14px; }
@@ -386,8 +386,8 @@ function populateClassDropdowns() {
   });
   const idEl = document.getElementById('idStudentSelect');
   if (idEl) idEl.innerHTML = '<option value="">Select Student</option>' + DB.students.map(s => `<option value="${s.studentId}">${s.fullName} - ${s.studentId}</option>`).join('');
-}
-function loadCBTEntry() {
+  }
+  function loadCBTEntry() {
   const cls = document.getElementById('cbtClass').value;
   const subject = document.getElementById('cbtSubject').value;
   const term = document.getElementById('cbtTerm').value;
@@ -542,3 +542,65 @@ function generateBroadsheet() {
       if (idx === 1) posEl.className = 'position-2';
       if (idx === 2) posEl.className = 'position-3';
     }
+  });
+}
+  function generateReportCard() {
+  const regNo = document.getElementById('reportRegNo').value.trim();
+  const term = document.getElementById('reportTerm').value;
+  const session = '2025/2026';
+  if (!regNo) return alert('Enter Student Reg No');
+  const student = DB.students.find(s => s.studentId === regNo);
+  if (!student) return alert('Student not found');
+  const subjects = [...new Set(Object.values(DB.scores).filter(s => s.studentId === regNo && s.term === term && s.session === session).map(s => s.subject))];
+  if (subjects.length === 0) {
+    document.getElementById('reportResult').innerHTML = '<p>No scores found for this student in ' + term + '</p>';
+    return;
+  }
+  let totalScore = 0;
+  let html = `<div class="report-header print-only"><h2>SEALED NECTAR ACADEMY</h2><h3>STUDENT REPORT CARD - ${term} - ${session}</h3></div><table style="width:100%; margin-bottom:15px; font-size:14px;"><tr><td><b>Name:</b> ${student.fullName}</td><b>Reg No:</b> ${student.studentId}</td></tr><td><b>Class:</b> ${student.class}</td><td><b>Gender:</b> ${student.gender}</td></tr></table><table><tr><th>Subject</th><th>CA /40</th><th>CBT /20</th><th>Theory /40</th><th>Total /100</th><th>Grade</th><th>Remark</th></tr>`;
+  subjects.forEach(sub => {
+    const key = `${session}_${term}_${student.class}_${sub}_${regNo}`;
+    const score = DB.scores[key];
+    if (score) {
+      const gradeInfo = getWAEcGrade(score.total);
+      totalScore += score.total;
+      html += `<tr><td>${sub}</td><td>${score.ca||0}</td><td>${score.cbt||0}</td><td>${score.theory||0}</td><b>${score.total}</b></td><td class="grade-${gradeInfo.grade}">${gradeInfo.grade}</td><td>${gradeInfo.remark}</td></tr>`;
+    }
+  });
+  const avg = subjects.length > 0? (totalScore / subjects.length).toFixed(2) : 0;
+  const overallGrade = getWAEcGrade(avg);
+  html += `</table><table style="width:100%; margin-top:15px; font-size:14px;"><tr><td><b>Total Score:</b> ${totalScore}</td><td><b>Average:</b> ${avg}%</td><td><b>Overall Grade:</b> <span class="grade-${overallGrade.grade}">${overallGrade.grade}</span></td></tr>`;
+  if (term === '3rd Term') {
+    let annualTotal = 0; let termCount = 0;
+    ['1st Term', '2nd Term', '3rd Term'].forEach(t => {
+      subjects.forEach(sub => {
+        const key = `${session}_${t}_${student.class}_${sub}_${regNo}`;
+        if (DB.scores[key]) { annualTotal += DB.scores[key].total; termCount++; }
+      });
+    });
+    const annualAvg = termCount > 0? (annualTotal / termCount).toFixed(2) : 0;
+    const annualGrade = getWAEcGrade(annualAvg);
+    html += `<tr><td colspan="3"><b>ANNUAL AVERAGE:</b> ${annualAvg}% - <span class="grade-${annualGrade.grade}">${annualGrade.grade} (${annualGrade.remark})</span></td></tr>`;
+  }
+  html += `</table><div style="margin-top:30px; display:flex; justify-content:space-between;"><div>_____________________<br>Class Teacher</div><div>_____________________<br>Head Teacher</div></div>`;
+  document.getElementById('reportResult').innerHTML = html;
+}
+function generateIDCard() {
+  const studentId = document.getElementById('idStudentSelect').value;
+  if (!studentId) return alert('Select a student');
+  const student = DB.students.find(s => s.studentId === studentId);
+  if (!student) return alert('Student not found');
+  const html = `<div class="id-card"><h3>SEALED NECTAR ACADEMY</h3><h4>STUDENT ID CARD</h4><div style="width:90px; height:90px; border-radius:50%; border:3px solid var(--gold); margin:10px auto; background:#ddd; display:flex; align-items:center; justify-content:center; font-size:12px;">Photo</div><p><b>${student.fullName}</b></p><p>Reg No: <b>${student.studentId}</b></p><p>Class: <b>${student.class}</b></p><p>Session: <b>2025/2026</b></p><div id="qrcode" style="margin:10px auto;"></div><p style="font-size:10px; margin-top:10px;">If found, return to school<br>Lagos, Nigeria</p></div>`;
+  document.getElementById('idCardResult').innerHTML = html;
+  setTimeout(() => {
+    document.getElementById('qrcode').innerHTML = '';
+    new QRCode(document.getElementById('qrcode'), { text: `SNA|${student.studentId}|${student.fullName}|${student.class}`, width: 80, height: 80 });
+  }, 100);
+}
+document.addEventListener('DOMContentLoaded', function() {
+  updateDashboard();
+  loadStudents();
+});
+</script>
+</body>
+</html>
