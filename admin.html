@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sealed Nectar Academy - SMS + CBT v6.9.10</title>
+<title>Sealed Nectar Academy - SMS + CBT v6.9.11</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <style>
   :root { --navy: #0A2342; --gold: #F4B400; --teal: #009688; --red: #d32f2f; }
     * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
@@ -27,45 +28,76 @@
 .btn-success { background: var(--teal); color: #fff; }
 .btn-warning { background: var(--gold); color: var(--navy); }
 .btn-danger { background: var(--red); color: #fff; }
-  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-  th { background: var(--navy); color: #fff; padding: 12px; text-align: left; font-size: 14px; }
-  td { padding: 10px; border-bottom: 1px solid #eee; }
-  td input { width: 70px; padding: 5px; }
-.score-auto { background: #e8f5e9; font-weight: bold; text-align: center; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+  th { background: var(--navy); color: #fff; padding: 8px; text-align: center; }
+  td { padding: 6px; border: 1px solid #ddd; text-align: center; }
+  td input { width: 55px; padding: 4px; text-align: center; }
+.score-auto { background: #e8f5e9; font-weight: bold; }
 .grade-A1,.grade-B2,.grade-B3 { color: #2e7d32; font-weight: bold; }
 .grade-C4,.grade-C5,.grade-C6 { color: #1976d2; font-weight: bold; }
 .grade-D7,.grade-E8 { color: #f57c00; font-weight: bold; }
 .grade-F9 { color: #d32f2f; font-weight: bold; }
-.flex-row { display: flex; gap: 10px; align-items: end; }
-.flex-row.form-group { flex: 1; }
+.flex-row { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; }
+.flex-row.form-group { flex: 1; min-width: 200px; }
+.position-1 { background: #ffd700; font-weight: bold; }
+.position-2 { background: #c0c0c0; font-weight: bold; }
+.position-3 { background: #cd7f32; font-weight: bold; color: #fff; }
+.print-only { display: none; }
+@media print {
+.no-print,.tabs,.header { display: none; }
+.print-only { display: block; }
+  body { background: #fff; margin: 0; }
+.card { box-shadow: none; border: none; padding: 0; }
+.content { display: block; padding: 0; }
+}
+.id-card { width: 340px; border: 3px solid var(--navy); border-radius: 10px; padding: 15px; text-align: center; background: linear-gradient(135deg, #fff 0%, #f0f8ff 100%); margin: 10px auto; }
+.id-card h3 { margin: 5px 0; color: var(--navy); font-size: 18px; }
+.id-card h4 { margin: 5px 0; color: var(--gold); font-size: 14px; }
+.id-card p { margin: 3px 0; font-size: 12px; }
+.report-header { text-align: center; border-bottom: 3px double var(--navy); padding-bottom: 10px; margin-bottom: 15px; }
+.report-header h2 { margin: 5px 0; color: var(--navy); }
+.report-header h3 { margin: 5px 0; color: var(--gold); }
 </style>
 </head>
 <body>
-
-<div class="header">
+<div class="header no-print">
   <h1>Sealed Nectar Academy</h1>
-  <p>School Management System + CBT v6.9.10 | 2025/2026 Session</p>
+  <p>School Management System + CBT v6.9.11 | 2025/2026 Session</p>
 </div>
-
-<div class="tabs">
-  <button class="tab active" onclick="openTab('dashboard')">Dashboard</button>
-  <button class="tab" onclick="openTab('students')">Student Profile</button>
-  <button class="tab" onclick="openTab('cbt')">CBT Setup</button>
-  <button class="tab" onclick="openTab('scores')">Enter Scores</button>
-  <button class="tab" onclick="openTab('broadsheet')">Broadsheet</button>
-  <button class="tab" onclick="openTab('report')">Report Card</button>
-  <button class="tab" onclick="openTab('idcard')">ID Card</button>
+<div class="tabs no-print">
+  <button class="tab active" onclick="openTab(event,'dashboard')">Dashboard</button>
+  <button class="tab" onclick="openTab(event,'students')">Student Profile</button>
+  <button class="tab" onclick="openTab(event,'cbt')">CBT Setup</button>
+  <button class="tab" onclick="openTab(event,'scores')">Enter Scores</button>
+  <button class="tab" onclick="openTab(event,'broadsheet')">Broadsheet</button>
+  <button class="tab" onclick="openTab(event,'report')">Report Card</button>
+  <button class="tab" onclick="openTab(event,'idcard')">ID Card</button>
 </div>
-
 <div id="dashboard" class="content active">
   <div class="card">
-    <h2>Dashboard</h2>
-    <p><b>Total Students:</b> <span id="totalStudents">0</span> | <b>Session:</b> 2025/2026 | <b>Term:</b> <span id="currentTerm">1st Term</span></p>
+    <h2>Dashboard - 2025/2026 Session</h2>
+    <div class="flex-row">
+      <div class="form-group">
+        <label>Current Term</label>
+        <select id="currentTerm" onchange="saveSettings()">
+          <option>1st Term</option>
+          <option>2nd Term</option>
+          <option>3rd Term</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Total Students</label>
+        <input type="text" id="totalStudents" readonly>
+      </div>
+      <div class="form-group">
+        <label>Total Classes</label>
+        <input type="text" id="totalClasses" readonly>
+      </div>
+    </div>
   </div>
 </div>
-
 <div id="students" class="content">
-  <div class="card">
+  <div class="card no-print">
     <h2>Student Profile Management WITH PROMOTION</h2>
     <div class="flex-row">
       <div class="form-group">
@@ -93,42 +125,40 @@
         <label>Student ID *</label>
         <input type="text" id="studentId" readonly placeholder="Select class first">
       </div>
-      <div class="form-group">
-        <label>&nbsp;</label>
-        <button class="btn btn-warning" type="button" onclick="generateStudentId()">Generate ID</button>
-      </div>
     </div>
     <div class="form-group">
       <label>Full Name *</label>
-      <input type="text" id="fullName" placeholder="Ajao Adnan">
+      <input type="text" id="fullName">
     </div>
-    <div class="form-group">
-      <label>Gender *</label>
-      <select id="gender">
-        <option value="">Select</option>
-        <option>Male</option>
-        <option>Female</option>
-      </select>
+    <div class="flex-row">
+      <div class="form-group">
+        <label>Gender *</label>
+        <select id="gender"><option value="">Select</option><option>Male</option><option>Female</option></select>
+      </div>
+      <div class="form-group">
+        <label>Date of Birth</label>
+        <input type="date" id="dob">
+      </div>
     </div>
-    <div class="form-group">
-      <label>Date of Birth</label>
-      <input type="date" id="dob">
+    <div class="flex-row">
+      <div class="form-group">
+        <label>Father's Name</label>
+        <input type="text" id="fatherName">
+      </div>
+      <div class="form-group">
+        <label>Father's Phone</label>
+        <input type="tel" id="fatherPhone">
+      </div>
     </div>
-    <div class="form-group">
-      <label>Father's Name</label>
-      <input type="text" id="fatherName">
-    </div>
-    <div class="form-group">
-      <label>Father's Phone</label>
-      <input type="tel" id="fatherPhone">
-    </div>
-    <div class="form-group">
-      <label>Mother's Name</label>
-      <input type="text" id="motherName">
-    </div>
-    <div class="form-group">
-      <label>Mother's Phone</label>
-      <input type="tel" id="motherPhone">
+    <div class="flex-row">
+      <div class="form-group">
+        <label>Mother's Name</label>
+        <input type="text" id="motherName">
+      </div>
+      <div class="form-group">
+        <label>Mother's Phone</label>
+        <input type="tel" id="motherPhone">
+      </div>
     </div>
     <div class="form-group">
       <label>Address</label>
@@ -142,40 +172,113 @@
     <div id="studentList"></div>
   </div>
 </div>
-
 <div id="cbt" class="content">
   <div class="card">
-    <h2>CBT Setup - 20 Questions Only</h2>
-    <p><b>Rule:</b> CBT must have exactly 20 MCQs. 1 question = 1 mark. Total = 20 marks.</p>
+    <h2>CBT Setup - 20 Questions = 20 Marks</h2>
+    <div class="flex-row no-print">
+      <div class="form-group">
+        <label>Session</label><select id="cbtSession"><option>2025/2026</option></select>
+      </div>
+      <div class="form-group">
+        <label>Term</label><select id="cbtTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
+      </div>
+      <div class="form-group">
+        <label>Class</label><select id="cbtClass" onchange="loadCBTEntry()"></select>
+      </div>
+      <div class="form-group">
+        <label>Subject</label><input type="text" id="cbtSubject" placeholder="Mathematics" onblur="loadCBTEntry()">
+      </div>
+    </div>
+    <div id="cbtScoreEntry"></div>
+    <button class="btn btn-success no-print" onclick="saveCBTScores()">Save CBT Scores for Class</button>
   </div>
 </div>
-
 <div id="scores" class="content">
   <div class="card">
     <h2>Enter Scores - CA 40 + CBT 20 + Theory 40 = 100</h2>
-    <div id="scoreTableContainer"><p>Select Class + Subject in Student Profile first, then add students.</p></div>
+    <div class="flex-row no-print">
+      <div class="form-group">
+        <label>Session</label><select id="scoreSession"><option>2025/2026</option></select>
+      </div>
+      <div class="form-group">
+        <label>Term</label><select id="scoreTerm" onchange="loadScoreTable()"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
+      </div>
+      <div class="form-group">
+        <label>Class</label><select id="scoreClass" onchange="loadScoreTable()"></select>
+      </div>
+      <div class="form-group">
+        <label>Subject</label><input type="text" id="scoreSubject" placeholder="Mathematics" onblur="loadScoreTable()">
+      </div>
+    </div>
+    <div id="scoreTableContainer"></div>
+    <button class="btn btn-success no-print" onclick="saveAllScores()">Save All Scores</button>
   </div>
 </div>
-
-<div id="broadsheet" class="content"><div class="card"><h2>Broadsheet</h2><p>Coming in v6.9.11</p></div></div>
-<div id="report" class="content"><div class="card"><h2>Report Card</h2><p>Coming in v6.9.11</p></div></div>
-<div id="idcard" class="content"><div class="card"><h2>ID Card Generator</h2><p>Coming in v6.9.11</p></div></div>
-
+<div id="broadsheet" class="content">
+  <div class="card">
+    <h2>Broadsheet - WAEC Grading + Position</h2>
+    <div class="flex-row no-print">
+      <div class="form-group">
+        <label>Session</label><select id="broadSession"><option>2025/2026</option></select>
+      </div>
+      <div class="form-group">
+        <label>Term</label><select id="broadTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
+      </div>
+      <div class="form-group">
+        <label>Class</label><select id="broadClass"></select>
+      </div>
+    </div>
+    <button class="btn btn-primary no-print" onclick="generateBroadsheet()">Generate Broadsheet</button>
+    <button class="btn btn-warning no-print" onclick="window.print()">Print Broadsheet</button>
+    <div id="broadsheetResult"></div>
+  </div>
+</div>
+<div id="report" class="content">
+  <div class="card">
+    <h2>Report Card - WAEC + Annual Average</h2>
+    <div class="flex-row no-print">
+      <div class="form-group">
+        <label>Student Reg No</label>
+        <input type="text" id="reportRegNo" placeholder="SNA/2035/001">
+      </div>
+      <div class="form-group">
+        <label>Term</label>
+        <select id="reportTerm"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select>
+      </div>
+    </div>
+    <button class="btn btn-primary no-print" onclick="generateReportCard()">Generate Report Card</button>
+    <button class="btn btn-warning no-print" onclick="window.print()">Print Report Card</button>
+    <div id="reportResult"></div>
+  </div>
+</div>
+<div id="idcard" class="content">
+  <div class="card">
+    <h2>ID Card Generator - Staff/Student</h2>
+    <div class="flex-row no-print">
+      <div class="form-group">
+        <label>Select Student</label>
+        <select id="idStudentSelect"></select>
+      </div>
+    </div>
+    <button class="btn btn-primary no-print" onclick="generateIDCard()">Generate ID Card</button>
+    <button class="btn btn-warning no-print" onclick="window.print()">Print ID Card</button>
+    <div id="idCardResult" style="margin-top:20px;"></div>
+  </div>
+</div>
 <script>
-// === DATABASE ===
 let DB = {
   students: JSON.parse(localStorage.getItem('sna_students') || '[]'),
   scores: JSON.parse(localStorage.getItem('sna_scores') || '{}'),
-  cbtResults: JSON.parse(localStorage.getItem('sna_cbt') || '{}')
+  cbtResults: JSON.parse(localStorage.getItem('sna_cbt') || '{}'),
+  settings: JSON.parse(localStorage.getItem('sna_settings') || '{"currentTerm":"1st Term"}')
 };
-
 const CLASS_YEAR_MAP = {
   'CRECHE': 2025, 'NUR 1': 2026, 'NUR 2': 2027, 'KG 1': 2028, 'K.G 2': 2029,
   'BASIC 1': 2030, 'BASIC 2': 2031, 'BASIC 3': 2032, 'BASIC 4': 2033, 'BASIC 5': 2034,
   'JSS 1': 2035, 'JSS 2': 2036, 'JSS 3': 2037, 'SS 1': 2038, 'SS 2': 2039
 };
-
 function getWAEcGrade(total) {
+  total = Number(total);
   if (total >= 75) return {grade: 'A1', remark: 'Excellent'};
   if (total >= 70) return {grade: 'B2', remark: 'Very Good'};
   if (total >= 65) return {grade: 'B3', remark: 'Good'};
@@ -186,39 +289,39 @@ function getWAEcGrade(total) {
   if (total >= 40) return {grade: 'E8', remark: 'Pass'};
   return {grade: 'F9', remark: 'Fail'};
 }
-
-function openTab(tabName) {
+function openTab(evt, tabName) {
   document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById(tabName).classList.add('active');
-  event.target.classList.add('active');
+  evt.currentTarget.classList.add('active');
   if(tabName === 'students') loadStudents();
+  if(['scores','cbt','broadsheet','idcard'].includes(tabName)) populateClassDropdowns();
+  if(tabName === 'dashboard') updateDashboard();
 }
-
-// === FIXED: STUDENT ID GENERATOR ===
+function saveSettings() {
+  DB.settings.currentTerm = document.getElementById('currentTerm').value;
+  localStorage.setItem('sna_settings', JSON.stringify(DB.settings));
+}
+function updateDashboard() {
+  DB.students = JSON.parse(localStorage.getItem('sna_students') || '[]');
+  document.getElementById('totalStudents').textContent = DB.students.length;
+  document.getElementById('totalClasses').textContent = [...new Set(DB.students.map(s => s.class))].length;
+  document.getElementById('currentTerm').value = DB.settings.currentTerm;
+}
 function generateStudentId() {
   const cls = document.getElementById('studentClass').value;
   const idField = document.getElementById('studentId');
-  
   if (!cls) {
     idField.value = '';
     idField.placeholder = 'Select class first';
     return;
   }
-  
   const year = CLASS_YEAR_MAP[cls];
-  if (!year) {
-    idField.value = '';
-    return;
-  }
-  
-  // Reload DB to get latest count
   DB.students = JSON.parse(localStorage.getItem('sna_students') || '[]');
   const existing = DB.students.filter(s => s.studentId && s.studentId.startsWith(`SNA/${year}/`));
   const nextNum = String(existing.length + 1).padStart(3, '0');
   idField.value = `SNA/${year}/${nextNum}`;
 }
-
 function saveStudent() {
   const student = {
     studentId: document.getElementById('studentId').value,
@@ -232,62 +335,210 @@ function saveStudent() {
     motherPhone: document.getElementById('motherPhone').value,
     address: document.getElementById('address').value
   };
-  
-  if (!student.fullName ||!student.class) return alert('Fill Full Name and Class');
-  if (!student.studentId) return alert('Click "Generate ID" button or select Class again');
-  
+  if (!student.fullName ||!student.class ||!student.studentId) return alert('Fill Full Name, Class and generate ID');
   const idx = DB.students.findIndex(s => s.studentId === student.studentId);
   if (idx >= 0) DB.students[idx] = student;
   else DB.students.push(student);
-  
   localStorage.setItem('sna_students', JSON.stringify(DB.students));
   loadStudents();
   clearForm();
   alert('Student saved: ' + student.studentId);
 }
-
 function loadStudents() {
   DB.students = JSON.parse(localStorage.getItem('sna_students') || '[]');
-  document.getElementById('totalStudents').textContent = DB.students.length;
   document.getElementById('studentCount').textContent = DB.students.length;
-  let html = '<table><tr><th>Name</th><th>ID</th><th>Class</th><th>Action</th></tr>';
+  let html = '<table><tr><th>Name</th><th>ID</th><th>Class</th><th>Gender</th><th>Action</th></tr>';
   DB.students.forEach(s => {
     html += `<tr>
       <td>${s.fullName}</td>
       <td>${s.studentId}</td>
       <td>${s.class}</td>
+      <td>${s.gender}</td>
       <td><button class="btn btn-danger" onclick="deleteStudent('${s.studentId}')">Delete</button></td>
     </tr>`;
   });
   html += '</table>';
   document.getElementById('studentList').innerHTML = html;
+  updateDashboard();
 }
-
 function deleteStudent(id) {
-  if (!confirm('Delete ' + id + '?')) return;
+  if (!confirm('Delete ' + id + '? This removes all scores too.')) return;
   DB.students = DB.students.filter(s => s.studentId!== id);
+  Object.keys(DB.scores).forEach(key => { if(key.includes(id)) delete DB.scores[key]; });
+  Object.keys(DB.cbtResults).forEach(key => { if(key.includes(id)) delete DB.cbtResults[key]; });
   localStorage.setItem('sna_students', JSON.stringify(DB.students));
+  localStorage.setItem('sna_scores', JSON.stringify(DB.scores));
+  localStorage.setItem('sna_cbt', JSON.stringify(DB.cbtResults));
   loadStudents();
 }
-
 function clearForm() {
-  document.getElementById('fullName').value = '';
-  document.getElementById('studentClass').value = '';
-  document.getElementById('gender').value = '';
-  document.getElementById('studentId').value = '';
-  document.getElementById('dob').value = '';
-  document.getElementById('fatherName').value = '';
-  document.getElementById('fatherPhone').value = '';
-  document.getElementById('motherName').value = '';
-  document.getElementById('motherPhone').value = '';
-  document.getElementById('address').value = '';
+  ['fullName','studentClass','gender','studentId','dob','fatherName','fatherPhone','motherName','motherPhone','address'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
 }
-
-// Init on load
-document.addEventListener('DOMContentLoaded', function() {
-  loadStudents();
-});
-</script>
-
-</body>
-</html>
+function populateClassDropdowns() {
+  DB.students = JSON.parse(localStorage.getItem('sna_students') || '[]');
+  const classes = [...new Set(DB.students.map(s => s.class))].sort();
+  const html = classes.map(c => `<option>${c}</option>`).join('');
+  ['scoreClass','cbtClass','broadClass'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '<option value="">Select Class</option>' + html;
+  });
+  const idEl = document.getElementById('idStudentSelect');
+  if (idEl) idEl.innerHTML = '<option value="">Select Student</option>' + DB.students.map(s => `<option value="${s.studentId}">${s.fullName} - ${s.studentId}</option>`).join('');
+}
+function loadCBTEntry() {
+  const cls = document.getElementById('cbtClass').value;
+  const subject = document.getElementById('cbtSubject').value;
+  const term = document.getElementById('cbtTerm').value;
+  const session = document.getElementById('cbtSession').value;
+  if (!cls ||!subject) {
+    document.getElementById('cbtScoreEntry').innerHTML = '';
+    return;
+  }
+  const students = DB.students.filter(s => s.class === cls);
+  let html = '<table><tr><th>S/N</th><th>Name</th><th>Reg No</th><th>CBT Score /20</th></tr>';
+  students.forEach((s, i) => {
+    const key = `${session}_${term}_${cls}_${subject}_${s.studentId}`;
+    const score = DB.cbtResults[key] || '';
+    html += `<tr><td>${i+1}</td><td>${s.fullName}</td><td>${s.studentId}</td>
+      <td><input type="number" max="20" min="0" id="cbt_${s.studentId}" value="${score}"></td></tr>`;
+  });
+  html += '</table>';
+  document.getElementById('cbtScoreEntry').innerHTML = html;
+}
+function saveCBTScores() {
+  const cls = document.getElementById('cbtClass').value;
+  const subject = document.getElementById('cbtSubject').value;
+  const term = document.getElementById('cbtTerm').value;
+  const session = document.getElementById('cbtSession').value;
+  if (!cls ||!subject) return alert('Select Class and Subject');
+  const students = DB.students.filter(s => s.class === cls);
+  students.forEach(s => {
+    const key = `${session}_${term}_${cls}_${subject}_${s.studentId}`;
+    const score = document.getElementById(`cbt_${s.studentId}`)? Number(document.getElementById(`cbt_${s.studentId}`).value) : 0;
+    DB.cbtResults[key] = Math.min(20, Math.max(0, score));
+  });
+  localStorage.setItem('sna_cbt', JSON.stringify(DB.cbtResults));
+  alert('CBT scores saved for ' + cls + ' - ' + subject);
+}
+function loadScoreTable() {
+  const cls = document.getElementById('scoreClass').value;
+  const subject = document.getElementById('scoreSubject').value;
+  const term = document.getElementById('scoreTerm').value;
+  const session = document.getElementById('scoreSession').value;
+  if (!cls ||!subject) {
+    document.getElementById('scoreTableContainer').innerHTML = '<p>Select Class and Subject to load students.</p>';
+    return;
+  }
+  const students = DB.students.filter(s => s.class === cls);
+  if (students.length === 0) {
+    document.getElementById('scoreTableContainer').innerHTML = '<p>No students in this class yet.</p>';
+    return;
+  }
+  let html = '<table><tr><th>S/N</th><th>Name</th><th>Reg No</th><th>CA /40</th><th>CBT /20</th><th>Theory /40</th><th>Total /100</th><th>Grade</th></tr>';
+  students.forEach((s, i) => {
+    const key = `${session}_${term}_${cls}_${subject}_${s.studentId}`;
+    const score = DB.scores[key] || {ca: '', theory: ''};
+    const cbtScore = DB.cbtResults[key] || 0;
+    const total = (Number(score.ca) || 0) + cbtScore + (Number(score.theory) || 0);
+    const gradeInfo = getWAEcGrade(total);
+    html += `<tr>
+      <td>${i + 1}</td>
+      <td>${s.fullName}</td>
+      <td>${s.studentId}</td>
+      <td><input type="number" max="40" min="0" id="ca_${s.studentId}" value="${score.ca}" onchange="calcTotal('${s.studentId}')"></td>
+      <td class="score-auto">${cbtScore}</td>
+      <td><input type="number" max="40" min="0" id="theory_${s.studentId}" value="${score.theory}" onchange="calcTotal('${s.studentId}')"></td>
+      <td id="total_${s.studentId}">${total}</td>
+      <td id="grade_${s.studentId}" class="grade-${gradeInfo.grade}">${gradeInfo.grade}</td>
+    </tr>`;
+  });
+  html += '</table>';
+  document.getElementById('scoreTableContainer').innerHTML = html;
+}
+function calcTotal(studentId) {
+  const key = `${document.getElementById('scoreSession').value}_${document.getElementById('scoreTerm').value}_${document.getElementById('scoreClass').value}_${document.getElementById('scoreSubject').value}_${studentId}`;
+  const ca = Number(document.getElementById(`ca_${studentId}`).value) || 0;
+  const theory = Number(document.getElementById(`theory_${studentId}`).value) || 0;
+  const cbt = DB.cbtResults[key] || 0;
+  const total = Math.min(100, ca + cbt + theory);
+  const gradeInfo = getWAEcGrade(total);
+  document.getElementById(`total_${studentId}`).textContent = total;
+  document.getElementById(`grade_${studentId}`).textContent = gradeInfo.grade;
+  document.getElementById(`grade_${studentId}`).className = `grade-${gradeInfo.grade}`;
+}
+function saveAllScores() {
+  const cls = document.getElementById('scoreClass').value;
+  const subject = document.getElementById('scoreSubject').value;
+  const term = document.getElementById('scoreTerm').value;
+  const session = document.getElementById('scoreSession').value;
+  if (!cls ||!subject) return alert('Select Class and Subject');
+  const students = DB.students.filter(s => s.class === cls);
+  students.forEach(s => {
+    const key = `${session}_${term}_${cls}_${subject}_${s.studentId}`;
+    const ca = document.getElementById(`ca_${s.studentId}`).value;
+    const theory = document.getElementById(`theory_${s.studentId}`).value;
+    const cbt = DB.cbtResults[key] || 0;
+    DB.scores[key] = {
+      ca: ca, theory: theory, cbt: cbt,
+      total: (Number(ca) || 0) + cbt + (Number(theory) || 0),
+      subject: subject, class: cls, term: term, session: session,
+      studentId: s.studentId, studentName: s.fullName
+    };
+  });
+  localStorage.setItem('sna_scores', JSON.stringify(DB.scores));
+  alert('All scores saved for ' + cls + ' - ' + subject);
+}
+function generateBroadsheet() {
+  const cls = document.getElementById('broadClass').value;
+  const term = document.getElementById('broadTerm').value;
+  const session = document.getElementById('broadSession').value;
+  if (!cls) return alert('Select Class');
+  const students = DB.students.filter(s => s.class === cls);
+  const subjects = [...new Set(Object.values(DB.scores).filter(s => s.class === cls && s.term === term && s.session === session).map(s => s.subject))];
+  if (subjects.length === 0) {
+    document.getElementById('broadsheetResult').innerHTML = '<p>No scores entered for this class/term yet. Go to Enter Scores tab first.</p>';
+    return;
+  }
+  let html = `<div class="report-header print-only"><h2>SEALED NECTAR ACADEMY</h2><h3>BROADSHEET - ${cls} - ${term} - ${session}</h3></div>`;
+  html += '<table><tr><th>S/N</th><th>Name</th><th>Reg No</th>';
+  subjects.forEach(sub => {
+    html += `<th colspan="4">${sub}</th>`;
+  });
+  html += '<th>Overall Total</th><th>Average</th><th>Position</th></tr>';
+  html += '<tr><td colspan="3"></td>';
+  subjects.forEach(() => {
+    html += '<td>CA</td><td>CBT</td><td>Theory</td><td>Total</td>';
+  });
+  html += '<td colspan="3"></td></tr>';
+  let studentTotals = [];
+  students.forEach((s, i) => {
+    let rowTotal = 0;
+    let row = `<tr><td>${i + 1}</td><td>${s.fullName}</td><td>${s.studentId}</td>`;
+    subjects.forEach(sub => {
+      const key = `${session}_${term}_${cls}_${sub}_${s.studentId}`;
+      const score = DB.scores[key];
+      if (score) {
+        row += `<td>${score.ca||0}</td><td>${score.cbt||0}</td><td>${score.theory||0}</td><td><b>${score.total}</b></td>`;
+        rowTotal += score.total;
+      } else {
+        row += '<td>-</td><td>-</td><td>-</td><td>-</td>';
+      }
+    });
+    const avg = subjects.length > 0? (rowTotal / subjects.length).toFixed(2) : 0;
+    studentTotals.push({id: s.studentId, total: rowTotal, avg: avg});
+    row += `<td><b>${rowTotal}</b></td><td>${avg}</td><td id="pos_${s.studentId}">-</td></tr>`;
+    html += row;
+  });
+  html += '</table>';
+  document.getElementById('broadsheetResult').innerHTML = html;
+  studentTotals.sort((a,b) => b.total - a.total);
+  studentTotals.forEach((st, idx) => {
+    const posEl = document.getElementById(`pos_${st.id}`);
+    if (posEl) {
+      posEl.textContent = idx + 1;
+      if (idx === 0) posEl.className = 'position-1';
+      if (idx === 1) posEl.className = 'position-2';
+      if (idx === 2) posEl.className = 'position-3';
+    }
